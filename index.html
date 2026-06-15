@@ -6,193 +6,198 @@
     <title>姥姥的树存档</title>
     <style>
         body {
-            font-family: "Microsoft YaHei", sans-serif;
-            background-color: #f4f6f8;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f6f9; /* 浅灰背景 */
             color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         h1 {
             text-align: center;
             color: #2c3e50;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+            font-size: 24px;
         }
-        .folder-section {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 25px;
         }
         .folder-title {
-            font-size: 1.2em;
             font-weight: bold;
-            color: #007bff;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .folder-icon {
-            margin-right: 10px;
-            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: block;
         }
         .file-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        .file-item {
+        .file-list li {
             margin-bottom: 8px;
         }
-        .file-link {
+        .file-list a {
             display: block;
             padding: 10px 15px;
             background-color: #f8f9fa;
             text-decoration: none;
-            color: #495057;
+            color: #444;
             border-radius: 4px;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
         }
-        .file-link:hover {
-            background-color: #e9ecef;
-            border-left: 4px solid #007bff;
-            color: #007bff;
+        .file-list a:hover {
+            background-color: #eef2f5;
+            border-left: 3px solid #3498db; /* 悬停时的蓝色左边框 */
+            color: #000;
             transform: translateX(5px);
-        }
-        /* 简单的加载提示 */
-        .loading-text {
-            color: #999;
-            font-size: 0.9em;
-            padding-left: 10px;
         }
     </style>
 </head>
 <body>
 
+<div class="container">
     <h1>🌳 姥姥的树存档</h1>
+    <p class="subtitle">这里记录了小组内的珍贵讨论与回忆，点击下方标题即可阅读。</p >
 
-    <!-- 容器：所有的文件夹列表会生成在这里 -->
-    <div id="archive-container"></div>
+    <!-- 1. 史官楼 (2个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 史官楼</span>
+        <ul class="file-list">
+            <li><a href=" ">史官楼 - 第 1 页</a ></li>
+            <li><a href="史官楼/2.html">史官楼 - 第 2 页</a ></li>
+        </ul>
+    </div>
 
-    <script>
-        // 这里定义了你要求的顺序和对应的文件夹名称
-        // 注意：如果你的文件夹名字有空格或特殊符号，请保持和GitHub上一模一样
-        const folders = [
-            "史官楼",
-            "吵架1",
-            "吵架2",
-            "吵架3",
-            "吵架4",
-            "苹果凌晨出没",
-            "建议楼",
-            "组务投票楼",
-            "管理员留任投票楼",
-            "投票2号",
-            "管理组群内",
-            "三天后狐狸第一次现身组内",
-            "组员发帖",
-            "苹果现身组内"
-        ];
+    <!-- 2. 吵架1 (3个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 吵架1</span>
+        <ul class="file-list">
+            <li><a href="吵架1/1.html">吵架1 - 第 1 页</a ></li>
+            <li><a href="吵架1/2.html">吵架1 - 第 2 页</a ></li>
+            <li><a href="吵架1/3.html">吵架1 - 第 3 页</a ></li>
+        </ul>
+    </div>
 
-        const container = document.getElementById('archive-container');
+    <!-- 3. 吵架2 (3个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 吵架2</span>
+        <ul class="file-list">
+            <li><a href="吵架2/1.html">吵架2 - 第 1 页</a ></li>
+            <li><a href="吵架2/2.html">吵架2 - 第 2 页</a ></li>
+            <li><a href="吵架2/3.html">吵架2 - 第 3 页</a ></li>
+        </ul>
+    </div>
 
-        // 遍历每一个文件夹
-        folders.forEach(folderName => {
-            // 创建文件夹的大盒子
-            const section = document.createElement('div');
-            section.className = 'folder-section';
+    <!-- 4. 吵架3 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 吵架3</span>
+        <ul class="file-list">
+            <li><a href="吵架3/1.html">吵架3 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            // 创建标题
-            const title = document.createElement('div');
-            title.className = 'folder-title';
-            title.innerHTML = `<span class="folder-icon">📂</span> ${folderName}`;
-            section.appendChild(title);
+    <!-- 5. 吵架4 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 吵架4</span>
+        <ul class="file-list">
+            <li><a href="吵架4/1.html">吵架4 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            // 创建列表容器
-            const ul = document.createElement('ul');
-            ul.className = 'file-list';
+    <!-- 6. 苹果凌晨出没 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 苹果凌晨出没</span>
+        <ul class="file-list">
+            <li><a href="苹果凌晨出没/1.html">苹果凌晨出没 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            // 核心逻辑：尝试寻找 1.html 到 20.html
-            // 这样可以解决有的文件夹有3个，有的只有1个的问题
-            let foundAny = false; // 标记是否找到了文件
+    <!-- 7. 建议楼 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 建议楼</span>
+        <ul class="file-list">
+            <li><a href="建议楼/1.html">建议楼 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            for (let i = 1; i <= 20; i++) {
-                // 构造路径，例如：吵架1/1.html
-                const filePath = `${folderName}/${i}.html`;
+    <!-- 8. 组务投票楼 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 组务投票楼</span>
+        <ul class="file-list">
+            <li><a href="组务投票楼/1.html">组务投票楼 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-                // 创建一个临时的图片标签来测试文件是否存在
-                // 这是纯前端判断文件是否存在的最简单方法（HEAD请求）
-                const img = new Image();
-                img.onload = function() {
-                    // 如果加载成功（说明文件存在），则添加链接
-                    addLink(ul, filePath, i);
-                    foundAny = true;
-                };
-                // 这里的 src 指向 html 文件，虽然它是网页，但浏览器能读取到它的大小从而触发 onload
-                // 加上时间戳防止缓存导致判断失误
-                img.src = filePath + '?t=' + new Date().getTime();
-            }
+    <!-- 9. 管理员留任投票楼 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 管理员留任投票楼</span>
+        <ul class="file-list">
+            <li><a href="管理员留任投票楼/1.html">管理员留任投票楼 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            // 如果循环结束还没找到任何文件（或者网络慢还没加载完），
-            // 我们至少放一个默认的 1.html 链接保底，防止文件夹看起来是空的
-            // (如果你确定所有文件夹都有1.html，这行可以保留作为保险)
-            setTimeout(() => {
-                if (ul.children.length === 0) {
-                   const fallbackLi = document.createElement('li');
-                   fallbackLi.className = 'file-item';
-                   fallbackLi.innerHTML = `<a href=" " class="file-link">查看第 1 页 (默认)</a >`;
-                   ul.appendChild(fallbackLi);
-                }
-            }, 2000); // 2秒后如果没检测到，就显示默认链接
+    <!-- 10. 投票2号 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 投票2号</span>
+        <ul class="file-list">
+            <li><a href="投票2号/1.html">投票2号 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            section.appendChild(ul);
-            container.appendChild(section);
-        });
+    <!-- 11. 管理组群内 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 管理组群内</span>
+        <ul class="file-list">
+            <li><a href="管理组群内/1.html">管理组群内 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-        // 辅助函数：添加链接到列表
-        function addLink(parentUl, path, index) {
-            // 避免重复添加（因为异步加载可能会乱序）
-            // 检查一下是不是已经加过这个 index 了
-            const existingLinks = parentUl.querySelectorAll('a');
-            for(let link of existingLinks) {
-                if(link.getAttribute('href') === path) return;
-            }
+    <!-- 12. 三天后狐狸第一次现身组内 (1个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 三天后狐狸第一次现身组内</span>
+        <ul class="file-list">
+            <li><a href="三天后狐狸第一次现身组内/1.html">三天后狐狸第一次现身组内 - 第 1 页</a ></li>
+        </ul>
+    </div>
 
-            const li = document.createElement('li');
-            li.className = 'file-item';
+    <!-- 13. 组员发帖 (2个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 组员发帖</span>
+        <ul class="file-list">
+            <li><a href="组员发帖/1.html">组员发帖 - 第 1 页</a ></li>
+            <li><a href="组员发帖/2.html">组员发帖 - 第 2 页</a ></li>
+        </ul>
+    </div>
 
-            const a = document.createElement('a');
-            a.href = path;
-            a.className = 'file-link';
-            a.textContent = `第 ${index} 页`; // 显示文字：第 1 页, 第 2 页...
+    <!-- 14. 苹果现身组内 (2个文件) -->
+    <div class="section">
+        <span class="folder-title">📂 苹果现身组内</span>
+        <ul class="file-list">
+            <li><a href="苹果现身组内/1.html">苹果现身组内 - 第 1 页</a ></li>
+            <li><a href="苹果现身组内/2.html">苹果现身组内 - 第 2 页</a ></li>
+        </ul>
+    </div>
 
-            li.appendChild(a);
-            parentUl.appendChild(li);
+</div>
 
-            // 排序：为了让链接按 1, 2, 3 顺序排列，而不是谁先加载出来谁在前面
-            sortList(parentUl);
-        }
-
-        // 辅助函数：给列表排序
-        function sortList(ul) {
-            const items = Array.from(ul.querySelectorAll('li'));
-            items.sort((a, b) => {
-                const textA = a.querySelector('a').textContent;
-                const textB = b.querySelector('a').textContent;
-                // 提取数字进行比较
-                const numA = parseInt(textA.replace(/\D/g, ''));
-                const numB = parseInt(textB.replace(/\D/g, ''));
-                return numA - numB;
-            });
-
-            // 清空并重新添加
-            ul.innerHTML = '';
-            items.forEach(item => ul.appendChild(item));
-        }
-    </script>
 </body>
 </html>
