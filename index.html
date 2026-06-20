@@ -9,9 +9,9 @@
         html, body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
             background: #f0f7f0;
-            min-height: 100vh;
+            height: 100%;
             color: #2e4a2e;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         
         /* 顶部导航 */
@@ -91,6 +91,8 @@
         /* 首页 */
         .home-view {
             padding: 66px 16px 20px;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
             display: block;
         }
         .home-view.hidden { display: none; }
@@ -120,16 +122,19 @@
         /* 内容容器 */
         .content-wrapper {
             display: none;
-            padding-top: 50px;
-            padding-bottom: 50px;
-            min-height: 100vh;
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 50px;
+            height: calc(100vh - 100px);
         }
         .content-wrapper.active { display: block; }
         
-        /* iframe 样式 */
+        /* iframe */
         .content-frame {
             width: 100%;
-            min-height: calc(100vh - 100px);
+            height: 100%;
             border: none;
             display: block;
         }
@@ -167,34 +172,35 @@
         .pagination .disabled { color: #ccc; background: #f5f5f5; }
         .page-info { font-size: 14px; color: #666; font-weight: 600; }
         
-        /* 到底提示 - 增强样式 */
+        /* 到底提示 */
         .bottom-hint {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
             text-align: center;
-            padding: 20px 16px 30px;
+            padding: 8px;
             color: #81c784;
             font-size: 13px;
+            background: rgba(240, 247, 240, 0.95);
+            border-top: 1px solid #e8f5e9;
+            z-index: 49;
             display: none;
-            clear: both;
         }
-        .bottom-hint.show { 
-            display: block; 
-            animation: fadeIn 0.3s ease;
-        }
+        .bottom-hint.show { display: block; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* 首页底部提示 */
-        .home-bottom-hint {
-            text-align: center;
-            padding: 20px 16px 30px;
+        /* 加载中提示 */
+        .loading-tip {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             color: #81c784;
-            font-size: 13px;
+            font-size: 14px;
             display: none;
+            z-index: 48;
         }
-        .home-bottom-hint.show { display: block; }
+        .loading-tip.show { display: block; }
     </style>
 </head>
 <body>
@@ -223,14 +229,16 @@
     <main class="home-view" id="homeView">
         <div style="text-align:center; margin-bottom:16px; color:#558b2f; font-size:13px;">🌱 欢迎来到姥姥的树</div>
         <div class="catalog-grid" id="catalogGrid"></div>
-        <div class="home-bottom-hint" id="homeBottomHint">— 已经到底了 —</div>
     </main>
 
     <!-- 内容容器 -->
     <div class="content-wrapper" id="contentWrapper">
+        <div class="loading-tip" id="loadingTip">加载中...</div>
         <iframe class="content-frame" id="contentFrame" scrolling="yes"></iframe>
-        <div class="bottom-hint" id="contentBottomHint">— 已经到底了 —</div>
     </div>
+
+    <!-- 到底提示 -->
+    <div class="bottom-hint" id="bottomHint">— 已经到底了 —</div>
 
     <!-- 底部分页 -->
     <nav class="pagination" id="pagination" style="display: none;"></nav>
@@ -260,7 +268,6 @@
         function init() {
             renderHome();
             renderSidebar();
-            setupScrollListener();
         }
 
         function renderHome() {
@@ -300,14 +307,115 @@
             document.getElementById('contentWrapper').classList.add('active');
             document.getElementById('pagination').style.display = 'flex';
             document.getElementById('backBtn').style.visibility = 'visible';
+            document.getElementById('bottomHint').classList.remove('show');
+            document.getElementById('loadingTip').classList.add('show');
             
             const path = series + '/' + page + '.html';
-            document.getElementById('contentFrame').src = path;
+            const iframe = document.getElementById('contentFrame');
+            iframe.src = path;
+            
+            // 关键：等 iframe 完全加载后再处理
+            iframe.onload = function() {
+                document.getElementById('loadingTip').classList.remove('show');
+                waitForImages(iframe);
+            };
             
             renderPagination(series, page, data.pages);
-            
-            // 重置到底提示
-            document.getElementById('contentBottomHint').classList.remove('show');
+        }
+
+        // 关键：等待所有图片加载完成
+        function waitForImages(iframe) {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const images = iframeDoc.querySelectorAll('img');
+                const totalImages = images.length;
+                let loadedImages = 0;
+                
+                // 如果没有图片，直接设置滚动监听
+                if (totalImages === 0) {
+                    setupScrollListener(iframe);
+                    return;
+                }
+                
+                // 监听每张图片加载
+                images.forEach(img => {
+                    if (img.complete) {
+                        loadedImages++;
+                    } else {
+                        img.addEventListener('load', function() {
+                            loadedImages++;
+                            checkAllLoaded();
+                        });
+                        img.addEventListener('error', function() {
+                            loadedImages++; // 加载失败也算完成
+                            checkAllLoaded();
+                        });
+                    }
+                });
+                
+                // 检查是否全部加载完成
+                function checkAllLoaded() {
+                    if (loadedImages >= totalImages) {
+                        // 所有图片加载完成，设置滚动监听
+                        setTimeout(() => setupScrollListener(iframe), 100);
+                    }
+                }
+                
+                // 立即检查一次（可能图片已经缓存）
+                checkAllLoaded();
+                
+                // 超时处理：最多等3秒
+                setTimeout(() => {
+                    setupScrollListener(iframe);
+                }, 3000);
+                
+            } catch(e) {
+                // 跨域限制，直接设置监听
+                setupScrollListener(iframe);
+            }
+        }
+
+        // 设置滚动监听
+        function setupScrollListener(iframe) {
+            try {
+                const iframeWin = iframe.contentWindow;
+                
+                const scrollHandler = function() {
+                    const iframeDoc = iframe.contentDocument || iframeWin.document;
+                    const scrollTop = iframeWin.pageYOffset || iframeDoc.documentElement.scrollTop;
+                    const scrollHeight = iframeDoc.documentElement.scrollHeight;
+                    const clientHeight = iframeDoc.documentElement.clientHeight;
+                    
+                    // 关键：增加缓冲值，确保真的到底了
+                    const buffer = 50;
+                    const isBottom = scrollTop + clientHeight >= scrollHeight - buffer;
+                    
+                    if (isBottom) {
+                        document.getElementById('bottomHint').classList.add('show');
+                    } else {
+                        document.getElementById('bottomHint').classList.remove('show');
+                    }
+                };
+                
+                // 移除旧监听器
+                iframeWin.removeEventListener('scroll', scrollHandler);
+                iframeWin.addEventListener('scroll', scrollHandler);
+                
+                // 初始检查
+                setTimeout(scrollHandler, 200);
+                
+                // 图片加载后高度可能变化，定时检查
+                let checkCount = 0;
+                const intervalId = setInterval(() => {
+                    scrollHandler();
+                    checkCount++;
+                    if (checkCount > 10) clearInterval(intervalId); // 检查10次后停止
+                }, 500);
+                
+            } catch(e) {
+                // 跨域：默认显示提示
+                document.getElementById('bottomHint').classList.add('show');
+            }
         }
 
         function renderPagination(series, current, total) {
@@ -336,6 +444,7 @@
             document.getElementById('contentWrapper').classList.remove('active');
             document.getElementById('pagination').style.display = 'none';
             document.getElementById('backBtn').style.visibility = 'hidden';
+            document.getElementById('bottomHint').classList.remove('show');
             document.getElementById('contentFrame').src = '';
         }
 
@@ -343,54 +452,6 @@
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.overlay').classList.toggle('active');
         }
-
-        // 滚动检测 - 改进版
-        function setupScrollListener() {
-            let ticking = false;
-            
-            window.addEventListener('scroll', function() {
-                if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                        checkScrollBottom();
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-            
-            // 也监听 iframe 的加载完成
-            document.getElementById('contentFrame').addEventListener('load', function() {
-                // iframe 加载后检查高度
-                setTimeout(checkScrollBottom, 100);
-            });
-        }
-
-        function checkScrollBottom() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight;
-            const clientHeight = document.documentElement.clientHeight;
-            
-            // 增加容错阈值，确保能触发
-            const threshold = 50;
-            const isBottom = scrollTop + clientHeight >= scrollHeight - threshold;
-            
-            // 首页提示
-            const homeHint = document.getElementById('homeBottomHint');
-            if (!document.getElementById('homeView').classList.contains('hidden')) {
-                if (isBottom) homeHint.classList.add('show');
-                else homeHint.classList.remove('show');
-            }
-            
-            // 内容页提示
-            const contentHint = document.getElementById('contentBottomHint');
-            if (document.getElementById('contentWrapper').classList.contains('active')) {
-                if (isBottom) contentHint.classList.add('show');
-                else contentHint.classList.remove('show');
-            }
-        }
-
-        // 定时检查（备用方案）
-        setInterval(checkScrollBottom, 500);
 
         init();
     </script>
