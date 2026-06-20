@@ -297,7 +297,7 @@
             {
                 title: "史官楼",
                 pages: 2,
-                path: "史官楼/" // 文件夹路径，注意斜杠
+                path: "史官楼/"
             },
             {
                 title: "吵架1",
@@ -355,13 +355,13 @@
                 path: "三天后狐狸第一次现身组内/"
             },
             {
-                title: "组员发帖1",  // ⚠️ 修正点2：标题加了1
-                pages: 2,           // 假设是2页，如果只有1页请改为1
-                path: "组员发帖1/"   // ⚠️ 修正点2：文件夹名也对应修改
+                title: "组员发帖1",
+                pages: 2,
+                path: "组员发帖1/"
             },
             {
                 title: "苹果凌晨出没",
-                pages: 1,           // ⚠️ 修正点1：改为1页
+                pages: 1,
                 path: "苹果凌晨出没/"
             },
             {
@@ -396,7 +396,7 @@
                 // 构建HTML结构
                 li.innerHTML = `
                     <div class="toc-main-title" onclick="toggleSubList(this)">
-                        <span>${item.title}</span>
+                        ${item.title} <span class="page-count">${item.pages}页</span>
                         <span style="font-size:0.8em">▼</span>
                     </div>
                     <ul class="toc-sub-list">
@@ -432,6 +432,21 @@
             }
         }
 
+        // 切换侧边栏显示
+        function toggleMenu(forceClose = null) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const isActive = sidebar.classList.contains('active');
+
+            if (forceClose === true || isActive) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            }
+        }
+
         // 加载具体内容
         function loadContent(index, page) {
             currentIndex = index;
@@ -443,39 +458,4 @@
 
             // 更新iframe源
             // 假设文件命名规则是 1.html, 2.html...
-            const fileSrc = `${data.path}${page}.html`;
-            document.getElementById('content-frame').src = fileSrc;
-
-            // 更新底部导航状态
-            updatePagination(data.pages);
-
-            // 隐藏“到底了”提示
-            document.getElementById('end-msg').style.display = 'none';
-
-            // 如果在手机上，点击目录后自动收起目录
-            if(window.innerWidth < 800) {
-                toggleMenu(false);
-            }
-        }
-
-        // 更新分页器
-        function updatePagination(totalPages) {
-            const infoSpan = document.getElementById('page-info');
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-
-            // 显示格式：第 1、2 页 (如果是单页则不显示数字选择)
-            if (totalPages > 1) {
-                let numbers = '';
-                for(let i=1; i<=totalPages; i++) {
-                    // 简单的省略号逻辑：如果页数太多，这里可以加复杂逻辑，目前先全显示或简单处理
-                    numbers += `<span style="cursor:pointer; margin:0 5px; color:${i===currentPage?'var(--primary-green)':'#999'}; font-weight:${i===currentPage?'bold':'normal'}" onclick="loadContent(${currentIndex}, ${i})">${i}</span>`;
-                }
-                infoSpan.innerHTML = `第 ${numbers} 页`;
-            } else {
-                infoSpan.innerText = "共 1 页";
-            }
-
-            prevBtn.disabled = (currentPage === 1);
-            nextBtn.disabled = (currentPage === totalPages);
-        }
+            const file
