@@ -117,19 +117,19 @@
         .catalog-title { font-size: 13px; font-weight: 600; color: #2e4a2e; }
         .catalog-pages { font-size: 10px; color: #81c784; margin-top: 2px; }
         
-        /* 内容容器 - 关键修改 */
+        /* 内容容器 */
         .content-wrapper {
             display: none;
-            padding-top: 50px; /* 给顶部导航留空间 */
-            padding-bottom: 50px; /* 给底部分页留空间 */
+            padding-top: 50px;
+            padding-bottom: 50px;
             min-height: 100vh;
         }
         .content-wrapper.active { display: block; }
         
-        /* iframe 样式 - 关键修改 */
+        /* iframe 样式 */
         .content-frame {
             width: 100%;
-            min-height: calc(100vh - 100px); /* 减去顶部和底部高度 */
+            min-height: calc(100vh - 100px);
             border: none;
             display: block;
         }
@@ -166,6 +166,35 @@
         .pagination .arrow { font-size: 14px; padding: 0 12px; }
         .pagination .disabled { color: #ccc; background: #f5f5f5; }
         .page-info { font-size: 14px; color: #666; font-weight: 600; }
+        
+        /* 到底提示 - 增强样式 */
+        .bottom-hint {
+            text-align: center;
+            padding: 20px 16px 30px;
+            color: #81c784;
+            font-size: 13px;
+            display: none;
+            clear: both;
+        }
+        .bottom-hint.show { 
+            display: block; 
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 首页底部提示 */
+        .home-bottom-hint {
+            text-align: center;
+            padding: 20px 16px 30px;
+            color: #81c784;
+            font-size: 13px;
+            display: none;
+        }
+        .home-bottom-hint.show { display: block; }
     </style>
 </head>
 <body>
@@ -194,11 +223,13 @@
     <main class="home-view" id="homeView">
         <div style="text-align:center; margin-bottom:16px; color:#558b2f; font-size:13px;">🌱 欢迎来到姥姥的树</div>
         <div class="catalog-grid" id="catalogGrid"></div>
+        <div class="home-bottom-hint" id="homeBottomHint">— 已经到底了 —</div>
     </main>
 
-    <!-- 内容容器 - 关键修改 -->
+    <!-- 内容容器 -->
     <div class="content-wrapper" id="contentWrapper">
         <iframe class="content-frame" id="contentFrame" scrolling="yes"></iframe>
+        <div class="bottom-hint" id="contentBottomHint">— 已经到底了 —</div>
     </div>
 
     <!-- 底部分页 -->
@@ -229,6 +260,7 @@
         function init() {
             renderHome();
             renderSidebar();
+            setupScrollListener();
         }
 
         function renderHome() {
@@ -264,18 +296,18 @@
             currentPage = page;
             const data = archiveData[series];
             
-            // 切换视图
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('contentWrapper').classList.add('active');
             document.getElementById('pagination').style.display = 'flex';
             document.getElementById('backBtn').style.visibility = 'visible';
             
-            // 加载已有文件
             const path = series + '/' + page + '.html';
             document.getElementById('contentFrame').src = path;
             
-            // 渲染分页
             renderPagination(series, page, data.pages);
+            
+            // 重置到底提示
+            document.getElementById('contentBottomHint').classList.remove('show');
         }
 
         function renderPagination(series, current, total) {
@@ -311,6 +343,54 @@
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.overlay').classList.toggle('active');
         }
+
+        // 滚动检测 - 改进版
+        function setupScrollListener() {
+            let ticking = false;
+            
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        checkScrollBottom();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+            
+            // 也监听 iframe 的加载完成
+            document.getElementById('contentFrame').addEventListener('load', function() {
+                // iframe 加载后检查高度
+                setTimeout(checkScrollBottom, 100);
+            });
+        }
+
+        function checkScrollBottom() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+            
+            // 增加容错阈值，确保能触发
+            const threshold = 50;
+            const isBottom = scrollTop + clientHeight >= scrollHeight - threshold;
+            
+            // 首页提示
+            const homeHint = document.getElementById('homeBottomHint');
+            if (!document.getElementById('homeView').classList.contains('hidden')) {
+                if (isBottom) homeHint.classList.add('show');
+                else homeHint.classList.remove('show');
+            }
+            
+            // 内容页提示
+            const contentHint = document.getElementById('contentBottomHint');
+            if (document.getElementById('contentWrapper').classList.contains('active')) {
+                if (isBottom) contentHint.classList.add('show');
+                else contentHint.classList.remove('show');
+            }
+        }
+
+        // 定时检查（备用方案）
+        setInterval(checkScrollBottom, 500);
 
         init();
     </script>
