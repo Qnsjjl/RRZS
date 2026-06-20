@@ -26,9 +26,18 @@
             align-items: center;
             height: 50px;
         }
-        .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
+        .header h1 { font-size: 18px; font-weight: 600; }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
         
-        /* 悬浮按钮 */
+        /* 悬浮目录按钮 */
         .fab {
             position: fixed;
             top: 7px;
@@ -76,10 +85,6 @@
         .sidebar-close {
             position: absolute;
             top: 12px; right: 12px;
-            width: 28px; height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
             color: #999;
             font-size: 20px;
@@ -99,7 +104,6 @@
             color: #1b5e20;
             margin-bottom: 4px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
             cursor: pointer;
             padding: 6px 4px;
@@ -109,7 +113,6 @@
         .nav-title .pages {
             font-size: 11px;
             color: #81c784;
-            font-weight: 500;
             background: #f1f8e9;
             padding: 2px 6px;
             border-radius: 10px;
@@ -128,19 +131,20 @@
             background: #f1f8e9;
             border-radius: 12px;
             border: 1px solid #c8e6c9;
+            cursor: pointer;
         }
         
-        /* 主内容 */
-        .main-content {
+        /* 首页 */
+        .home-view {
             padding: 66px 16px 20px;
-            min-height: 100vh;
+            display: block;
         }
+        .home-view.hidden { display: none; }
         .welcome {
             text-align: center;
             margin-bottom: 16px;
             color: #558b2f;
             font-size: 13px;
-            opacity: 0.8;
         }
         .catalog-grid {
             display: grid;
@@ -155,29 +159,83 @@
             text-align: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
             border: 1px solid #e8f5e9;
-            transition: all 0.2s;
             cursor: pointer;
-            text-decoration: none;
-            color: inherit;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 60px;
         }
-        .catalog-item:active {
-            transform: translateY(2px);
-            background: #f1f8e9;
-        }
+        .catalog-item:active { background: #f1f8e9; }
         .catalog-icon { font-size: 20px; margin-bottom: 4px; }
-        .catalog-title { font-size: 13px; font-weight: 600; color: #2e4a2e; line-height: 1.3; }
+        .catalog-title { font-size: 13px; font-weight: 600; color: #2e4a2e; }
         .catalog-pages { font-size: 10px; color: #81c784; margin-top: 2px; }
-        .footer {
-            text-align: center;
-            padding: 20px 0;
-            color: #a5d6a7;
-            font-size: 11px;
+        
+        /* 内容页 */
+        .content-view {
+            padding: 66px 16px 80px;
+            display: none;
         }
+        .content-view.active { display: block; }
+        .content-title {
+            font-size: 18px;
+            color: #1b5e20;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e8f5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-body {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            min-height: 300px;
+        }
+        
+        /* 底部分页 */
+        .pagination {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #e8f5e9;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            z-index: 50;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+        .pagination a, .pagination span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .pagination a {
+            color: #43a047;
+            background: #f1f8e9;
+            border: 1px solid #c8e6c9;
+        }
+        .pagination a:active { background: #43a047; color: white; }
+        .pagination .current { background: #43a047; color: white; font-weight: 600; }
+        .pagination .arrow { font-size: 14px; padding: 0 12px; font-weight: 600; }
+        .pagination .disabled { color: #ccc; background: #f5f5f5; border: 1px solid #e0e0e0; }
+        .page-info { font-size: 14px; color: #666; font-weight: 600; margin: 0 8px; }
+        
         .bottom-hint {
             text-align: center;
             padding: 16px;
@@ -187,22 +245,22 @@
         }
         .bottom-hint.show { display: block; }
         
-        @media (max-height: 700px) {
-            .catalog-item { min-height: 52px; padding: 8px 6px; }
-            .catalog-icon { font-size: 18px; }
-            .catalog-title { font-size: 12px; }
-        }
-        @media (max-height: 600px) {
-            .catalog-grid { gap: 6px; }
-            .catalog-item { min-height: 48px; padding: 6px; }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #a5d6a7;
+            font-size: 11px;
         }
     </style>
 </head>
 <body>
     <header class="header">
+        <span class="back-btn" onclick="goHome()" id="backBtn" style="visibility: hidden;">← 首页</span>
         <h1>🌿 姥姥的树</h1>
+        <span style="width:40px;"></span>
     </header>
 
+    <!-- 悬浮目录 -->
     <div class="fab" onclick="toggleSidebar()" aria-label="目录">
         <svg viewBox="0 0 24 24">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
@@ -211,273 +269,197 @@
 
     <div class="overlay" onclick="toggleSidebar()"></div>
 
+    <!-- 侧边栏 -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-close" onclick="toggleSidebar()">✕</div>
         <div class="sidebar-header">🌲 姥姥的树存档</div>
-        
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='史官楼/1.html'">
-                史官楼 <span class="pages">[2页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="史官楼/1.html" class="nav-page-link">1</a>
-                <a href="史官楼/2.html" class="nav-page-link">2</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='吵架1/1.html'">
-                吵架1 <span class="pages">[3页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="吵架1/1.html" class="nav-page-link">1</a>
-                <a href="吵架1/2.html" class="nav-page-link">2</a>
-                <a href="吵架1/3.html" class="nav-page-link">3</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='吵架2/1.html'">
-                吵架2 <span class="pages">[3页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="吵架2/1.html" class="nav-page-link">1</a>
-                <a href="吵架2/2.html" class="nav-page-link">2</a>
-                <a href="吵架2/3.html" class="nav-page-link">3</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='吵架3/1.html'">
-                吵架3 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="吵架3/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='吵架4/1.html'">
-                吵架4 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="吵架4/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='姥组吵架整理/1.html'">
-                姥组吵架整理 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="姥组吵架整理/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='苹果凌晨出没/1.html'">
-                苹果凌晨出没 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="苹果凌晨出没/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='建议楼/1.html'">
-                建议楼 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="建议楼/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='组务投票楼/1.html'">
-                组务投票楼 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="组务投票楼/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='管理员留任投票楼/1.html'">
-                管理员留任投票楼 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="管理员留任投票楼/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='投票2号/1.html'">
-                投票2号 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="投票2号/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='管理组群内/1.html'">
-                管理组群内 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="管理组群内/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='三天后狐狸第一次现身组内/1.html'">
-                三天后狐狸第一次现身组内 <span class="pages">[1页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="三天后狐狸第一次现身组内/1.html" class="nav-page-link">1</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='组员发帖1/1.html'">
-                组员发帖1 <span class="pages">[2页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="组员发帖1/1.html" class="nav-page-link">1</a>
-                <a href="组员发帖1/2.html" class="nav-page-link">2</a>
-            </div>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-title" onclick="location.href='苹果现身组内/1.html'">
-                苹果现身组内 <span class="pages">[2页]</span>
-            </div>
-            <div class="nav-pages">
-                <a href="苹果现身组内/1.html" class="nav-page-link">1</a>
-                <a href="苹果现身组内/2.html" class="nav-page-link">2</a>
-            </div>
-        </div>
+        <div id="sidebarContent"></div>
     </nav>
 
-    <main class="main-content">
+    <!-- 首页 -->
+    <main class="home-view" id="homeView">
         <div class="welcome">🌱 欢迎来到姥姥的树，点击标题即可阅读</div>
-        
-        <div class="catalog-grid">
-            <a href="史官楼/1.html" class="catalog-item">
-                <div class="catalog-icon">📜</div>
-                <div class="catalog-title">史官楼</div>
-                <div class="catalog-pages">[2页]</div>
-            </a>
-            
-            <a href="吵架1/1.html" class="catalog-item">
-                <div class="catalog-icon">💢</div>
-                <div class="catalog-title">吵架1</div>
-                <div class="catalog-pages">[3页]</div>
-            </a>
-            
-            <a href="吵架2/1.html" class="catalog-item">
-                <div class="catalog-icon">😤</div>
-                <div class="catalog-title">吵架2</div>
-                <div class="catalog-pages">[3页]</div>
-            </a>
-            
-            <a href="吵架3/1.html" class="catalog-item">
-                <div class="catalog-icon">😠</div>
-                <div class="catalog-title">吵架3</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="吵架4/1.html" class="catalog-item">
-                <div class="catalog-icon">🤬</div>
-                <div class="catalog-title">吵架4</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="姥组吵架整理/1.html" class="catalog-item">
-                <div class="catalog-icon">📝</div>
-                <div class="catalog-title">姥组吵架整理</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="苹果凌晨出没/1.html" class="catalog-item">
-                <div class="catalog-icon">🍎</div>
-                <div class="catalog-title">苹果凌晨出没</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="建议楼/1.html" class="catalog-item">
-                <div class="catalog-icon">💡</div>
-                <div class="catalog-title">建议楼</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="组务投票楼/1.html" class="catalog-item">
-                <div class="catalog-icon">🗳️</div>
-                <div class="catalog-title">组务投票楼</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="管理员留任投票楼/1.html" class="catalog-item">
-                <div class="catalog-icon">🗳️</div>
-                <div class="catalog-title">管理员留任投票楼</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="投票2号/1.html" class="catalog-item">
-                <div class="catalog-icon">🗳️</div>
-                <div class="catalog-title">投票2号</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="管理组群内/1.html" class="catalog-item">
-                <div class="catalog-icon">👥</div>
-                <div class="catalog-title">管理组群内</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="三天后狐狸第一次现身组内/1.html" class="catalog-item">
-                <div class="catalog-icon">🦊</div>
-                <div class="catalog-title">三天后狐狸第一次现身组内</div>
-                <div class="catalog-pages">[1页]</div>
-            </a>
-            
-            <a href="组员发帖1/1.html" class="catalog-item">
-                <div class="catalog-icon">📮</div>
-                <div class="catalog-title">组员发帖1</div>
-                <div class="catalog-pages">[2页]</div>
-            </a>
-            
-            <a href="苹果现身组内/1.html" class="catalog-item">
-                <div class="catalog-icon">🍎</div>
-                <div class="catalog-title">苹果现身组内</div>
-                <div class="catalog-pages">[2页]</div>
-            </a>
-        </div>
-
+        <div class="catalog-grid" id="catalogGrid"></div>
         <div class="footer">
             <p>🌳 姥姥的树 · 存档站</p>
-            <p style="margin-top:4px; font-size:10px;">移动端优化版</p>
         </div>
-        
-        <div class="bottom-hint" id="bottomHint">— 已经到底了 —</div>
+        <div class="bottom-hint" id="homeBottomHint">— 已经到底了 —</div>
+    </main>
+
+    <!-- 内容页 -->
+    <main class="content-view" id="contentView">
+        <div class="content-title">
+            <span id="contentTitle">标题</span>
+            <span style="font-size:13px; color:#81c784;" id="pageNum">第 1 / 1 页</span>
+        </div>
+        <div class="content-body" id="contentBody"></div>
+        <div class="bottom-hint" id="contentBottomHint">— 已经到底了 —</div>
+        <nav class="pagination" id="pagination"></nav>
     </main>
 
     <script>
+        // 数据配置 - 只改这里！
+        const archiveData = {
+            "史官楼": { pages: 2, icon: "📜" },
+            "吵架1": { pages: 3, icon: "💢" },
+            "吵架2": { pages: 3, icon: "😤" },
+            "吵架3": { pages: 1, icon: "😠" },
+            "吵架4": { pages: 1, icon: "🤬" },
+            "姥组吵架整理": { pages: 1, icon: "📝" },
+            "苹果凌晨出没": { pages: 1, icon: "🍎" },
+            "建议楼": { pages: 1, icon: "💡" },
+            "组务投票楼": { pages: 1, icon: "🗳️" },
+            "管理员留任投票楼": { pages: 1, icon: "🗳️" },
+            "投票2号": { pages: 1, icon: "🗳️" },
+            "管理组群内": { pages: 1, icon: "👥" },
+            "三天后狐狸第一次现身组内": { pages: 1, icon: "🦊" },
+            "组员发帖1": { pages: 2, icon: "📮" },
+            "苹果现身组内": { pages: 2, icon: "🍎" }
+        };
+
+        // 初始化
+        function init() {
+            renderHome();
+            renderSidebar();
+            
+            // 检查URL
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const parts = hash.split('_');
+                if (parts.length === 2) {
+                    loadContent(parts[0], parseInt(parts[1]));
+                }
+            }
+            
+            window.addEventListener('hashchange', function() {
+                const hash = window.location.hash.replace('#', '');
+                if (hash) {
+                    const parts = hash.split('_');
+                    loadContent(parts[0], parseInt(parts[1]));
+                } else {
+                    goHome();
+                }
+            });
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                const hint = document.getElementById('homeView').classList.contains('hidden') ? 
+                    document.getElementById('contentBottomHint') : document.getElementById('homeBottomHint');
+                if (scrollTop + clientHeight >= scrollHeight - 10) {
+                    hint.classList.add('show');
+                } else {
+                    hint.classList.remove('show');
+                }
+            });
+        }
+
+        // 渲染首页
+        function renderHome() {
+            const grid = document.getElementById('catalogGrid');
+            grid.innerHTML = Object.keys(archiveData).map(key => {
+                const item = archiveData[key];
+                return `
+                    <div class="catalog-item" onclick="loadContent('${key}', 1)">
+                        <div class="catalog-icon">${item.icon}</div>
+                        <div class="catalog-title">${key}</div>
+                        <div class="catalog-pages">[${item.pages}页]</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 渲染侧边栏
+        function renderSidebar() {
+            const container = document.getElementById('sidebarContent');
+            container.innerHTML = Object.keys(archiveData).map(key => {
+                const item = archiveData[key];
+                const pages = Array.from({length: item.pages}, (_, i) => 
+                    `<span class="nav-page-link" onclick="loadContent('${key}', ${i+1}); toggleSidebar();">${i+1}</span>`
+                ).join('');
+                
+                return `
+                    <div class="nav-item">
+                        <div class="nav-title" onclick="loadContent('${key}', 1); toggleSidebar();">
+                            ${key} <span class="pages">[${item.pages}页]</span>
+                        </div>
+                        <div class="nav-pages">${pages}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 加载内容 - 从外部文件获取
+        function loadContent(series, page) {
+            const data = archiveData[series];
+            if (!data) return;
+            
+            window.location.hash = series + '_' + page;
+            
+            document.getElementById('homeView').classList.add('hidden');
+            document.getElementById('contentView').classList.add('active');
+            document.getElementById('backBtn').style.visibility = 'visible';
+            
+            document.getElementById('contentTitle').textContent = series;
+            document.getElementById('pageNum').textContent = `第 ${page} / ${data.pages} 页`;
+            
+            // 从外部文件加载内容
+            fetch(series + '/' + page + '.html')
+                .then(r => {
+                    if (!r.ok) throw new Error('未找到');
+                    return r.text();
+                })
+                .then(text => {
+                    document.getElementById('contentBody').innerHTML = text;
+                })
+                .catch(() => {
+                    document.getElementById('contentBody').innerHTML = '<p style="color:#999; text-align:center; padding:40px;">内容加载失败</p>';
+                });
+            
+            // 渲染分页
+            renderPagination(series, page, data.pages);
+            window.scrollTo(0, 0);
+        }
+
+        // 渲染分页
+        function renderPagination(series, current, total) {
+            const nav = document.getElementById('pagination');
+            let html = '';
+            
+            if (current > 1) {
+                html += `<a onclick="loadContent('${series}', ${current-1})" class="arrow">← 上一页</a>`;
+            } else {
+                html += `<span class="arrow disabled">← 上一页</span>`;
+            }
+            
+            html += `<span class="page-info">第 ${current} / ${total} 页</span>`;
+            
+            if (current < total) {
+                html += `<a onclick="loadContent('${series}', ${current+1})" class="arrow">下一页 →</a>`;
+            } else {
+                html += `<span class="arrow disabled">下一页 →</span>`;
+            }
+            
+            nav.innerHTML = html;
+        }
+
+        // 返回首页
+        function goHome() {
+            window.location.hash = '';
+            document.getElementById('homeView').classList.remove('hidden');
+            document.getElementById('contentView').classList.remove('active');
+            document.getElementById('backBtn').style.visibility = 'hidden';
+            window.scrollTo(0, 0);
+        }
+
+        // 侧边栏切换
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.overlay').classList.toggle('active');
         }
 
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight;
-            const clientHeight = document.documentElement.clientHeight;
-            
-            if (scrollTop + clientHeight >= scrollHeight - 10) {
-                document.getElementById('bottomHint').classList.add('show');
-            } else {
-                document.getElementById('bottomHint').classList.remove('show');
-            }
-        });
+        init();
     </script>
 </body>
 </html>
