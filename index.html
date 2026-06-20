@@ -7,34 +7,32 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            background: linear-gradient(135deg, #f0f7f0 0%, #e8f5e9 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background: #f0f7f0;
             min-height: 100vh;
             color: #2e4a2e;
-            overflow-x: hidden;
         }
-        .header {
+        
+        /* 顶部导航 */
+        .top-nav {
             background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
             color: white;
             padding: 12px 16px;
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .header h1 { font-size: 18px; font-weight: 600; }
+        .top-nav h1 { font-size: 16px; }
         .back-btn {
             color: white;
             text-decoration: none;
             font-size: 14px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
         
         /* 悬浮目录按钮 */
@@ -54,7 +52,6 @@
             z-index: 101;
             border: 2px solid #81c784;
         }
-        .fab:active { transform: scale(0.95); }
         .fab svg { width: 20px; height: 20px; fill: #43a047; }
         
         /* 侧边栏 */
@@ -76,126 +73,30 @@
             height: 100%;
             background: #fff;
             z-index: 200;
-            transition: right 0.3s ease-out;
+            transition: right 0.3s;
             overflow-y: auto;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
             padding: 16px 12px;
         }
         .sidebar.active { right: 0; }
-        .sidebar-close {
-            position: absolute;
-            top: 12px; right: 12px;
-            cursor: pointer;
-            color: #999;
-            font-size: 20px;
-        }
-        .sidebar-header {
-            font-size: 16px;
-            font-weight: 700;
-            color: #2e7d32;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e8f5e9;
-        }
+        .sidebar-close { position: absolute; top: 12px; right: 12px; cursor: pointer; color: #999; font-size: 20px; }
+        .sidebar-header { font-size: 16px; font-weight: 700; color: #2e7d32; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
         .nav-item { margin-bottom: 12px; }
-        .nav-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1b5e20;
-            margin-bottom: 4px;
-            display: flex;
-            justify-content: space-between;
-            cursor: pointer;
-            padding: 6px 4px;
-            border-radius: 6px;
-        }
+        .nav-title { font-size: 14px; font-weight: 600; color: #1b5e20; cursor: pointer; padding: 6px 4px; }
         .nav-title:active { background: #e8f5e9; }
-        .nav-title .pages {
-            font-size: 11px;
-            color: #81c784;
-            background: #f1f8e9;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-        .nav-pages {
-            padding-left: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .nav-page-link {
-            font-size: 12px;
-            color: #558b2f;
-            text-decoration: none;
-            padding: 4px 10px;
-            background: #f1f8e9;
-            border-radius: 12px;
-            border: 1px solid #c8e6c9;
-            cursor: pointer;
-        }
+        .nav-title .pages { font-size: 11px; color: #81c784; background: #f1f8e9; padding: 2px 6px; border-radius: 10px; }
+        .nav-pages { padding-left: 8px; display: flex; gap: 6px; }
+        .nav-page-link { font-size: 12px; color: #558b2f; text-decoration: none; padding: 4px 10px; background: #f1f8e9; border-radius: 12px; cursor: pointer; }
         
-        /* 首页 */
-        .home-view {
-            padding: 66px 16px 20px;
-            display: block;
-        }
-        .home-view.hidden { display: none; }
-        .welcome {
-            text-align: center;
-            margin-bottom: 16px;
-            color: #558b2f;
-            font-size: 13px;
-        }
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .catalog-item {
+        /* 内容框架 */
+        .content-frame {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 50px;
+            width: 100%;
+            border: none;
             background: #fff;
-            border-radius: 10px;
-            padding: 10px 8px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            border: 1px solid #e8f5e9;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60px;
-        }
-        .catalog-item:active { background: #f1f8e9; }
-        .catalog-icon { font-size: 20px; margin-bottom: 4px; }
-        .catalog-title { font-size: 13px; font-weight: 600; color: #2e4a2e; }
-        .catalog-pages { font-size: 10px; color: #81c784; margin-top: 2px; }
-        
-        /* 内容页 */
-        .content-view {
-            padding: 66px 16px 80px;
-            display: none;
-        }
-        .content-view.active { display: block; }
-        .content-title {
-            font-size: 18px;
-            color: #1b5e20;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e8f5e9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .content-body {
-            font-size: 15px;
-            line-height: 1.8;
-            color: #333;
-            background: #fff;
-            padding: 16px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            min-height: 300px;
         }
         
         /* 底部分页 */
@@ -212,7 +113,7 @@
             align-items: center;
             gap: 8px;
             z-index: 50;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+            height: 50px;
         }
         .pagination a, .pagination span {
             display: inline-flex;
@@ -223,48 +124,55 @@
             border-radius: 8px;
             font-size: 13px;
             text-decoration: none;
-            cursor: pointer;
         }
-        .pagination a {
-            color: #43a047;
-            background: #f1f8e9;
-            border: 1px solid #c8e6c9;
-        }
+        .pagination a { color: #43a047; background: #f1f8e9; border: 1px solid #c8e6c9; cursor: pointer; }
         .pagination a:active { background: #43a047; color: white; }
         .pagination .current { background: #43a047; color: white; font-weight: 600; }
-        .pagination .arrow { font-size: 14px; padding: 0 12px; font-weight: 600; }
-        .pagination .disabled { color: #ccc; background: #f5f5f5; border: 1px solid #e0e0e0; }
-        .page-info { font-size: 14px; color: #666; font-weight: 600; margin: 0 8px; }
+        .pagination .arrow { font-size: 14px; padding: 0 12px; }
+        .pagination .disabled { color: #ccc; background: #f5f5f5; }
+        .page-info { font-size: 14px; color: #666; font-weight: 600; }
         
-        .bottom-hint {
-            text-align: center;
-            padding: 16px;
-            color: #81c784;
-            font-size: 12px;
-            display: none;
+        /* 首页 */
+        .home-view {
+            padding: 66px 16px 20px;
+            display: block;
         }
-        .bottom-hint.show { display: block; }
-        
-        .footer {
-            text-align: center;
-            padding: 20px 0;
-            color: #a5d6a7;
-            font-size: 11px;
+        .home-view.hidden { display: none; }
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
+        .catalog-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 8px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border: 1px solid #e8f5e9;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+        .catalog-icon { font-size: 20px; margin-bottom: 4px; }
+        .catalog-title { font-size: 13px; font-weight: 600; color: #2e4a2e; }
+        .catalog-pages { font-size: 10px; color: #81c784; margin-top: 2px; }
     </style>
 </head>
 <body>
-    <header class="header">
+    <!-- 顶部导航 -->
+    <header class="top-nav" id="topNav">
         <span class="back-btn" onclick="goHome()" id="backBtn" style="visibility: hidden;">← 首页</span>
         <h1>🌿 姥姥的树</h1>
         <span style="width:40px;"></span>
     </header>
 
     <!-- 悬浮目录 -->
-    <div class="fab" onclick="toggleSidebar()" aria-label="目录">
-        <svg viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
+    <div class="fab" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
     </div>
 
     <div class="overlay" onclick="toggleSidebar()"></div>
@@ -278,27 +186,18 @@
 
     <!-- 首页 -->
     <main class="home-view" id="homeView">
-        <div class="welcome">🌱 欢迎来到姥姥的树，点击标题即可阅读</div>
+        <div style="text-align:center; margin-bottom:16px; color:#558b2f; font-size:13px;">🌱 欢迎来到姥姥的树</div>
         <div class="catalog-grid" id="catalogGrid"></div>
-        <div class="footer">
-            <p>🌳 姥姥的树 · 存档站</p>
-        </div>
-        <div class="bottom-hint" id="homeBottomHint">— 已经到底了 —</div>
     </main>
 
-    <!-- 内容页 -->
-    <main class="content-view" id="contentView">
-        <div class="content-title">
-            <span id="contentTitle">标题</span>
-            <span style="font-size:13px; color:#81c784;" id="pageNum">第 1 / 1 页</span>
-        </div>
-        <div class="content-body" id="contentBody"></div>
-        <div class="bottom-hint" id="contentBottomHint">— 已经到底了 —</div>
-        <nav class="pagination" id="pagination"></nav>
-    </main>
+    <!-- 内容框架（加载已有文件） -->
+    <iframe class="content-frame" id="contentFrame" style="display: none;"></iframe>
+
+    <!-- 底部分页 -->
+    <nav class="pagination" id="pagination" style="display: none;"></nav>
 
     <script>
-        // 数据配置 - 只改这里！
+        // 数据配置 - 只配置标题和页数
         const archiveData = {
             "史官楼": { pages: 2, icon: "📜" },
             "吵架1": { pages: 3, icon: "💢" },
@@ -317,60 +216,26 @@
             "苹果现身组内": { pages: 2, icon: "🍎" }
         };
 
-        // 初始化
+        let currentSeries = null;
+        let currentPage = 1;
+
         function init() {
             renderHome();
             renderSidebar();
-            
-            // 检查URL
-            const hash = window.location.hash.replace('#', '');
-            if (hash) {
-                const parts = hash.split('_');
-                if (parts.length === 2) {
-                    loadContent(parts[0], parseInt(parts[1]));
-                }
-            }
-            
-            window.addEventListener('hashchange', function() {
-                const hash = window.location.hash.replace('#', '');
-                if (hash) {
-                    const parts = hash.split('_');
-                    loadContent(parts[0], parseInt(parts[1]));
-                } else {
-                    goHome();
-                }
-            });
-            
-            window.addEventListener('scroll', function() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollHeight = document.documentElement.scrollHeight;
-                const clientHeight = document.documentElement.clientHeight;
-                const hint = document.getElementById('homeView').classList.contains('hidden') ? 
-                    document.getElementById('contentBottomHint') : document.getElementById('homeBottomHint');
-                if (scrollTop + clientHeight >= scrollHeight - 10) {
-                    hint.classList.add('show');
-                } else {
-                    hint.classList.remove('show');
-                }
-            });
         }
 
-        // 渲染首页
         function renderHome() {
             const grid = document.getElementById('catalogGrid');
             grid.innerHTML = Object.keys(archiveData).map(key => {
                 const item = archiveData[key];
-                return `
-                    <div class="catalog-item" onclick="loadContent('${key}', 1)">
-                        <div class="catalog-icon">${item.icon}</div>
-                        <div class="catalog-title">${key}</div>
-                        <div class="catalog-pages">[${item.pages}页]</div>
-                    </div>
-                `;
+                return `<div class="catalog-item" onclick="loadContent('${key}', 1)">
+                    <div class="catalog-icon">${item.icon}</div>
+                    <div class="catalog-title">${key}</div>
+                    <div class="catalog-pages">[${item.pages}页]</div>
+                </div>`;
             }).join('');
         }
 
-        // 渲染侧边栏
         function renderSidebar() {
             const container = document.getElementById('sidebarContent');
             container.innerHTML = Object.keys(archiveData).map(key => {
@@ -378,51 +243,34 @@
                 const pages = Array.from({length: item.pages}, (_, i) => 
                     `<span class="nav-page-link" onclick="loadContent('${key}', ${i+1}); toggleSidebar();">${i+1}</span>`
                 ).join('');
-                
-                return `
-                    <div class="nav-item">
-                        <div class="nav-title" onclick="loadContent('${key}', 1); toggleSidebar();">
-                            ${key} <span class="pages">[${item.pages}页]</span>
-                        </div>
-                        <div class="nav-pages">${pages}</div>
+                return `<div class="nav-item">
+                    <div class="nav-title" onclick="loadContent('${key}', 1); toggleSidebar();">
+                        ${key} <span class="pages">[${item.pages}页]</span>
                     </div>
-                `;
+                    <div class="nav-pages">${pages}</div>
+                </div>`;
             }).join('');
         }
 
-        // 加载内容 - 从外部文件获取
         function loadContent(series, page) {
+            currentSeries = series;
+            currentPage = page;
             const data = archiveData[series];
-            if (!data) return;
             
-            window.location.hash = series + '_' + page;
-            
+            // 显示内容框架
             document.getElementById('homeView').classList.add('hidden');
-            document.getElementById('contentView').classList.add('active');
+            document.getElementById('contentFrame').style.display = 'block';
+            document.getElementById('pagination').style.display = 'flex';
             document.getElementById('backBtn').style.visibility = 'visible';
             
-            document.getElementById('contentTitle').textContent = series;
-            document.getElementById('pageNum').textContent = `第 ${page} / ${data.pages} 页`;
-            
-            // 从外部文件加载内容
-            fetch(series + '/' + page + '.html')
-                .then(r => {
-                    if (!r.ok) throw new Error('未找到');
-                    return r.text();
-                })
-                .then(text => {
-                    document.getElementById('contentBody').innerHTML = text;
-                })
-                .catch(() => {
-                    document.getElementById('contentBody').innerHTML = '<p style="color:#999; text-align:center; padding:40px;">内容加载失败</p>';
-                });
+            // 加载已有文件（关键！）
+            const path = series + '/' + page + '.html';
+            document.getElementById('contentFrame').src = path;
             
             // 渲染分页
             renderPagination(series, page, data.pages);
-            window.scrollTo(0, 0);
         }
 
-        // 渲染分页
         function renderPagination(series, current, total) {
             const nav = document.getElementById('pagination');
             let html = '';
@@ -444,16 +292,14 @@
             nav.innerHTML = html;
         }
 
-        // 返回首页
         function goHome() {
-            window.location.hash = '';
             document.getElementById('homeView').classList.remove('hidden');
-            document.getElementById('contentView').classList.remove('active');
+            document.getElementById('contentFrame').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
             document.getElementById('backBtn').style.visibility = 'hidden';
-            window.scrollTo(0, 0);
+            document.getElementById('contentFrame').src = '';
         }
 
-        // 侧边栏切换
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.overlay').classList.toggle('active');
