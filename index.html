@@ -2,291 +2,312 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>姥姥的树存档</title>
+    <!-- 移动端强制适配，禁止横向滚动 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>姥姥的树 - 存档首页</title>
     <style>
-        /* --- 全局样式 --- */
-        :root {
-            --primary-green: #66bb6a;
-            --dark-green: #2e7d32;
-            --light-bg: #f1f8e9;
-            --white: #ffffff;
-            --text-main: #333333;
-        }
-
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: "Microsoft YaHei", sans-serif;
-            background-color: var(--light-bg);
-            color: var(--text-main);
-            line-height: 1.6;
-            min-height: 100vh; /* 关键：允许页面根据内容自动撑开高度 */
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- 首页容器 --- */
-        .home-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            text-align: center;
-            width: 100%;
             box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-
-        h1.main-title {
-            color: var(--dark-green);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+        body {
+            background-color: #f7fcf8;
+            color: #224027;
+            padding: 16px;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-
-        p.subtitle {
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 1rem;
-        }
-
-        /* --- 目录列表 (首页) --- */
-        .toc-list {
-            list-style: none;
-            padding: 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 自适应网格 */
-            gap: 15px;
-        }
-
-        .toc-item {
-            background: var(--white);
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--dark-green);
+        .page-title {
+            font-size: 28px;
+            text-align: center;
+            color: #2d7d32;
+            margin-bottom: 20px;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid transparent;
         }
-
-        .toc-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.15);
-            border-color: var(--primary-green);
+        .archive-wrap {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
         }
-
-        /* --- 悬浮球 (小树) --- */
-        .floating-tree {
+        .archive-item {
+            background: #e6f7e9;
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid #b8e0bd;
+        }
+        .archive-item a {
+            font-size: 17px;
+            color: #1f5c24;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .page-tag {
+            font-size: 13px;
+            color: #558c5a;
+            margin-left: 8px;
+        }
+        /* 右上角悬浮小树按钮 */
+        .float-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary-green);
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: transform 0.3s;
-        }
-
-        .floating-tree:hover {
-            transform: scale(1.1);
-        }
-
-        .tree-icon {
-            font-size: 30px;
-            color: white;
-        }
-
-        /* --- 全屏菜单弹窗 --- */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
-            z-index: 999;
-            display: none; /* 默认隐藏 */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-        }
-
-        .menu-overlay.active {
-            display: flex;
-        }
-
-        .close-btn {
-            position: absolute;
             top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            color: var(--dark-green);
-            cursor: pointer;
-            background: none;
+            right: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #38a140;
+            box-shadow: 0 2px 10px rgba(56, 161, 64, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            z-index: 999;
             border: none;
         }
-
-        .menu-list {
-            list-style: none;
-            padding: 0;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
+        /* 侧边目录遮罩 */
+        .mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 998;
+            display: none;
         }
-
-        .menu-list li {
-            margin: 10px 0;
+        /* 侧边目录栏 手机50%宽度 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -50vw;
+            width: 50vw;
+            height: 100vh;
+            background: #f0faf2;
+            border-left: 2px solid #b0ddb6;
+            padding: 24px 16px;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 999;
         }
-
-        .menu-list a {
-            display: block;
-            padding: 12px;
-            background: var(--white);
-            border-radius: 8px;
+        .sidebar.active {
+            right: 0;
+        }
+        .sidebar h2 {
+            color: #2d7d32;
+            font-size: 22px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #c8e6cc;
+            padding-bottom: 10px;
+        }
+        .side-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .side-item a {
+            font-size: 16px;
+            color: #1f5c24;
             text-decoration: none;
-            color: var(--text-main);
-            border-left: 5px solid var(--primary-green);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
-        /* --- 到底提示 --- */
-        .bottom-indicator {
-            text-align: center;
-            padding: 30px;
-            color: #888;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.5s;
-            margin-top: 20px;
+        .side-page-links {
+            margin-top: 6px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-
-        .bottom-indicator.visible {
-            opacity: 1;
-        }
-
-        /* --- 手机端优化 --- */
-        @media (max-width: 600px) {
-            h1.main-title { font-size: 1.8rem; }
-            .toc-list { grid-template-columns: 1fr; } /* 手机上一行一个 */
-            .home-container { padding: 20px; }
+        .side-page-links a {
+            font-size: 13px;
+            padding: 2px 8px;
+            background: #d4eed8;
+            border-radius: 6px;
         }
     </style>
 </head>
 <body>
-
-    <!-- 首页内容区 -->
-    <div class="home-container">
-        <h1 class="main-title">🌳 姥姥的树存档 🌳</h1>
-        <p class="subtitle">点击下方标题开始阅读</p>
-
-        <ul class="toc-list" id="homeToc">
-            <!-- JS 将在这里自动生成目录链接 -->
-        </ul>
-
-        <div id="endTip" class="bottom-indicator">
-            🍃 已经到底啦，没有更多内容了 🍃
+    <h1 class="page-title">姥姥的树存档</h1>
+    <div class="archive-wrap">
+        <div class="archive-item">
+            <a href="史官楼_1.html">史官楼</a>
+            <span class="page-tag">[2页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="吵架1_1.html">吵架1</a>
+            <span class="page-tag">[3页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="吵架2_1.html">吵架2</a>
+            <span class="page-tag">[3页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="吵架3_1.html">吵架3</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="吵架4_1.html">吵架4</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="姥组吵架整理_1.html">姥组吵架整理</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="苹果凌晨出没_1.html">苹果凌晨出没</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="建议楼_1.html">建议楼</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="组务投票楼_1.html">组务投票楼</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="管理员留任投票楼_1.html">管理员留任投票楼</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="投票2号_1.html">投票2号</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="管理组群内_1.html">管理组群内</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="三天后狐狸第一次现身组内_1.html">三天后狐狸第一次现身组内</a>
+            <span class="page-tag">[1页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="组员发帖1_1.html">组员发帖1</a>
+            <span class="page-tag">[2页]</span>
+        </div>
+        <div class="archive-item">
+            <a href="苹果现身组内_1.html">苹果现身组内</a>
+            <span class="page-tag">[2页]</span>
         </div>
     </div>
 
-    <!-- 悬浮小树按钮 -->
-    <div class="floating-tree" onclick="toggleMenu()">
-        <span class="tree-icon">🌲</span>
-    </div>
-
-    <!-- 全屏菜单 -->
-    <div class="menu-overlay" id="menuOverlay">
-        <button class="close-btn" onclick="toggleMenu()">×</button>
-        <h2 style="color:var(--dark-green)">选择章节</h2>
-        <ul class="menu-list" id="menuList">
-             <!-- JS 将在这里再次生成目录链接 -->
-        </ul>
+    <!-- 悬浮目录按钮 -->
+    <button class="float-btn" id="openSideBtn">🌱</button>
+    <!-- 遮罩 -->
+    <div class="mask" id="mask"></div>
+    <!-- 侧边目录栏 -->
+    <div class="sidebar" id="sidebar">
+        <h2>姥姥的树存档</h2>
+        <div class="side-list">
+            <div class="side-item">
+                <a href="史官楼_1.html">史官楼 [2页]</a>
+                <div class="side-page-links">
+                    <a href="史官楼_1.html">1</a>
+                    <a href="史官楼_2.html">2</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="吵架1_1.html">吵架1 [3页]</a>
+                <div class="side-page-links">
+                    <a href="吵架1_1.html">1</a>
+                    <a href="吵架1_2.html">2</a>
+                    <a href="吵架1_3.html">3</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="吵架2_1.html">吵架2 [3页]</a>
+                <div class="side-page-links">
+                    <a href="吵架2_1.html">1</a>
+                    <a href="吵架2_2.html">2</a>
+                    <a href="吵架2_3.html">3</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="吵架3_1.html">吵架3 [1页]</a>
+                <div class="side-page-links">
+                    <a href="吵架3_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="吵架4_1.html">吵架4 [1页]</a>
+                <div class="side-page-links">
+                    <a href="吵架4_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="姥组吵架整理_1.html">姥组吵架整理 [1页]</a>
+                <div class="side-page-links">
+                    <a href="姥组吵架整理_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="苹果凌晨出没_1.html">苹果凌晨出没 [1页]</a>
+                <div class="side-page-links">
+                    <a href="苹果凌晨出没_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="建议楼_1.html">建议楼 [1页]</a>
+                <div class="side-page-links">
+                    <a href="建议楼_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="组务投票楼_1.html">组务投票楼 [1页]</a>
+                <div class="side-page-links">
+                    <a href="组务投票楼_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="管理员留任投票楼_1.html">管理员留任投票楼 [1页]</a>
+                <div class="side-page-links">
+                    <a href="管理员留任投票楼_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="投票2号_1.html">投票2号 [1页]</a>
+                <div class="side-page-links">
+                    <a href="投票2号_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="管理组群内_1.html">管理组群内 [1页]</a>
+                <div class="side-page-links">
+                    <a href="管理组群内_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="三天后狐狸第一次现身组内_1.html">三天后狐狸第一次现身组内 [1页]</a>
+                <div class="side-page-links">
+                    <a href="三天后狐狸第一次现身组内_1.html">1</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="组员发帖1_1.html">组员发帖1 [2页]</a>
+                <div class="side-page-links">
+                    <a href="组员发帖1_1.html">1</a>
+                    <a href="组员发帖1_2.html">2</a>
+                </div>
+            </div>
+            <div class="side-item">
+                <a href="苹果现身组内_1.html">苹果现身组内 [2页]</a>
+                <div class="side-page-links">
+                    <a href="苹果现身组内_1.html">1</a>
+                    <a href="苹果现身组内_2.html">2</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 定义数据结构：严格按照您的图片和文字要求
-        const chapters = [
-            { title: "史官楼", pages: 2 },
-            { title: "吵架1", pages: 3 },
-            { title: "吵架2", pages: 3 },
-            { title: "吵架3", pages: 1 },
-            { title: "吵架4", pages: 1 },
-            { title: "姥组吵架整理", pages: 1 },
-            { title: "苹果凌晨出没", pages: 1 },
-            { title: "建议楼", pages: 1 },
-            { title: "组务投票楼", pages: 1 },
-            { title: "管理员留任投票楼", pages: 1 },
-            { title: "投票2号", pages: 1 },
-            { title: "管理组群内", pages: 1 },
-            { title: "三天后狐狸第一次现身组内", pages: 1 },
-            { title: "组员发帖1", pages: 2 },
-            { title: "苹果现身组内", pages: 2 } // 已修正为2页
-        ];
-
-        const homeToc = document.getElementById('homeToc');
-        const menuList = document.getElementById('menuList');
-
-        // 生成链接函数
-        function generateLinks() {
-            chapters.forEach((chapter, index) => {
-                // 创建首页的方块链接
-                const liHome = document.createElement('li');
-                const aHome = document.createElement('a');
-                aHome.className = 'toc-item';
-                aHome.href = `${chapter.title}/1.html`; // 默认跳转到该文件夹下的第1页
-                aHome.textContent = chapter.title;
-                liHome.appendChild(aHome);
-                homeToc.appendChild(liHome);
-
-                // 创建菜单里的列表链接
-                const liMenu = document.createElement('li');
-                const aMenu = document.createElement('a');
-                aMenu.href = `${chapter.title}/1.html`;
-                aMenu.textContent = `${index + 1}. ${chapter.title}`;
-                liMenu.appendChild(aMenu);
-                menuList.appendChild(liMenu);
-            });
-        }
-
-        // 初始化生成
-        generateLinks();
-
-        // 菜单开关逻辑
-        function toggleMenu() {
-            const overlay = document.getElementById('menuOverlay');
-            if (overlay.style.display === 'flex') {
-                overlay.style.display = 'none';
-                document.body.style.overflow = 'auto'; // 恢复滚动
-            } else {
-                overlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden'; // 防止背景滚动
-            }
-        }
-
-        // 到底检测逻辑
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
-            const windowHeight = window.innerHeight;
-            const docHeight = document.documentElement.scrollHeight;
-
-            // 当距离底部小于 50px 时显示提示
-            if (scrollTop + windowHeight >= docHeight - 50) {
-                document.getElementById('endTip').classList.add('visible');
-            } else {
-                document.getElementById('endTip').classList.remove('visible');
-            }
+        const openBtn = document.getElementById('openSideBtn');
+        const sidebar = document.getElementById('sidebar');
+        const mask = document.getElementById('mask');
+        // 打开侧边栏
+        openBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            mask.style.display = 'block';
+        });
+        // 点击遮罩关闭
+        mask.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            mask.style.display = 'none';
         });
     </script>
 </body>
