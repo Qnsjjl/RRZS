@@ -297,7 +297,7 @@
             {
                 title: "史官楼",
                 pages: 2,
-                path: "史官楼/"
+                path: "史官楼/" // 文件夹路径，注意斜杠
             },
             {
                 title: "吵架1",
@@ -355,13 +355,13 @@
                 path: "三天后狐狸第一次现身组内/"
             },
             {
-                title: "组员发帖1",
-                pages: 2,
-                path: "组员发帖1/"
+                title: "组员发帖1",  // ⚠️ 修正点2：标题加了1
+                pages: 2,           // 假设是2页，如果只有1页请改为1
+                path: "组员发帖1/"   // ⚠️ 修正点2：文件夹名也对应修改
             },
             {
                 title: "苹果凌晨出没",
-                pages: 1,
+                pages: 1,           // ⚠️ 修正点1：改为1页
                 path: "苹果凌晨出没/"
             },
             {
@@ -396,8 +396,8 @@
                 // 构建HTML结构
                 li.innerHTML = `
                     <div class="toc-main-title" onclick="toggleSubList(this)">
-                        ${item.title} <span class="page-count">${item.pages}页</span>
-                        <span style="font-size:0.8em">▼</span>
+                        ${item.title}
+                        <span>▼</span>
                     </div>
                     <ul class="toc-sub-list">
                         ${generateSubLinks(item, index)}
@@ -432,7 +432,7 @@
             }
         }
 
-        // 切换侧边栏显示
+        // 切换侧边栏显示/隐藏
         function toggleMenu(forceClose = null) {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
@@ -458,4 +458,35 @@
 
             // 更新iframe源
             // 假设文件命名规则是 1.html, 2.html...
-            const file
+            const fileSrc = `${data.path}${page}.html`;
+            document.getElementById('content-frame').src = fileSrc;
+
+            // 更新底部导航状态
+            updatePagination(data.pages);
+
+            // 隐藏“到底了”提示
+            document.getElementById('end-msg').style.display = 'none';
+
+            // 如果在手机上，点击目录后自动收起目录
+            if(window.innerWidth < 800) {
+                toggleMenu(true);
+            }
+        }
+
+        // 翻页功能 (修复报错的核心)
+        function changePage(direction) {
+            const data = archiveData[currentIndex];
+            const newPage = currentPage + direction;
+
+            if (newPage >= 1 && newPage <= data.pages) {
+                loadContent(currentIndex, newPage);
+            }
+        }
+
+        // 更新分页器
+        function updatePagination(totalPages) {
+            const infoSpan = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            // 显示格式：第 1、2 页 (如果是单页则不显示数字
