@@ -1,314 +1,100 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <!-- 移动端强制适配，禁止横向滚动 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>姥姥的树 - 存档首页</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-        body {
-            background-color: #f7fcf8;
-            color: #224027;
-            padding: 16px;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .page-title {
-            font-size: 28px;
-            text-align: center;
-            color: #2d7d32;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .archive-wrap {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-        .archive-item {
-            background: #e6f7e9;
-            border-radius: 10px;
-            padding: 12px 16px;
-            border: 1px solid #b8e0bd;
-        }
-        .archive-item a {
-            font-size: 17px;
-            color: #1f5c24;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .page-tag {
-            font-size: 13px;
-            color: #558c5a;
-            margin-left: 8px;
-        }
-        /* 右上角悬浮小树按钮 */
-        .float-btn {
-            position: fixed;
-            top: 20px;
-            right: 16px;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: #38a140;
-            box-shadow: 0 2px 10px rgba(56, 161, 64, 0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            z-index: 999;
-            border: none;
-        }
-        /* 侧边目录遮罩 */
-        .mask {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 998;
-            display: none;
-        }
-        /* 侧边目录栏 手机50%宽度 */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -50vw;
-            width: 50vw;
-            height: 100vh;
-            background: #f0faf2;
-            border-left: 2px solid #b0ddb6;
-            padding: 24px 16px;
-            overflow-y: auto;
-            transition: right 0.3s ease;
-            z-index: 999;
-        }
-        .sidebar.active {
-            right: 0;
-        }
-        .sidebar h2 {
-            color: #2d7d32;
-            font-size: 22px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #c8e6cc;
-            padding-bottom: 10px;
-        }
-        .side-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        .side-item a {
-            font-size: 16px;
-            color: #1f5c24;
-            text-decoration: none;
-        }
-        .side-page-links {
-            margin-top: 6px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .side-page-links a {
-            font-size: 13px;
-            padding: 2px 8px;
-            background: #d4eed8;
-            border-radius: 6px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>替换这里标题-第X页</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
+body{background:#f7fcf8;color:#224027;padding:16px;padding-bottom:120px;overflow-x:hidden;}
+.title{font-size:24px;color:#2d7d32;text-align:center;margin-bottom:24px;}
+.content-box{background:#fff;border-radius:10px;padding:16px;border:1px solid #d1e8d4;line-height:1.7;font-size:16px;margin-bottom:40px;}
+.bottom-tip{text-align:center;margin-top:140px;font-size:15px;color:#608c64;display:none;}
+/*底部翻页导航*/
+.page-nav{position:fixed;bottom:20px;left:16px;right:16px;display:flex;align-items:center;gap:12px;z-index:900;}
+.page-btn{flex:1;padding:14px 0;border:none;border-radius:12px;font-size:17px;background:#38a140;color:#fff;}
+.page-btn:disabled{background:#b8d8bb;color:#779c7b;}
+.page-num-text{font-size:18px;color:#2d7d32;white-space:nowrap;}
+/*悬浮侧边目录*/
+.float-btn{position:fixed;top:20px;right:16px;width:52px;height:52px;border-radius:50%;background:#38a140;box-shadow:0 2px 10px rgba(56,161,64,.35);border:none;color:#fff;font-size:24px;z-index:999;}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:998;display:none;}
+.sidebar{position:fixed;top:0;right:-50vw;width:50vw;height:100vh;background:#f0faf2;border-left:2px solid #b0ddb6;padding:24px 16px;overflow-y:auto;transition:right .3s ease;z-index:999;}
+.sidebar.active{right:0;}
+.sidebar h2{color:#2d7d32;font-size:22px;margin-bottom:24px;border-bottom:1px solid #c8e6cc;padding-bottom:10px;}
+.side-list{display:flex;flex-direction:column;gap:14px;}
+.side-item a{font-size:16px;color:#1f5c24;text-decoration:none;}
+.side-page-links{margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;}
+.side-page-links a{font-size:13px;padding:2px 8px;background:#d4eed8;border-radius:6px;text-decoration:none;}
+</style>
 </head>
 <body>
-    <h1 class="page-title">姥姥的树存档</h1>
-    <div class="archive-wrap">
-        <div class="archive-item">
-            <a href="史官楼_1.html">史官楼</a>
-            <span class="page-tag">[2页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="吵架1_1.html">吵架1</a>
-            <span class="page-tag">[3页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="吵架2_1.html">吵架2</a>
-            <span class="page-tag">[3页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="吵架3_1.html">吵架3</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="吵架4_1.html">吵架4</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="姥组吵架整理_1.html">姥组吵架整理</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="苹果凌晨出没_1.html">苹果凌晨出没</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="建议楼_1.html">建议楼</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="组务投票楼_1.html">组务投票楼</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="管理员留任投票楼_1.html">管理员留任投票楼</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="投票2号_1.html">投票2号</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="管理组群内_1.html">管理组群内</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="三天后狐狸第一次现身组内_1.html">三天后狐狸第一次现身组内</a>
-            <span class="page-tag">[1页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="组员发帖1_1.html">组员发帖1</a>
-            <span class="page-tag">[2页]</span>
-        </div>
-        <div class="archive-item">
-            <a href="苹果现身组内_1.html">苹果现身组内</a>
-            <span class="page-tag">[2页]</span>
-        </div>
-    </div>
+<h2 class="title">替换这里栏目名称</h2>
+<div class="content-box">
+这里粘贴当前页面聊天文本
+</div>
+<p class="bottom-tip" id="endTip">已经到底了</p>
 
-    <!-- 悬浮目录按钮 -->
-    <button class="float-btn" id="openSideBtn">🌱</button>
-    <!-- 遮罩 -->
-    <div class="mask" id="mask"></div>
-    <!-- 侧边目录栏 -->
-    <div class="sidebar" id="sidebar">
-        <h2>姥姥的树存档</h2>
-        <div class="side-list">
-            <div class="side-item">
-                <a href="史官楼_1.html">史官楼 [2页]</a>
-                <div class="side-page-links">
-                    <a href="史官楼_1.html">1</a>
-                    <a href="史官楼_2.html">2</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="吵架1_1.html">吵架1 [3页]</a>
-                <div class="side-page-links">
-                    <a href="吵架1_1.html">1</a>
-                    <a href="吵架1_2.html">2</a>
-                    <a href="吵架1_3.html">3</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="吵架2_1.html">吵架2 [3页]</a>
-                <div class="side-page-links">
-                    <a href="吵架2_1.html">1</a>
-                    <a href="吵架2_2.html">2</a>
-                    <a href="吵架2_3.html">3</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="吵架3_1.html">吵架3 [1页]</a>
-                <div class="side-page-links">
-                    <a href="吵架3_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="吵架4_1.html">吵架4 [1页]</a>
-                <div class="side-page-links">
-                    <a href="吵架4_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="姥组吵架整理_1.html">姥组吵架整理 [1页]</a>
-                <div class="side-page-links">
-                    <a href="姥组吵架整理_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="苹果凌晨出没_1.html">苹果凌晨出没 [1页]</a>
-                <div class="side-page-links">
-                    <a href="苹果凌晨出没_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="建议楼_1.html">建议楼 [1页]</a>
-                <div class="side-page-links">
-                    <a href="建议楼_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="组务投票楼_1.html">组务投票楼 [1页]</a>
-                <div class="side-page-links">
-                    <a href="组务投票楼_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="管理员留任投票楼_1.html">管理员留任投票楼 [1页]</a>
-                <div class="side-page-links">
-                    <a href="管理员留任投票楼_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="投票2号_1.html">投票2号 [1页]</a>
-                <div class="side-page-links">
-                    <a href="投票2号_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="管理组群内_1.html">管理组群内 [1页]</a>
-                <div class="side-page-links">
-                    <a href="管理组群内_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="三天后狐狸第一次现身组内_1.html">三天后狐狸第一次现身组内 [1页]</a>
-                <div class="side-page-links">
-                    <a href="三天后狐狸第一次现身组内_1.html">1</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="组员发帖1_1.html">组员发帖1 [2页]</a>
-                <div class="side-page-links">
-                    <a href="组员发帖1_1.html">1</a>
-                    <a href="组员发帖1_2.html">2</a>
-                </div>
-            </div>
-            <div class="side-item">
-                <a href="苹果现身组内_1.html">苹果现身组内 [2页]</a>
-                <div class="side-page-links">
-                    <a href="苹果现身组内_1.html">1</a>
-                    <a href="苹果现身组内_2.html">2</a>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- 只修改这里：上下页链接、页码文字 -->
+<div class="page-nav">
+<button class="page-btn" disabled>&lt; 上一页</button>
+<span class="page-num-text">第 1 / 2 页</span>
+<a href="史官楼_2.html"><button class="page-btn">下一页 &gt;</button></a>
+</div>
 
-    <script>
-        const openBtn = document.getElementById('openSideBtn');
-        const sidebar = document.getElementById('sidebar');
-        const mask = document.getElementById('mask');
-        // 打开侧边栏
-        openBtn.addEventListener('click', () => {
-            sidebar.classList.add('active');
-            mask.style.display = 'block';
-        });
-        // 点击遮罩关闭
-        mask.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            mask.style.display = 'none';
-        });
-    </script>
+<!-- 悬浮目录（所有页面完全不用改，复制即可） -->
+<button class="float-btn" id="openSideBtn">🌱</button>
+<div class="mask" id="mask"></div>
+<div class="sidebar" id="sidebar">
+<h2>姥姥的树存档</h2>
+<div class="side-list">
+<div class="side-item">
+<a href="史官楼_1.html">史官楼 [2页]</a>
+<div class="side-page-links">
+<a href="史官楼_1.html">1</a><a href="史官楼_2.html">2</a>
+</div>
+</div>
+<div class="side-item">
+<a href="吵架1_1.html">吵架1 [3页]</a>
+<div class="side-page-links">
+<a href="吵架1_1.html">1</a><a href="吵架1_2.html">2</a><a href="吵架1_3.html">3</a>
+</div>
+</div>
+<div class="side-item">
+<a href="吵架2_1.html">吵架2 [3页]</a>
+<div class="side-page-links">
+<a href="吵架2_1.html">1</a><a href="吵架2_2.html">2</a><a href="吵架2_3.html">3</a>
+</div>
+</div>
+<div class="side-item"><a href="吵架3_1.html">吵架3 [1页]</a><div class="side-page-links"><a href="吵架3_1.html">1</a></div></div>
+<div class="side-item"><a href="吵架4_1.html">吵架4 [1页]</a><div class="side-page-links"><a href="吵架4_1.html">1</a></div></div>
+<div class="side-item"><a href="姥组吵架整理_1.html">姥组吵架整理 [1页]</a><div class="side-page-links"><a href="姥组吵架整理_1.html">1</a></div></div>
+<div class="side-item"><a href="苹果凌晨出没_1.html">苹果凌晨出没 [1页]</a><div class="side-page-links"><a href="苹果凌晨出没_1.html">1</a></div></div>
+<div class="side-item"><a href="建议楼_1.html">建议楼 [1页]</a><div class="side-page-links"><a href="建议楼_1.html">1</a></div></div>
+<div class="side-item"><a href="组务投票楼_1.html">组务投票楼 [1页]</a><div class="side-page-links"><a href="组务投票楼_1.html">1</a></div></div>
+<div class="side-item"><a href="管理员留任投票楼_1.html">管理员留任投票楼 [1页]</a><div class="side-page-links"><a href="管理员留任投票楼_1.html">1</a></div></div>
+<div class="side-item"><a href="投票2号_1.html">投票2号 [1页]</a><div class="side-page-links"><a href="投票2号_1.html">1</a></div></div>
+<div class="side-item"><a href="管理组群内_1.html">管理组群内 [1页]</a><div class="side-page-links"><a href="管理组群内_1.html">1</a></div></div>
+<div class="side-item"><a href="三天后狐狸第一次现身组内_1.html">三天后狐狸第一次现身组内 [1页]</a><div class="side-page-links"><a href="三天后狐狸第一次现身组内_1.html">1</a></div></div>
+<div class="side-item">
+<a href="组员发帖1_1.html">组员发帖1 [2页]</a>
+<div class="side-page-links"><a href="组员发帖1_1.html">1</a><a href="组员发帖1_2.html">2</a></div>
+</div>
+<div class="side-item">
+<a href="苹果现身组内_1.html">苹果现身组内 [2页]</a>
+<div class="side-page-links"><a href="苹果现身组内_1.html">1</a><a href="苹果现身组内_2.html">2</a></div>
+</div>
+</div>
+</div>
+
+<script>
+const openBtn=document.getElementById('openSideBtn'),sidebar=document.getElementById('sidebar'),mask=document.getElementById('mask');
+openBtn.onclick=()=>{sidebar.classList.add('active');mask.style.display='block'};
+mask.onclick=()=>{sidebar.classList.remove('active');mask.style.display='none'};
+const endTip=document.getElementById('endTip');
+window.onscroll=()=>{
+const s=window.scrollY,d=document.documentElement.scrollHeight,w=window.innerHeight;
+endTip.style.display=(s+w>=d-50)?'block':'none';
+}
+</script>
 </body>
 </html>
