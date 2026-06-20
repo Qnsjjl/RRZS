@@ -3,306 +3,479 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>姥姥的树存档</title>
+    <title>姥姥的树 - 存档首页</title>
     <style>
-        /* --- 全局样式设置 --- */
+        /* --- 全局样式 & 变量 --- */
+        :root {
+            --primary-green: #558b2f;       /* 深绿，用于强调 */
+            --light-green: #e8f5e9;         /* 浅绿背景 */
+            --leaf-green: #8bc34a;          /* 叶子绿 */
+            --text-color: #333333;
+            --bg-color: #f9fbf9;            /* 极淡的绿色背景 */
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(85, 139, 47, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
-            padding: 0;
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            background-color: #f7fbf7; /* 极浅的绿色背景 */
-            color: #444;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        /* --- 顶部导航栏 --- */
+        header {
+            background: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            position: relative;
         }
 
-        /* --- 顶部装饰树叶 (CSS绘制) --- */
-        .leaves-top-left {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle at 0% 0%, #a3d9a5 0%, transparent 60%);
-            border-radius: 0 0 100% 0;
-            opacity: 0.6;
-            z-index: -1;
-        }
-        .leaves-top-right {
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle at 100% 0%, #a3d9a5 0%, transparent 60%);
-            border-radius: 0 0 0 100%;
-            opacity: 0.6;
-            z-index: -1;
-        }
-
-        /* --- 主容器 --- */
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin-top: 60px;
-            margin-bottom: 60px;
-            text-align: center;
-            z-index: 1;
-        }
-
-        h1 {
-            color: #2e7d32;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: 50px;
-            font-weight: normal;
-        }
-
-        /* --- 双列布局 --- */
-        .grid-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 左右两列 */
-            gap: 40px;
-            text-align: left;
-        }
-
-        /* 手机端适配：变为单列 */
-        @media (max-width: 768px) {
-            .grid-wrapper {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* --- 单个板块样式 --- */
-        .section-block {
-            background: rgba(255, 255, 255, 0.7);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: transform 0.2s;
-        }
-
-        .section-block:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        /* 主链接（文件夹名） */
-        .main-link {
-            display: block;
+        .logo {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #2e7d32;
-            text-decoration: none;
-            margin-bottom: 10px;
-            border-bottom: 1px dashed #ccc;
-            padding-bottom: 5px;
-        }
-
-        .main-link:hover {
-            color: #1b5e20;
-            border-bottom-color: #1b5e20;
-        }
-
-        /* 子链接列表（1.html, 2.html...） */
-        .sub-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+            color: var(--primary-green);
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .sub-links li a {
-            display: inline-block;
-            width: 28px;
-            height: 28px;
-            line-height: 28px;
-            text-align: center;
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border-radius: 50%;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+        /* 目录按钮 */
+        .menu-btn {
+            background: var(--light-green);
+            color: var(--primary-green);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .sub-links li a:hover {
-            background-color: #2e7d32;
+        .menu-btn:hover {
+            background: var(--primary-green);
             color: white;
         }
 
-        /* 底部版权/提示 */
-        .footer {
-            margin-top: 50px;
-            font-size: 0.8rem;
-            color: #999;
+        /* --- 侧边栏目录 (抽屉式) --- */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            opacity: 0; visibility: hidden;
+            transition: 0.3s;
+            z-index: 998;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0; right: -300px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            z-index: 999;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            padding-bottom: 40px;
+        }
+
+        .sidebar.active { right: 0; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--light-green);
+            color: var(--primary-green);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--primary-green);
+        }
+
+        /* 目录树样式 */
+        .toc-list { list-style: none; padding: 10px 0; }
+
+        .toc-item { margin-bottom: 5px; }
+
+        .toc-main-title {
+            padding: 12px 20px;
+            font-weight: bold;
+            color: var(--primary-green);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border-left: 4px solid transparent;
+        }
+
+        .toc-main-title:hover { background: var(--light-green); }
+
+        .toc-sub-list {
+            list-style: none;
+            display: none; /* 默认折叠 */
+            background: #fcfdfc;
+        }
+
+        .toc-sub-list.open { display: block; }
+
+        .toc-sub-item a {
+            display: block;
+            padding: 10px 20px 10px 40px;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed #eee;
+            transition: 0.2s;
+        }
+
+        .toc-sub-item a:hover {
+            color: var(--primary-green);
+            background: #f0f7f0;
+            padding-left: 45px;
+        }
+
+        .page-count {
+            font-size: 0.75rem;
+            background: var(--light-green);
+            color: var(--primary-green);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+
+        /* --- 主内容区 --- */
+        main {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-height: 400px; /* 保证高度 */
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 60vh; /* 占据屏幕高度的60% */
+            border: none;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        /* --- 底部导航 --- */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-btn {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            font-size: 0.9rem;
+            color: #666;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* --- 到底提示 --- */
+        .end-message {
+            text-align: center;
+            color: #aaa;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 移动端适配微调 --- */
+        @media (max-width: 600px) {
+            .sidebar { width: 85%; }
+            .content-card { padding: 15px; }
+            iframe { height: 55vh; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 背景装饰 -->
-    <div class="leaves-top-left"></div>
-    <div class="leaves-top-right"></div>
+    <!-- 顶部 -->
+    <header>
+        <div class="logo">🌳 姥姥的树</div>
+        <button class="menu-btn" onclick="toggleMenu()">
+            📑 目录
+        </button>
+    </header>
 
-    <div class="container">
-        <h1>🌿 姥姥的树存档</h1>
-        <p class="subtitle">记录点滴，珍藏回忆，点击标题或数字即可跳转。</p >
-
-        <div class="grid-wrapper">
-
-            <!-- ================= 左列内容 ================= -->
-            <div class="column-left">
-
-                <!-- 1. 史官楼 (2个文件) -->
-                <div class="section-block">
-                    <a href=" " class="main-link">史官楼</a >
-                    <ul class="sub-links">
-                        <li><a href="史官楼/1.html">1</a ></li>
-                        <li><a href="史官楼/2.html">2</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 2. 吵架1 (3个文件) -->
-                <div class="section-block">
-                    <a href="吵架1/1.html" class="main-link">吵架1</a >
-                    <ul class="sub-links">
-                        <li><a href="吵架1/1.html">1</a ></li>
-                        <li><a href="吵架1/2.html">2</a ></li>
-                        <li><a href="吵架1/3.html">3</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 3. 吵架2 (3个文件) -->
-                <div class="section-block">
-                    <a href="吵架2/1.html" class="main-link">吵架2</a >
-                    <ul class="sub-links">
-                        <li><a href="吵架2/1.html">1</a ></li>
-                        <li><a href="吵架2/2.html">2</a ></li>
-                        <li><a href="吵架2/3.html">3</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 4. 吵架3 (1个文件) -->
-                <div class="section-block">
-                    <a href="吵架3/1.html" class="main-link">吵架3</a >
-                    <ul class="sub-links">
-                        <li><a href="吵架3/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 5. 吵架4 (1个文件) -->
-                <div class="section-block">
-                    <a href="吵架4/1.html" class="main-link">吵架4</a >
-                    <ul class="sub-links">
-                        <li><a href="吵架4/1.html">1</a ></li>
-                    </ul>
-                </div>
-                
-                <!-- 6. 姥组吵架整理 (1个文件) -->
-                <div class="section-block">
-                    <a href="姥组吵架整理/1.html" class="main-link">姥组吵架整理</a >
-                    <ul class="sub-links">
-                        <li><a href="姥组吵架整理/1.html">1</a ></li>
-                    </ul>
-                </div>
-                
-                <!-- 7. 苹果凌晨出没 (1个文件) -->
-                <div class="section-block">
-                    <a href="苹果凌晨出没/1.html" class="main-link">苹果凌晨出没</a >
-                    <ul class="sub-links">
-                        <li><a href="苹果凌晨出没/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 8. 建议楼 (1个文件) -->
-                <div class="section-block">
-                    <a href="建议楼/1.html" class="main-link">建议楼</a >
-                    <ul class="sub-links">
-                        <li><a href="建议楼/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <!-- ================= 右列内容 ================= -->
-            <div class="column-right">
-
-                <!-- 1. 组务投票楼 (1个文件) -->
-                <div class="section-block">
-                    <a href="组务投票楼/1.html" class="main-link">组务投票楼</a >
-                    <ul class="sub-links">
-                        <li><a href="组务投票楼/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 2. 管理员留任投票楼 (1个文件) -->
-                <div class="section-block">
-                    <a href="管理员留任投票楼/1.html" class="main-link">管理员留任投票楼</a >
-                    <ul class="sub-links">
-                        <li><a href="管理员留任投票楼/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 3. 投票2号 (1个文件) -->
-                <div class="section-block">
-                    <a href="投票2号/1.html" class="main-link">投票2号</a >
-                    <ul class="sub-links">
-                        <li><a href="投票2号/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 4. 管理组群内 (1个文件) -->
-                <div class="section-block">
-                    <a href="管理组群内/1.html" class="main-link">管理组群内</a >
-                    <ul class="sub-links">
-                        <li><a href="管理组群内/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 5. 三天后狐狸第一次现身组内 (1个文件) -->
-                <div class="section-block">
-                    <a href="三天后狐狸第一次现身组内/1.html" class="main-link">三天后狐狸第一次现身组内</a >
-                    <ul class="sub-links">
-                        <li><a href="三天后狐狸第一次现身组内/1.html">1</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 6. 组员发帖 (2个文件) -->
-                <div class="section-block">
-                    <a href="组员发帖1/1.html" class="main-link">组员发帖</a >
-                    <ul class="sub-links">
-                        <li><a href="组员发帖1/1.html">1</a ></li>
-                        <li><a href="组员发帖1/2.html">2</a ></li>
-                    </ul>
-                </div>
-
-                <!-- 7. 苹果现身组内 (2个文件) -->
-                <div class="section-block">
-                    <a href="苹果现身组内/1.html" class="main-link">苹果现身组内</a >
-                    <ul class="sub-links">
-                        <li><a href="苹果现身组内/1.html">1</a ></li>
-                        <li><a href="苹果现身组内/2.html">2</a ></li>
-                    </ul>
-                </div>
-
-            </div>
+    <!-- 侧边栏目录 -->
+    <div class="sidebar-overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>📚 存档目录</span>
+            <button class="close-btn" onclick="toggleMenu()">×</button>
         </div>
-
-        <div class="footer">
-            © 姥姥的树存档 · Generated for QNSJJL
-        </div>
+        <ul class="toc-list" id="toc-container">
+            <!-- JS将自动在这里生成目录 -->
+        </ul>
     </div>
 
-</body>
-</html>
+    <!-- 主内容 -->
+    <main>
+        <div class="content-card">
+            <h2 id="current-title" style="margin-bottom: 15px; color: var(--primary-green);">加载中...</h2>
+            <!-- iframe 用于加载具体的 html 文件 -->
+            <iframe id="content-frame" src=""></iframe>
+        </div>
+
+        <!-- 底部翻页导航 -->
+        <div class="pagination" id="pagination-controls">
+            <button class="nav-btn" id="prev-btn" onclick="changePage(-1)">＜ 上一页</button>
+            <span class="page-indicator" id="page-info">第 1 / 1 页</span>
+            <button class="nav-btn" id="next-btn" onclick="changePage(1)">下一页 ＞</button>
+        </div>
+
+        <div class="end-message" id="end-msg">
+            🍃 已经到底啦，没有更多内容了 ~
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // ⚠️ 配置区域：请在这里修改你的目录和页数
+        // ==========================================
+        const archiveData = [
+            {
+                title: "史官楼",
+                pages: 2,
+                path: "史官楼/" // 文件夹路径，注意斜杠
+            },
+            {
+                title: "吵架1",
+                pages: 3,
+                path: "吵架1/"
+            },
+            {
+                title: "吵架2",
+                pages: 3,
+                path: "吵架2/"
+            },
+            {
+                title: "吵架3",
+                pages: 1,
+                path: "吵架3/"
+            },
+            {
+                title: "吵架4",
+                pages: 1,
+                path: "吵架4/"
+            },
+            {
+                title: "姥组吵架整理",
+                pages: 1,
+                path: "姥组吵架整理/"
+            },
+            {
+                title: "建议楼",
+                pages: 1,
+                path: "建议楼/"
+            },
+            {
+                title: "组务投票楼",
+                pages: 1,
+                path: "组务投票楼/"
+            },
+            {
+                title: "管理员留任投票楼",
+                pages: 1,
+                path: "管理员留任投票楼/"
+            },
+            {
+                title: "投票2号",
+                pages: 1,
+                path: "投票2号/"
+            },
+            {
+                title: "管理组群内",
+                pages: 1,
+                path: "管理组群内/"
+            },
+            {
+                title: "三天后狐狸第一次现身组内",
+                pages: 2,
+                path: "三天后狐狸第一次现身组内/"
+            },
+            {
+                title: "组员发帖1",  // ⚠️ 修正点2：标题加了1
+                pages: 2,           // 假设是2页，如果只有1页请改为1
+                path: "组员发帖1/"   // ⚠️ 修正点2：文件夹名也对应修改
+            },
+            {
+                title: "苹果凌晨出没",
+                pages: 1,           // ⚠️ 修正点1：改为1页
+                path: "苹果凌晨出没/"
+            },
+            {
+                title: "苹果现身组内",
+                pages: 2,
+                path: "苹果现身组内/"
+            }
+        ];
+
+        // ==========================================
+        // 逻辑控制区域 (一般不需要动)
+        // ==========================================
+
+        let currentIndex = 0; // 当前选中的大标题索引
+        let currentPage = 1;  // 当前页码
+
+        // 初始化
+        window.onload = function() {
+            renderTOC();
+            loadContent(0, 1); // 默认加载第一个
+        };
+
+        // 渲染目录
+        function renderTOC() {
+            const container = document.getElementById('toc-container');
+            container.innerHTML = '';
+
+            archiveData.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+
+                // 构建HTML结构
+                li.innerHTML = `
+                    <div class="toc-main-title" onclick="toggleSubList(this)">
+                        <span>${item.title}</span>
+                        <span style="font-size:0.8em">▼</span>
+                    </div>
+                    <ul class="toc-sub-list">
+                        ${generateSubLinks(item, index)}
+                    </ul>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        // 生成子链接 (处理多页情况)
+        function generateSubLinks(item, index) {
+            let html = '';
+            for (let i = 1; i <= item.pages; i++) {
+                // 链接指向：文件夹/数字.html
+                const link = `${item.path}${i}.html`;
+                const label = item.pages > 1 ? `第 ${i} 页` : '查看全文';
+                html += `<li class="toc-sub-item"><a href="#" onclick="loadContent(${index}, ${i}); return false;">${label}</a></li>`;
+            }
+            return html;
+        }
+
+        // 切换子菜单展开/折叠
+        function toggleSubList(element) {
+            const subList = element.nextElementSibling;
+            const arrow = element.querySelector('span:last-child');
+            if (subList.classList.contains('open')) {
+                subList.classList.remove('open');
+                arrow.innerText = '▼';
+            } else {
+                subList.classList.add('open');
+                arrow.innerText = '▲';
+            }
+        }
+
+        // 加载具体内容
+        function loadContent(index, page) {
+            currentIndex = index;
+            currentPage = page;
+            const data = archiveData[index];
+
+            // 更新标题
+            document.getElementById('current-title').innerText = `${data.title} - 第 ${page} 页`;
+
+            // 更新iframe源
+            // 假设文件命名规则是 1.html, 2.html...
+            const fileSrc = `${data.path}${page}.html`;
+            document.getElementById('content-frame').src = fileSrc;
+
+            // 更新底部导航状态
+            updatePagination(data.pages);
+
+            // 隐藏“到底了”提示
+            document.getElementById('end-msg').style.display = 'none';
+
+            // 如果在手机上，点击目录后自动收起目录
+            if(window.innerWidth < 800) {
+                toggleMenu(false);
+            }
+        }
+
+        // 更新分页器
+        function updatePagination(totalPages) {
+            const infoSpan = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            // 显示格式：第 1、2 页 (如果是单页则不显示数字选择)
+            if (totalPages > 1) {
+                let numbers = '';
+                for(let i=1; i<=totalPages; i++) {
+                    // 简单的省略号逻辑：如果页数太多，这里可以加复杂逻辑，目前先全显示或简单处理
+                    numbers += `<span style="cursor:pointer; margin:0 5px; color:${i===currentPage?'var(--primary-green)':'#999'}; font-weight:${i===currentPage?'bold':'normal'}" onclick="loadContent(${currentIndex}, ${i})">${i}</span>`;
+                }
+                infoSpan.innerHTML = `第 ${numbers} 页`;
+            } else {
+                infoSpan.innerText = "共 1 页";
+            }
+
+            prevBtn.disabled = (currentPage === 1);
+            nextBtn.disabled = (currentPage === totalPages);
+        }
