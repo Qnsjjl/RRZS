@@ -1,0 +1,50 @@
+$(function() {
+  function show_abnormal() {
+    var content ='',
+      url = 'login';
+    var repeal_url = 'https://accounts.douban.com/passport/repeal'
+    var readonly = _USER_ABNORMAL.readonly
+    var banned =_USER_ABNORMAL.banned
+    if(readonly || banned) {
+      if(readonly) {
+        var message = readonly && readonly.message ? readonly.message : readonly;
+        content = `根据社区指导原则，${message}。如有疑问，请点击 <a target="_blank" href="${repeal_url}">我要申诉</a>`
+      }else {
+        content = `${banned} 如有疑问，请点击 <a target="_blank" href="${repeal_url}">我要申诉</a>`
+      }
+
+      var dlg_abnormal = dui.Dialog({
+                            title: '用户提示',
+                            width: 380,
+                            content: content
+                          })
+      dlg_abnormal.open().update()
+      return
+    }else if(_USER_ABNORMAL.abnormal) {
+      url = 'abnormal'
+    }else if(_USER_ABNORMAL.verify) {
+      url = 'verify'
+    }else if(_USER_ABNORMAL.oversea) {
+      url = 'identity'
+    }
+    location.href = `https://accounts.douban.com/passport/${url}?redir=${location.href}`
+  }
+
+  window.show_abnormal = show_abnormal
+  
+  if(window._USER_ABNORMAL) {
+    $('.cls_abnormal, .show_abnormal', document).unbind().bind('click', function(e) {
+      e.preventDefault()
+      show_abnormal()
+      return
+    })
+// 去除搜索框的限制
+    $('input, textarea').not('.nav-search input').removeAttr('disabled').removeAttr('readonly').unbind().bind('click', function(e) {
+      e.preventDefault()
+      var $el = $(this)
+      $el.attr('readonly', 'readonly')
+      show_abnormal()
+      return
+    })
+  }
+})
