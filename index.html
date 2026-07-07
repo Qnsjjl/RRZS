@@ -33,6 +33,21 @@
             position: relative;
         }
 
+        /* 响应式容器 - 手机满屏，电脑居中 */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            background: inherit;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 481px) {
+            .app-container {
+                box-shadow: 0 0 40px rgba(0,0,0,0.08);
+            }
+        }
+
         /* 状态栏 */
         .status-bar {
             height: 24px;
@@ -127,8 +142,6 @@
         /* 搜索区域 */
         .search-container {
             padding: 0 16px 16px;
-            max-width: 430px;
-            margin: 0 auto;
             display: none;
         }
 
@@ -168,7 +181,7 @@
         }
 
         .search-result-item {
-            padding: 14px 16px;
+            padding: 8px 12px;
             border-bottom: 1px solid rgba(0,0,0,0.04);
             cursor: pointer;
             transition: all 0.2s;
@@ -182,48 +195,50 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .search-result-icon {
-            font-size: 20px;
-            width: 32px;
-            height: 32px;
+            font-size: 18px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(76,175,80,0.1);
-            border-radius: 8px;
+            border-radius: 6px;
+            flex-shrink: 0;
         }
 
         .search-result-title {
-            font-size: 15px;
+            font-size: 14px;
             color: #333;
             font-weight: 600;
             flex: 1;
+            line-height: 1.3;
         }
 
         .search-result-pages {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
-            padding-left: 40px;
+            padding-left: 36px;
         }
 
         .search-page-tag {
-            min-width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 6px;
             background: rgba(76,175,80,0.1);
             color: var(--primary);
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
-            padding: 0 8px;
+            padding: 0 6px;
         }
 
         .search-page-tag:hover {
@@ -241,8 +256,6 @@
         /* 主内容 */
         .main-content {
             padding: 16px;
-            max-width: 430px;
-            margin: 0 auto;
             padding-bottom: 100px;
         }
 
@@ -539,8 +552,6 @@
         .content-page {
             display: none;
             padding: 16px;
-            max-width: 430px;
-            margin: 0 auto;
             min-height: calc(100vh - 80px);
             padding-bottom: 140px;
         }
@@ -589,12 +600,14 @@
             box-shadow: var(--shadow);
         }
 
-        /* 底部页码导航 - 新版美观设计 */
+        /* 底部页码导航 - 新版 */
         .page-nav {
             position: fixed;
             bottom: 0;
-            left: 0;
-            right: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid rgba(0,0,0,0.05);
@@ -636,6 +649,8 @@
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
+            flex: 1;
+            justify-content: center;
         }
 
         .nav-arrow-btn:hover:not(:disabled) {
@@ -731,8 +746,10 @@
         .load-status {
             position: fixed;
             bottom: 80px;
-            left: 0;
-            right: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             text-align: center;
             padding: 12px;
             color: #999;
@@ -1103,7 +1120,6 @@
             color: white;
         }
 
-        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -1123,12 +1139,20 @@
             .page-indicator { font-size: 14px; min-width: 60px; }
         }
 
+        @media (min-width: 481px) {
+            .back-to-top { left: calc(50% - 220px); }
+            .fab-catalog { right: calc(50% - 220px); }
+            .load-status { max-width: 480px; }
+        }
+
         @media (min-width: 768px) {
             .catalog-panel { width: 45%; max-width: 400px; }
         }
     </style>
 </head>
 <body>
+
+<div class="app-container">
 
     <!-- 阅读进度条 -->
     <div class="reading-progress" id="readingProgress"></div>
@@ -1190,18 +1214,18 @@
             <button class="back-btn" onclick="goBack()">←</button>
             <div class="content-title" id="contentTitle">标题</div>
         </div>
-        <iframe class="content-frame" id="contentFrame"></iframe>
+        <iframe class="content-frame" id="contentFrame" sandbox="allow-same-origin allow-scripts"></iframe>
     </div>
 
-    <!-- 底部页码导航 - 新版 -->
+    <!-- 底部页码导航 -->
     <div class="page-nav" id="pageNav">
         <div class="page-nav-content">
             <div class="page-nav-main">
-                <button class="nav-arrow-btn" id="prevBtn" onclick="goToPage(currentPage - 1)">
+                <button class="nav-arrow-btn" id="prevBtn" onclick="changePage(-1)">
                     ← 上一页
                 </button>
                 <div class="page-indicator" id="pageIndicator">1 / 1</div>
-                <button class="nav-arrow-btn" id="nextBtn" onclick="goToPage(currentPage + 1)">
+                <button class="nav-arrow-btn" id="nextBtn" onclick="changePage(1)">
                     下一页 →
                 </button>
             </div>
@@ -1240,675 +1264,801 @@
         <div class="catalog-content" id="catalogContent"></div>
     </div>
 
-    <script>
-        // ==================== 数据定义（严格按txt顺序，已补全）====================
-        const siteData = [
-            {
-                id: 'laolao',
-                name: '姥姥的树存档',
-                icon: '🌲',
-                posts: [
-                    { name: '姥组吵架整理', pages: 1, icon: '📝' },
-                    { name: '史官楼', pages: 2, icon: '📜' },
-                    { name: '吵架1', pages: 3, icon: '💢' },
-                    { name: '吵架2', pages: 3, icon: '😤' },
-                    { name: '吵架3', pages: 1, icon: '😠' },
-                    { name: '吵架4', pages: 1, icon: '🤬' },
-                    { name: '苹果凌晨出没', pages: 1, icon: '🍎' },
-                    { name: '建议楼', pages: 1, icon: '💡' },
-                    { name: '组务投票楼', pages: 1, icon: '🗳️' },
-                    { name: '管理员留任投票楼', pages: 1, icon: '📊' },
-                    { name: '投票2号', pages: 1, icon: '✅' },
-                    { name: '管理组群内', pages: 1, icon: '👥' },
-                    { name: '三天后狐狸第一次现身组内', pages: 1, icon: '🦊' },
-                    { name: '组员发帖1', pages: 2, icon: '📮' },
-                    { name: '苹果现身组内', pages: 2, icon: '🍏' }
-                ]
-            },
-            {
-                id: 'xinfan',
-                name: '新番组存档',
-                icon: '📺',
-                posts: [
-                    { name: '泥跌飞了：7月3日追番组事件整理', pages: 1, icon: '📅', special: 'nidi' },
-                    { name: '太阳组：防新番岁月史书', pages: 2, icon: '📖' },
-                    { name: '太阳组：七月闲聊', pages: 3, icon: '☀️' },
-                    { name: '如日之升：临时闲聊楼', pages: 28, icon: '💬' },
-                    { name: '组长是腐zl吗—组长已在评论区回应', pages: 2, icon: '❓' },
-                    { name: '组长回应：能理解你们的顾虑', pages: 2, icon: '💭' },
-                    { name: '应该是最后一个帖啦', pages: 1, icon: '📝' },
-                    { name: '组规2.0更所有女禁红不禁黑', pages: 1, icon: '📋' },
-                    { name: '你们可一定要保证朋友熟人扶你一把的陌生人都不磕腐不沾男啊', pages: 1, icon: '🤝' },
-                    { name: '组长打赏购买自证记录', pages: 1, icon: '💰' },
-                    { name: '补充装：Dia', pages: 2, icon: '📦', special: 'dia' }
-                ]
-            },
-            {
-                id: 'zhenhua',
-                name: '真话组存档',
-                icon: '💭',
-                posts: [
-                    { name: '本组为娱乐组，禁止过度讨女性_社会话题', pages: 1, icon: '🚫' },
-                    { name: '豆瓣知名恨女大组讨论（真话组）', pages: 1, icon: '🗣️' },
-                    { name: '们真话组居然在别组组禁榜上有名', pages: 1, icon: '📛' }
-                ]
-            }
-        ];
+</div><!-- app-container -->
 
-        // ==================== 状态管理 ====================
-        let currentCategory = null;
-        let currentPost = null;
-        let currentPage = 1;
-        let currentTotalPages = 1;
-        let recentViews = JSON.parse(localStorage.getItem('recentViews') || '[]');
-        let isDragging = false;
-        let searchDebounceTimer = null;
-        let imageLoadTimer = null;
-        let scrollCheckTimer = null;
-
-        // ==================== 初始化 ====================
-        function init() {
-            updateClock();
-            setInterval(updateClock, 60000);
-            renderCategories();
-            renderRecent();
-            renderCatalog();
-            initDrag();
-            initScroll();
-            initSearch();
+<script>
+    // ==================== 数据定义（严格按txt顺序，已补全）====================
+    const siteData = [
+        {
+            id: 'laolao',
+            name: '姥姥的树存档',
+            icon: '🌲',
+            posts: [
+                { name: '姥组吵架整理', pages: 1, icon: '📝' },
+                { name: '史官楼', pages: 2, icon: '📜' },
+                { name: '吵架1', pages: 3, icon: '💢' },
+                { name: '吵架2', pages: 3, icon: '😤' },
+                { name: '吵架3', pages: 1, icon: '😠' },
+                { name: '吵架4', pages: 1, icon: '🤬' },
+                { name: '苹果凌晨出没', pages: 1, icon: '🍎' },
+                { name: '建议楼', pages: 1, icon: '💡' },
+                { name: '组务投票楼', pages: 1, icon: '🗳️' },
+                { name: '管理员留任投票楼', pages: 1, icon: '📊' },
+                { name: '投票2号', pages: 1, icon: '✅' },
+                { name: '管理组群内', pages: 1, icon: '👥' },
+                { name: '三天后狐狸第一次现身组内', pages: 1, icon: '🦊' },
+                { name: '组员发帖1', pages: 2, icon: '📮' },
+                { name: '苹果现身组内', pages: 2, icon: '🍏' }
+            ]
+        },
+        {
+            id: 'xinfan',
+            name: '新番组存档',
+            icon: '📺',
+            posts: [
+                { name: '泥跌飞了：7月3日追番组事件整理', pages: 1, icon: '📅', special: 'nidi' },
+                { name: '太阳组：防新番岁月史书', pages: 2, icon: '📖' },
+                { name: '太阳组：七月闲聊', pages: 3, icon: '☀️' },
+                { name: '如日之升：临时闲聊楼', pages: 28, icon: '💬' },
+                { name: '组长是腐zl吗—组长已在评论区回应', pages: 2, icon: '❓' },
+                { name: '组长回应：能理解你们的顾虑', pages: 2, icon: '💭' },
+                { name: '应该是最后一个帖啦', pages: 1, icon: '📝' },
+                { name: '组规2.0更所有女禁红不禁黑', pages: 1, icon: '📋' },
+                { name: '你们可一定要保证朋友熟人扶你一把的陌生人都不磕腐不沾男啊', pages: 1, icon: '🤝' },
+                { name: '组长打赏购买自证记录', pages: 1, icon: '💰' },
+                { name: '补充装：Dia', pages: 2, icon: '📦', special: 'dia' }
+            ]
+        },
+        {
+            id: 'zhenhua',
+            name: '真话组存档',
+            icon: '💭',
+            posts: [
+                { name: '本组为娱乐组，禁止过度讨女性_社会话题', pages: 1, icon: '🚫' },
+                { name: '豆瓣知名恨女大组讨论（真话组）', pages: 1, icon: '🗣️' },
+                { name: '们真话组居然在别组组禁榜上有名', pages: 1, icon: '📛' }
+            ]
         }
+    ];
 
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}`;
-        }
+    // ==================== 状态管理 ====================
+    let currentCategory = null;
+    let currentPost = null;
+    let currentPage = 1;
+    let currentTotalPages = 1;
+    let currentSpecial = '';
+    let recentViews = JSON.parse(localStorage.getItem('recentViews') || '[]');
+    let isDragging = false;
+    let searchDebounceTimer = null;
+    let loadCheckTimer = null;
+    let isLoading = false;
 
-        // ==================== 渲染目录（默认全部收起）====================
-        function renderCategories() {
-            const container = document.getElementById('categoryList');
-            container.innerHTML = siteData.map(cat => `
-                <div class="category-section" data-id="${cat.id}">
-                    <div class="category-header" onclick="toggleCategory('${cat.id}')">
-                        <span class="category-icon">${cat.icon}</span>
-                        <span class="category-title">${cat.name}</span>
-                        <span class="category-toggle">▼</span>
-                    </div>
-                    <div class="category-items">
-                        ${cat.posts.map(post => `
-                            <div class="post-item" onclick="showPost('${cat.id}', '${post.name}', ${post.pages})">
-                                <div class="post-header">
-                                    <div class="post-icon">${post.icon}</div>
-                                    <div class="post-title">${post.name}</div>
-                                </div>
-                                <div class="post-pages">
-                                    ${generatePageButtons(cat.id, post.name, post.pages, post.special)}
-                                </div>
+    // ==================== 初始化 ====================
+    function init() {
+        updateClock();
+        setInterval(updateClock, 60000);
+        renderCategories();
+        renderRecent();
+        renderCatalog();
+        initDrag();
+        initScroll();
+        initSearch();
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('clock').textContent = `${hours}:${minutes}`;
+    }
+
+    // ==================== 渲染目录（默认全部收起）====================
+    function renderCategories() {
+        const container = document.getElementById('categoryList');
+        container.innerHTML = siteData.map(cat => `
+            <div class="category-section" data-id="${cat.id}">
+                <div class="category-header" onclick="toggleCategory('${cat.id}')">
+                    <span class="category-icon">${cat.icon}</span>
+                    <span class="category-title">${cat.name}</span>
+                    <span class="category-toggle">▼</span>
+                </div>
+                <div class="category-items">
+                    ${cat.posts.map(post => `
+                        <div class="post-item" onclick="showPost('${cat.id}', '${post.name}', ${post.pages}, '${post.special || ''}')">
+                            <div class="post-header">
+                                <div class="post-icon">${post.icon}</div>
+                                <div class="post-title">${post.name}</div>
                             </div>
-                        `).join('')}
-                    </div>
+                            <div class="post-pages">
+                                ${generatePageButtons(cat.id, post.name, post.pages, post.special)}
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        function generatePageButtons(catId, postName, pages, special) {
-            if (special && pages === 1) {
-                return `<button class="page-btn" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">查看</button>`;
-            }
-            let buttons = '';
-            for (let i = 1; i <= Math.min(pages, 6); i++) {
-                buttons += `<button class="page-btn" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i})">${i}</button>`;
-            }
-            if (pages > 6) {
-                buttons += `<button class="page-btn" onclick="event.stopPropagation(); showPost('${catId}', '${postName}', ${pages})">...</button>`;
-            }
-            return buttons;
+    function generatePageButtons(catId, postName, pages, special) {
+        if (special && pages === 1) {
+            return `<button class="page-btn" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">查看</button>`;
         }
-
-        function toggleCategory(id) {
-            const el = document.querySelector(`[data-id="${id}"]`);
-            el.classList.toggle('expanded');
+        let buttons = '';
+        for (let i = 1; i <= Math.min(pages, 6); i++) {
+            buttons += `<button class="page-btn" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i}, '${special || ''}')">${i}</button>`;
         }
-
-        // ==================== 最近浏览 ====================
-        function renderRecent() {
-            const container = document.getElementById('recentList');
-            if (recentViews.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📖</div>暂无浏览记录</div>';
-                return;
-            }
-            container.innerHTML = recentViews.map(view => `
-                <div class="recent-card" onclick="openPage('${view.catId}', '${view.postName}', ${view.page}, '${view.special || ''}')">
-                    <div class="recent-icon green">📄</div>
-                    <div class="recent-title">${view.postName}</div>
-                    <div class="recent-meta">${view.time}</div>
-                </div>
-            `).join('');
+        if (pages > 6) {
+            buttons += `<button class="page-btn" onclick="event.stopPropagation(); showPost('${catId}', '${postName}', ${pages}, '${special || ''}')">...</button>`;
         }
+        return buttons;
+    }
 
-        function addRecent(catId, postName, page, special) {
-            const exists = recentViews.findIndex(v => v.catId === catId && v.postName === postName && v.page === page);
-            if (exists > -1) recentViews.splice(exists, 1);
-            
-            recentViews.unshift({
-                catId, postName, page, special: special || '',
-                time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            });
-            
-            if (recentViews.length > 6) recentViews = recentViews.slice(0, 6);
-            localStorage.setItem('recentViews', JSON.stringify(recentViews));
-            renderRecent();
+    function toggleCategory(id) {
+        const el = document.querySelector(`[data-id="${id}"]`);
+        el.classList.toggle('expanded');
+    }
+
+    // ==================== 最近浏览 ====================
+    function renderRecent() {
+        const container = document.getElementById('recentList');
+        if (recentViews.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">📖</div>暂无浏览记录</div>';
+            return;
         }
+        container.innerHTML = recentViews.map(view => `
+            <div class="recent-card" onclick="openPage('${view.catId}', '${view.postName}', ${view.page}, '${view.special || ''}')">
+                <div class="recent-icon green">📄</div>
+                <div class="recent-title">${view.postName}</div>
+                <div class="recent-meta">${view.time}</div>
+            </div>
+        `).join('');
+    }
 
-        function clearRecent() {
-            recentViews = [];
-            localStorage.removeItem('recentViews');
-            renderRecent();
-        }
+    function addRecent(catId, postName, page, special) {
+        const exists = recentViews.findIndex(v => v.catId === catId && v.postName === postName && v.page === page);
+        if (exists > -1) recentViews.splice(exists, 1);
+        
+        recentViews.unshift({
+            catId, postName, page, special: special || '',
+            time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        });
+        
+        if (recentViews.length > 6) recentViews = recentViews.slice(0, 6);
+        localStorage.setItem('recentViews', JSON.stringify(recentViews));
+        renderRecent();
+    }
 
-        // ==================== 页面导航 ====================
-        function showPost(catId, postName, totalPages) {
-            currentCategory = catId;
-            currentPost = postName;
-            currentTotalPages = totalPages;
-            currentPage = 1;
-            openPage(catId, postName, 1);
-        }
+    function clearRecent() {
+        recentViews = [];
+        localStorage.removeItem('recentViews');
+        renderRecent();
+    }
 
-        function openPage(catId, postName, page, special) {
-            addRecent(catId, postName, page, special);
-            
-            const cat = siteData.find(c => c.id === catId);
-            const post = cat.posts.find(p => p.name === postName);
-            
-            // 构建文件路径
-            let filePath;
-            if (special === 'nidi') {
-                filePath = `新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html`;
-            } else if (special === 'dia') {
-                // Dia有两个文件，根据页码选择
-                if (page === 1) {
-                    filePath = `新番组存档/补充装：Dia/Dia：不是，举我自证楼干嘛？.html`;
-                } else {
-                    filePath = `新番组存档/补充装：Dia/只敢举报不敢对线的造谣小团体你赢了.html`;
-                }
+    // ==================== 页面导航（修复版）====================
+    function showPost(catId, postName, totalPages, special) {
+        currentCategory = catId;
+        currentPost = postName;
+        currentTotalPages = totalPages;
+        currentPage = 1;
+        currentSpecial = special || '';
+        openPage(catId, postName, 1, special);
+    }
+
+    function openPage(catId, postName, page, special) {
+        // 更新状态
+        currentCategory = catId;
+        currentPost = postName;
+        currentPage = page;
+        currentSpecial = special || '';
+        
+        const cat = siteData.find(c => c.id === catId);
+        const post = cat.posts.find(p => p.name === postName);
+        currentTotalPages = post.pages;
+        
+        addRecent(catId, postName, page, special);
+        
+        // 构建文件路径
+        let filePath;
+        if (special === 'nidi') {
+            filePath = `新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html`;
+        } else if (special === 'dia') {
+            if (page === 1) {
+                filePath = `新番组存档/补充装：Dia/Dia：不是，举我自证楼干嘛？.html`;
             } else {
-                filePath = `${cat.name}/${postName}/${page}.html`;
+                filePath = `新番组存档/补充装：Dia/只敢举报不敢对线的造谣小团体你赢了.html`;
             }
-            
-            // 切换视图
-            document.getElementById('homePage').style.display = 'none';
-            document.getElementById('recentSection').style.display = 'none';
-            document.getElementById('contentPage').classList.add('active');
-            document.getElementById('pageNav').classList.add('active');
-            document.getElementById('pageTitle').textContent = postName;
-            
-            // 加载内容
-            showLoading(true);
-            document.getElementById('contentFrame').src = filePath;
-            document.getElementById('contentTitle').textContent = postName + (post.pages > 1 ? ` (${page}/${post.pages})` : '');
-            
-            setTimeout(() => showLoading(false), 300);
-            
-            // 更新页码显示
-            currentPage = page;
-            currentTotalPages = post.pages;
-            updatePageNav();
-            
-            // 显示阅读进度条
-            document.getElementById('readingProgress').classList.add('active');
-            
-            // 监听iframe加载和图片
-            setupIframeLoadListener();
+        } else {
+            filePath = `${cat.name}/${postName}/${page}.html`;
         }
+        
+        // 切换视图
+        document.getElementById('homePage').style.display = 'none';
+        document.getElementById('recentSection').style.display = 'none';
+        document.getElementById('contentPage').classList.add('active');
+        document.getElementById('pageNav').classList.add('active');
+        document.getElementById('pageTitle').textContent = postName;
+        
+        // 加载内容
+        showLoading(true);
+        const iframe = document.getElementById('contentFrame');
+        iframe.src = filePath;
+        document.getElementById('contentTitle').textContent = postName + (post.pages > 1 ? ` (${page}/${post.pages})` : '');
+        
+        // 更新页码显示
+        updatePageNav();
+        
+        // 显示阅读进度条
+        document.getElementById('readingProgress').classList.add('active');
+        
+        // 设置加载检测
+        setupLoadDetection();
+        
+        setTimeout(() => showLoading(false), 300);
+    }
 
-        function updatePageNav() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const indicator = document.getElementById('pageIndicator');
-            
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= currentTotalPages;
-            indicator.textContent = `${currentPage} / ${currentTotalPages}`;
-            
-            const jumpInput = document.getElementById('jumpInput');
-            jumpInput.max = currentTotalPages;
-            jumpInput.placeholder = `${currentTotalPages}`;
-        }
-
-        function goToPage(page) {
-            if (page < 1 || page > currentTotalPages || !currentPost) return;
-            currentPage = page;
-            openPage(currentCategory, currentPost, page, getSpecialType(currentCategory, currentPost));
-            scrollToTop();
-        }
-
-        function jumpToPage() {
-            const input = document.getElementById('jumpInput');
-            const page = parseInt(input.value);
-            if (page >= 1 && page <= currentTotalPages) {
-                goToPage(page);
-                input.value = '';
+    // ==================== 页码切换（核心修复）====================
+    function changePage(delta) {
+        if (!currentPost || isLoading) return;
+        
+        const newPage = currentPage + delta;
+        if (newPage < 1 || newPage > currentTotalPages) return;
+        
+        // 只切换页码，不重新初始化状态
+        currentPage = newPage;
+        
+        const cat = siteData.find(c => c.id === currentCategory);
+        const post = cat.posts.find(p => p.name === currentPost);
+        
+        // 构建新路径
+        let filePath;
+        if (currentSpecial === 'nidi') {
+            filePath = `新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html`;
+        } else if (currentSpecial === 'dia') {
+            if (currentPage === 1) {
+                filePath = `新番组存档/补充装：Dia/Dia：不是，举我自证楼干嘛？.html`;
             } else {
-                alert(`请输入 1-${currentTotalPages} 之间的页码`);
+                filePath = `新番组存档/补充装：Dia/只敢举报不敢对线的造谣小团体你赢了.html`;
             }
+        } else {
+            filePath = `${cat.name}/${currentPost}/${currentPage}.html`;
         }
+        
+        // 只更新iframe和页码显示
+        const iframe = document.getElementById('contentFrame');
+        iframe.src = filePath;
+        document.getElementById('contentTitle').textContent = currentPost + ` (${currentPage}/${currentTotalPages})`;
+        updatePageNav();
+        
+        // 滚动到顶部
+        scrollToTop();
+        
+        // 重新检测加载
+        setupLoadDetection();
+    }
 
-        function getSpecialType(catId, postName) {
-            const cat = siteData.find(c => c.id === catId);
-            const post = cat.posts.find(p => p.name === postName);
-            return post.special || '';
+    function jumpToPage() {
+        const input = document.getElementById('jumpInput');
+        const page = parseInt(input.value);
+        if (isNaN(page)) {
+            alert('请输入页码');
+            return;
         }
-
-        function goBack() {
-            document.getElementById('contentPage').classList.remove('active');
-            document.getElementById('pageNav').classList.remove('active');
-            document.getElementById('homePage').style.display = 'block';
-            document.getElementById('recentSection').style.display = 'block';
-            document.getElementById('pageTitle').textContent = '如日之升';
-            document.getElementById('contentFrame').src = '';
-            document.getElementById('readingProgress').classList.remove('active');
-            document.getElementById('readingProgress').style.width = '0%';
-            document.getElementById('loadStatus').classList.remove('active');
-            currentCategory = null;
-            currentPost = null;
-            clearTimeout(imageLoadTimer);
-            clearTimeout(scrollCheckTimer);
+        if (page < 1 || page > currentTotalPages) {
+            alert(`请输入 1-${currentTotalPages} 之间的页码`);
+            return;
         }
+        if (page === currentPage) return;
+        
+        // 使用changePage的逻辑
+        const delta = page - currentPage;
+        changePage(delta);
+        input.value = '';
+    }
 
-        // ==================== 加载检测（增强版）====================
-        function setupIframeLoadListener() {
-            const iframe = document.getElementById('contentFrame');
-            const loadStatus = document.getElementById('loadStatus');
+    function updatePageNav() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indicator = document.getElementById('pageIndicator');
+        const jumpInput = document.getElementById('jumpInput');
+        
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= currentTotalPages;
+        indicator.textContent = `${currentPage} / ${currentTotalPages}`;
+        
+        jumpInput.max = currentTotalPages;
+        jumpInput.placeholder = `${currentTotalPages}`;
+    }
+
+    function goBack() {
+        document.getElementById('contentPage').classList.remove('active');
+        document.getElementById('pageNav').classList.remove('active');
+        document.getElementById('homePage').style.display = 'block';
+        document.getElementById('recentSection').style.display = 'block';
+        document.getElementById('pageTitle').textContent = '如日之升';
+        document.getElementById('contentFrame').src = '';
+        document.getElementById('readingProgress').classList.remove('active');
+        document.getElementById('readingProgress').style.width = '0%';
+        document.getElementById('loadStatus').classList.remove('active');
+        
+        currentCategory = null;
+        currentPost = null;
+        currentPage = 1;
+        currentTotalPages = 1;
+        currentSpecial = '';
+        isLoading = false;
+        
+        clearTimeout(loadCheckTimer);
+    }
+
+    // ==================== 加载检测（加强版）====================
+    function setupLoadDetection() {
+        const loadStatus = document.getElementById('loadStatus');
+        const iframe = document.getElementById('contentFrame');
+        
+        isLoading = true;
+        loadStatus.textContent = '加载中...';
+        loadStatus.classList.add('active');
+        
+        // 清除之前的定时器
+        clearTimeout(loadCheckTimer);
+        
+        // 等待iframe加载
+        iframe.onload = function() {
+            isLoading = false;
             
-            loadStatus.textContent = '加载中...';
-            loadStatus.classList.add('active');
-            
-            iframe.onload = function() {
-                try {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    const images = iframeDoc.querySelectorAll('img');
-                    let loadedCount = 0;
-                    let totalImages = images.length;
-                    
-                    if (totalImages === 0) {
-                        // 无图片，直接检测
-                        setTimeout(() => checkScrollBottom(), 500);
-                        return;
-                    }
-                    
-                    // 监听每张图片加载
-                    images.forEach(img => {
-                        if (img.complete) {
-                            loadedCount++;
-                        } else {
-                            img.addEventListener('load', () => {
-                                loadedCount++;
-                                checkAllLoaded();
-                            });
-                            img.addEventListener('error', () => {
-                                loadedCount++;
-                                checkAllLoaded();
-                            });
-                        }
-                    });
-                    
-                    // 超时处理（3秒）
-                    setTimeout(() => {
-                        if (loadStatus.classList.contains('active') && loadStatus.textContent === '加载中...') {
-                            checkScrollBottom();
-                        }
-                    }, 3000);
-                    
-                    function checkAllLoaded() {
-                        if (loadedCount >= totalImages) {
-                            // 图片加载完成，检查高度稳定
-                            let stableCount = 0;
-                            let lastHeight = 0;
-                            
-                            imageLoadTimer = setInterval(() => {
-                                const currentHeight = iframeDoc.body.scrollHeight;
-                                if (currentHeight === lastHeight) {
-                                    stableCount++;
-                                    if (stableCount >= 3) {
-                                        clearInterval(imageLoadTimer);
-                                        checkScrollBottom();
-                                    }
-                                } else {
-                                    stableCount = 0;
-                                    lastHeight = currentHeight;
-                                }
-                            }, 500);
-                            
-                            // 最多检查10次（5秒）
-                            setTimeout(() => {
-                                clearInterval(imageLoadTimer);
-                                if (loadStatus.classList.contains('active')) {
-                                    checkScrollBottom();
-                                }
-                            }, 5000);
-                        }
-                    }
-                    
-                    // 立即检查一次
-                    checkAllLoaded();
-                    
-                } catch(e) {
-                    // 跨域情况，简单处理
-                    setTimeout(() => checkScrollBottom(), 1000);
-                }
-            };
-        }
-
-        function checkScrollBottom() {
-            const loadStatus = document.getElementById('loadStatus');
-            const docHeight = document.documentElement.scrollHeight;
-            const winHeight = window.innerHeight;
-            const scrollY = window.scrollY;
-            
-            // 缓冲值50px
-            if (scrollY + winHeight >= docHeight - 50) {
-                loadStatus.textContent = '— 到底了 —';
-            } else {
-                loadStatus.classList.remove('active');
-            }
-        }
-
-        // ==================== 滚动处理（增强版）====================
-        function initScroll() {
-            const backToTop = document.getElementById('backToTop');
-            const readingProgress = document.getElementById('readingProgress');
-            const loadStatus = document.getElementById('loadStatus');
-            
-            window.addEventListener('scroll', () => {
-                const scrollY = window.scrollY;
-                const docHeight = document.documentElement.scrollHeight;
-                const winHeight = window.innerHeight;
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const images = iframeDoc.querySelectorAll('img');
+                let loadedImages = 0;
+                let totalImages = images.length;
                 
-                // 回到顶部按钮（左侧）
-                if (scrollY > 300) {
-                    backToTop.classList.add('visible');
-                } else {
-                    backToTop.classList.remove('visible');
+                if (totalImages === 0) {
+                    // 无图片，延迟检测到底
+                    scheduleBottomCheck(500);
+                    return;
                 }
                 
-                // 阅读进度（内容页）
-                if (currentPost) {
-                    const progress = (scrollY / (docHeight - winHeight)) * 100;
-                    readingProgress.style.width = Math.min(100, Math.max(0, progress)) + '%';
-                    
-                    // 到底检测（缓冲50px）
-                    if (scrollY + winHeight >= docHeight - 50) {
-                        if (!loadStatus.classList.contains('active') || loadStatus.textContent !== '— 到底了 —') {
-                            loadStatus.textContent = '— 到底了 —';
-                            loadStatus.classList.add('active');
-                        }
-                    }
-                }
-            });
-        }
-
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            // 同时滚动iframe内部
-            const iframe = document.getElementById('contentFrame');
-            if (iframe && iframe.contentWindow) {
-                try {
-                    iframe.contentWindow.scrollTo({ top: 0, behavior: 'smooth' });
-                } catch(e) {}
-            }
-        }
-
-        // ==================== 搜索功能（升级）====================
-        function initSearch() {
-            const toggle = document.getElementById('searchToggle');
-            const container = document.getElementById('searchContainer');
-            const box = document.getElementById('searchBox');
-            
-            toggle.addEventListener('click', () => {
-                container.classList.toggle('active');
-                if (container.classList.contains('active')) {
-                    box.focus();
-                }
-            });
-            
-            box.addEventListener('input', (e) => {
-                clearTimeout(searchDebounceTimer);
-                searchDebounceTimer = setTimeout(() => doSearch(e.target.value), 300);
-            });
-        }
-
-        function doSearch(keyword) {
-            const results = document.getElementById('searchResults');
-            if (!keyword.trim()) {
-                results.classList.remove('active');
-                return;
-            }
-            
-            const matches = [];
-            const lowerK = keyword.toLowerCase();
-            
-            siteData.forEach(cat => {
-                cat.posts.forEach(post => {
-                    // 匹配标题、文件名、子项目
-                    const matchName = post.name.toLowerCase().includes(lowerK);
-                    const matchCat = cat.name.toLowerCase().includes(lowerK);
-                    
-                    if (matchName || matchCat) {
-                        matches.push({
-                            catName: cat.name,
-                            catId: cat.id,
-                            postName: post.name,
-                            pages: post.pages,
-                            icon: post.icon,
-                            special: post.special || ''
-                        });
+                // 监听每张图片
+                images.forEach(img => {
+                    if (img.complete) {
+                        loadedImages++;
+                    } else {
+                        img.addEventListener('load', () => { loadedImages++; checkAllImages(); });
+                        img.addEventListener('error', () => { loadedImages++; checkAllImages(); });
                     }
                 });
-            });
-            
-            if (matches.length === 0) {
-                results.innerHTML = '<div class="search-result-item"><div class="search-result-header"><div class="search-result-title">无搜索结果</div></div></div>';
-            } else {
-                results.innerHTML = matches.map(m => `
-                    <div class="search-result-item" onclick="showPost('${m.catId}', '${m.postName}', ${m.pages})">
-                        <div class="search-result-header">
-                            <div class="search-result-icon">${m.icon}</div>
-                            <div class="search-result-title">${highlightText(m.postName, keyword)}</div>
-                        </div>
-                        <div class="search-result-pages">
-                            ${generateSearchPages(m.catId, m.postName, m.pages, m.special)}
-                        </div>
-                    </div>
-                `).join('');
-            }
-            results.classList.add('active');
-        }
-
-        function generateSearchPages(catId, postName, pages, special) {
-            if (special && pages <= 2) {
-                if (special === 'dia') {
-                    return `
-                        <span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, 'dia')">1</span>
-                        <span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 2, 'dia')">2</span>
-                    `;
+                
+                // 立即检查一次
+                checkAllImages();
+                
+                // 3秒超时
+                loadCheckTimer = setTimeout(() => {
+                    if (loadStatus.classList.contains('active') && loadStatus.textContent === '加载中...') {
+                        scheduleBottomCheck(200);
+                    }
+                }, 3000);
+                
+                function checkAllImages() {
+                    if (loadedImages >= totalImages) {
+                        // 图片加载完成，检查高度稳定
+                        let stableCount = 0;
+                        let lastHeight = 0;
+                        let checkCount = 0;
+                        
+                        const heightChecker = setInterval(() => {
+                            const currentHeight = iframeDoc.body ? iframeDoc.body.scrollHeight : 0;
+                            if (currentHeight === lastHeight && currentHeight > 0) {
+                                stableCount++;
+                                if (stableCount >= 2) {
+                                    clearInterval(heightChecker);
+                                    scheduleBottomCheck(100);
+                                }
+                            } else {
+                                stableCount = 0;
+                                lastHeight = currentHeight;
+                            }
+                            
+                            checkCount++;
+                            if (checkCount >= 10) {
+                                clearInterval(heightChecker);
+                                scheduleBottomCheck(100);
+                            }
+                        }, 500);
+                    }
                 }
-                return `<span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">查看</span>`;
+                
+            } catch(e) {
+                // 跨域或异常，简单处理
+                scheduleBottomCheck(1000);
             }
-            let tags = '';
-            for (let i = 1; i <= Math.min(pages, 8); i++) {
-                tags += `<span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i})">${i}</span>`;
-            }
-            if (pages > 8) {
-                tags += `<span class="search-page-tag" onclick="event.stopPropagation(); showPost('${catId}', '${postName}', ${pages})">...</span>`;
-            }
-            return tags;
-        }
+        };
+        
+        // iframe加载失败也处理
+        iframe.onerror = function() {
+            isLoading = false;
+            scheduleBottomCheck(500);
+        };
+    }
 
-        function highlightText(text, keyword) {
-            const reg = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            return text.replace(reg, '<span class="highlight">$1</span>');
-        }
+    function scheduleBottomCheck(delay) {
+        clearTimeout(loadCheckTimer);
+        loadCheckTimer = setTimeout(() => {
+            checkScrollBottom();
+        }, delay);
+    }
 
-        // ==================== 悬浮目录面板 ====================
-        function renderCatalog() {
-            const container = document.getElementById('catalogContent');
-            container.innerHTML = siteData.map(cat => `
-                <div class="catalog-group expanded">
-                    <div class="catalog-group-header" onclick="toggleCatalogGroup(this)">
-                        <div class="catalog-group-name">
-                            <span>${cat.icon}</span>
-                            ${cat.name}
-                        </div>
-                        <span class="catalog-toggle">▼</span>
+    function checkScrollBottom() {
+        const loadStatus = document.getElementById('loadStatus');
+        const docHeight = document.documentElement.scrollHeight;
+        const winHeight = window.innerHeight;
+        const scrollY = window.scrollY || document.documentElement.scrollTop;
+        
+        // 50px缓冲
+        if (scrollY + winHeight >= docHeight - 50) {
+            loadStatus.textContent = '— 到底了 —';
+            loadStatus.classList.add('active');
+        } else {
+            loadStatus.classList.remove('active');
+        }
+    }
+
+    // ==================== 滚动处理（修复版）====================
+    function initScroll() {
+        const backToTop = document.getElementById('backToTop');
+        const readingProgress = document.getElementById('readingProgress');
+        const loadStatus = document.getElementById('loadStatus');
+        
+        // 主页面滚动监听
+        window.addEventListener('scroll', handleScroll);
+        
+        // iframe滚动监听（通过postMessage或定时轮询）
+        setInterval(() => {
+            if (currentPost) {
+                const iframe = document.getElementById('contentFrame');
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const iframeScroll = iframeDoc.documentElement.scrollTop || iframeDoc.body.scrollTop;
+                    const iframeHeight = iframeDoc.documentElement.scrollHeight || iframeDoc.body.scrollHeight;
+                    const iframeWin = iframeDoc.documentElement.clientHeight;
+                    
+                    // 同步iframe滚动到主页面（如果iframe内部滚动）
+                    if (iframeScroll > 0) {
+                        const progress = (iframeScroll / (iframeHeight - iframeWin)) * 100;
+                        readingProgress.style.width = Math.min(100, Math.max(0, progress)) + '%';
+                        
+                        // 显示回到顶部
+                        if (iframeScroll > 200) {
+                            backToTop.classList.add('visible');
+                        } else {
+                            backToTop.classList.remove('visible');
+                        }
+                    }
+                } catch(e) {
+                    // 跨域忽略
+                }
+            }
+        }, 200);
+    }
+
+    function handleScroll() {
+        const backToTop = document.getElementById('backToTop');
+        const readingProgress = document.getElementById('readingProgress');
+        const loadStatus = document.getElementById('loadStatus');
+        const scrollY = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight;
+        const winHeight = window.innerHeight;
+        
+        // 回到顶部按钮 - 主页和内容页都显示
+        if (scrollY > 200) {
+            backToTop.classList.add('visible');
+        } else {
+            // 检查iframe内部滚动
+            const iframe = document.getElementById('contentFrame');
+            let iframeScroll = 0;
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeScroll = iframeDoc.documentElement.scrollTop || iframeDoc.body.scrollTop;
+            } catch(e) {}
+            
+            if (iframeScroll <= 200) {
+                backToTop.classList.remove('visible');
+            }
+        }
+        
+        // 阅读进度（内容页）
+        if (currentPost) {
+            const progress = (scrollY / (docHeight - winHeight)) * 100;
+            readingProgress.style.width = Math.min(100, Math.max(0, progress)) + '%';
+        }
+        
+        // 到底检测（50px缓冲）
+        if (!isLoading && scrollY + winHeight >= docHeight - 50) {
+            if (!loadStatus.classList.contains('active') || loadStatus.textContent !== '— 到底了 —') {
+                loadStatus.textContent = '— 到底了 —';
+                loadStatus.classList.add('active');
+            }
+        }
+    }
+
+    function scrollToTop() {
+        // 滚动主页面
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // 滚动iframe内部
+        const iframe = document.getElementById('contentFrame');
+        if (iframe && iframe.contentWindow) {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+                iframeDoc.body.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch(e) {
+                // 跨域尝试通过postMessage
+                iframe.contentWindow.postMessage({action: 'scrollToTop'}, '*');
+            }
+        }
+        
+        // 隐藏按钮
+        setTimeout(() => {
+            document.getElementById('backToTop').classList.remove('visible');
+        }, 300);
+    }
+
+    // ==================== 搜索功能（优化间距和字体）====================
+    function initSearch() {
+        const toggle = document.getElementById('searchToggle');
+        const container = document.getElementById('searchContainer');
+        const box = document.getElementById('searchBox');
+        
+        toggle.addEventListener('click', () => {
+            container.classList.toggle('active');
+            if (container.classList.contains('active')) {
+                box.focus();
+            }
+        });
+        
+        box.addEventListener('input', (e) => {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => doSearch(e.target.value), 300);
+        });
+    }
+
+    function doSearch(keyword) {
+        const results = document.getElementById('searchResults');
+        if (!keyword.trim()) {
+            results.classList.remove('active');
+            return;
+        }
+        
+        const matches = [];
+        const lowerK = keyword.toLowerCase();
+        
+        siteData.forEach(cat => {
+            cat.posts.forEach(post => {
+                const matchName = post.name.toLowerCase().includes(lowerK);
+                const matchCat = cat.name.toLowerCase().includes(lowerK);
+                
+                if (matchName || matchCat) {
+                    matches.push({
+                        catName: cat.name,
+                        catId: cat.id,
+                        postName: post.name,
+                        pages: post.pages,
+                        icon: post.icon,
+                        special: post.special || ''
+                    });
+                }
+            });
+        });
+        
+        if (matches.length === 0) {
+            results.innerHTML = '<div class="search-result-item"><div class="search-result-header"><div class="search-result-title" style="font-size:14px;color:#999;">无搜索结果</div></div></div>';
+        } else {
+            results.innerHTML = matches.map(m => `
+                <div class="search-result-item" onclick="showPost('${m.catId}', '${m.postName}', ${m.pages}, '${m.special}')">
+                    <div class="search-result-header">
+                        <div class="search-result-icon">${m.icon}</div>
+                        <div class="search-result-title">${highlightText(m.postName, keyword)}</div>
                     </div>
-                    <div class="catalog-items">
-                        ${cat.posts.map(post => `
-                            <div class="catalog-item" onclick="showPost('${cat.id}', '${post.name}', ${post.pages})">
-                                <div class="catalog-item-icon">${post.icon}</div>
-                                <div class="catalog-item-info">
-                                    <div class="catalog-item-name">${post.name}</div>
-                                    <div class="catalog-pages">
-                                        ${generateCatalogPages(cat.id, post.name, post.pages, post.special)}
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="search-result-pages">
+                        ${generateSearchPages(m.catId, m.postName, m.pages, m.special)}
                     </div>
                 </div>
             `).join('');
         }
+        results.classList.add('active');
+    }
 
-        function generateCatalogPages(catId, postName, pages, special) {
-            if (special === 'dia') {
-                return `
-                    <span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, 'dia')">1</span>
-                    <span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 2, 'dia')">2</span>
-                `;
+    function generateSearchPages(catId, postName, pages, special) {
+        if (special === 'dia') {
+            return `
+                <span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, 'dia')">1</span>
+                <span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 2, 'dia')">2</span>
+            `;
+        }
+        if (special && pages === 1) {
+            return `<span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">查看</span>`;
+        }
+        let tags = '';
+        for (let i = 1; i <= Math.min(pages, 8); i++) {
+            tags += `<span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i})">${i}</span>`;
+        }
+        if (pages > 8) {
+            tags += `<span class="search-page-tag" onclick="event.stopPropagation(); showPost('${catId}', '${postName}', ${pages})">...</span>`;
+        }
+        return tags;
+    }
+
+    function highlightText(text, keyword) {
+        const reg = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(reg, '<span class="highlight">$1</span>');
+    }
+
+    // ==================== 悬浮目录面板（默认收起）====================
+    function renderCatalog() {
+        const container = document.getElementById('catalogContent');
+        container.innerHTML = siteData.map(cat => `
+            <div class="catalog-group">
+                <div class="catalog-group-header" onclick="toggleCatalogGroup(this)">
+                    <div class="catalog-group-name">
+                        <span>${cat.icon}</span>
+                        ${cat.name}
+                    </div>
+                    <span class="catalog-toggle">▼</span>
+                </div>
+                <div class="catalog-items">
+                    ${cat.posts.map(post => `
+                        <div class="catalog-item" onclick="showPost('${cat.id}', '${post.name}', ${post.pages}, '${post.special || ''}')">
+                            <div class="catalog-item-icon">${post.icon}</div>
+                            <div class="catalog-item-info">
+                                <div class="catalog-item-name">${post.name}</div>
+                                <div class="catalog-pages">
+                                    ${generateCatalogPages(cat.id, post.name, post.pages, post.special)}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function generateCatalogPages(catId, postName, pages, special) {
+        if (special === 'dia') {
+            return `
+                <span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, 'dia')">1</span>
+                <span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 2, 'dia')">2</span>
+            `;
+        }
+        if (special && pages === 1) {
+            return `<span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">1</span>`;
+        }
+        let tags = '';
+        for (let i = 1; i <= pages; i++) {
+            tags += `<span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i})">${i}</span>`;
+        }
+        return tags;
+    }
+
+    function toggleCatalogGroup(header) {
+        header.parentElement.classList.toggle('expanded');
+    }
+
+    // 目录面板开关
+    const fab = document.getElementById('fabCatalog');
+    const overlay = document.getElementById('catalogOverlay');
+    const panel = document.getElementById('catalogPanel');
+    const closeBtn = document.getElementById('catalogClose');
+
+    function openCatalog() {
+        overlay.classList.add('active');
+        panel.classList.add('active');
+    }
+
+    function closeCatalog() {
+        overlay.classList.remove('active');
+        panel.classList.remove('active');
+    }
+
+    fab.addEventListener('click', (e) => {
+        if (!isDragging) openCatalog();
+    });
+    overlay.addEventListener('click', closeCatalog);
+    closeBtn.addEventListener('click', closeCatalog);
+
+    // ==================== 拖拽功能 ====================
+    function initDrag() {
+        let startX, startY, initialRight, initialBottom;
+        const dragThreshold = 5;
+
+        fab.addEventListener('mousedown', startDrag);
+        fab.addEventListener('touchstart', startDrag, {passive: false});
+
+        function startDrag(e) {
+            isDragging = false;
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            
+            startX = clientX;
+            startY = clientY;
+            
+            const rect = fab.getBoundingClientRect();
+            initialRight = window.innerWidth - rect.right;
+            initialBottom = window.innerHeight - rect.bottom;
+
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchmove', onDrag, {passive: false});
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function onDrag(e) {
+            e.preventDefault();
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            
+            if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
+                isDragging = true;
+                fab.classList.add('dragging');
             }
-            if (special && pages === 1) {
-                return `<span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">1</span>`;
-            }
-            let tags = '';
-            for (let i = 1; i <= pages; i++) {
-                tags += `<span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i})">${i}</span>`;
-            }
-            return tags;
-        }
 
-        function toggleCatalogGroup(header) {
-            header.parentElement.classList.toggle('expanded');
-        }
-
-        // 目录面板开关
-        const fab = document.getElementById('fabCatalog');
-        const overlay = document.getElementById('catalogOverlay');
-        const panel = document.getElementById('catalogPanel');
-        const closeBtn = document.getElementById('catalogClose');
-
-        function openCatalog() {
-            overlay.classList.add('active');
-            panel.classList.add('active');
-        }
-
-        function closeCatalog() {
-            overlay.classList.remove('active');
-            panel.classList.remove('active');
-        }
-
-        fab.addEventListener('click', (e) => {
-            if (!isDragging) openCatalog();
-        });
-        overlay.addEventListener('click', closeCatalog);
-        closeBtn.addEventListener('click', closeCatalog);
-
-        // ==================== 拖拽功能 ====================
-        function initDrag() {
-            let startX, startY, initialRight, initialBottom;
-            const dragThreshold = 5;
-
-            fab.addEventListener('mousedown', startDrag);
-            fab.addEventListener('touchstart', startDrag, {passive: false});
-
-            function startDrag(e) {
-                isDragging = false;
-                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            if (isDragging) {
+                const newRight = initialRight - dx;
+                const newBottom = initialBottom - dy;
+                const maxRight = window.innerWidth - 64;
+                const maxBottom = window.innerHeight - 64;
                 
-                startX = clientX;
-                startY = clientY;
-                
+                fab.style.right = Math.max(0, Math.min(newRight, maxRight)) + 'px';
+                fab.style.bottom = Math.max(0, Math.min(newBottom, maxBottom)) + 'px';
+                fab.style.left = 'auto';
+                fab.style.top = 'auto';
+            }
+        }
+
+        function endDrag() {
+            fab.classList.remove('dragging');
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchmove', onDrag);
+            document.removeEventListener('touchend', endDrag);
+            
+            if (isDragging) {
                 const rect = fab.getBoundingClientRect();
-                initialRight = window.innerWidth - rect.right;
-                initialBottom = window.innerHeight - rect.bottom;
-
-                document.addEventListener('mousemove', onDrag);
-                document.addEventListener('mouseup', endDrag);
-                document.addEventListener('touchmove', onDrag, {passive: false});
-                document.addEventListener('touchend', endDrag);
-            }
-
-            function onDrag(e) {
-                e.preventDefault();
-                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                const centerX = rect.left + rect.width / 2;
+                const winWidth = window.innerWidth;
                 
-                const dx = clientX - startX;
-                const dy = clientY - startY;
+                // 电脑版适配
+                const isPC = window.innerWidth > 480;
+                const containerHalf = isPC ? (window.innerWidth / 2 + 240) : (winWidth / 2);
                 
-                if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
-                    isDragging = true;
-                    fab.classList.add('dragging');
-                }
-
-                if (isDragging) {
-                    const newRight = initialRight - dx;
-                    const newBottom = initialBottom - dy;
-                    const maxRight = window.innerWidth - 64;
-                    const maxBottom = window.innerHeight - 64;
-                    
-                    fab.style.right = Math.max(0, Math.min(newRight, maxRight)) + 'px';
-                    fab.style.bottom = Math.max(0, Math.min(newBottom, maxBottom)) + 'px';
+                if (centerX > containerHalf) {
+                    fab.style.right = isPC ? 'calc(50% - 220px)' : '20px';
                     fab.style.left = 'auto';
-                    fab.style.top = 'auto';
+                } else {
+                    fab.style.left = isPC ? 'calc(50% - 220px)' : '20px';
+                    fab.style.right = 'auto';
                 }
             }
-
-            function endDrag() {
-                fab.classList.remove('dragging');
-                document.removeEventListener('mousemove', onDrag);
-                document.removeEventListener('mouseup', endDrag);
-                document.removeEventListener('touchmove', onDrag);
-                document.removeEventListener('touchend', endDrag);
-                
-                if (isDragging) {
-                    const rect = fab.getBoundingClientRect();
-                    const centerX = rect.left + rect.width / 2;
-                    if (centerX > window.innerWidth / 2) {
-                        fab.style.right = '20px';
-                        fab.style.left = 'auto';
-                    } else {
-                        fab.style.left = '20px';
-                        fab.style.right = 'auto';
-                    }
-                }
-                setTimeout(() => isDragging = false, 50);
-            }
+            setTimeout(() => isDragging = false, 50);
         }
+    }
 
-        // ==================== 工具函数 ====================
-        function showLoading(show) {
-            document.getElementById('loadingToast').classList.toggle('active', show);
-        }
+    // ==================== 工具函数 ====================
+    function showLoading(show) {
+        document.getElementById('loadingToast').classList.toggle('active', show);
+    }
 
-        // 防止拖拽时页面滚动
-        document.addEventListener('touchmove', function(e) {
-            if (isDragging) e.preventDefault();
-        }, { passive: false });
+    // 防止拖拽时页面滚动
+    document.addEventListener('touchmove', function(e) {
+        if (isDragging) e.preventDefault();
+    }, { passive: false });
 
-        // 启动
-        init();
-    </script>
+    // 启动
+    init();
+</script>
+
 </body>
 </html>
