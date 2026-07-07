@@ -124,7 +124,7 @@
             transform: scale(1.05);
         }
 
-        /* 搜索框 */
+        /* 搜索区域 */
         .search-container {
             padding: 0 16px 16px;
             max-width: 430px;
@@ -155,11 +155,12 @@
         .search-results {
             margin-top: 8px;
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
-            max-height: 400px;
+            max-height: 70vh;
             overflow-y: auto;
             display: none;
+            border: 1px solid rgba(76,175,80,0.1);
         }
 
         .search-results.active {
@@ -167,7 +168,7 @@
         }
 
         .search-result-item {
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-bottom: 1px solid rgba(0,0,0,0.04);
             cursor: pointer;
             transition: all 0.2s;
@@ -177,16 +178,57 @@
             background: rgba(76, 175, 80, 0.05);
         }
 
-        .search-result-title {
-            font-size: 14px;
-            color: #333;
-            font-weight: 600;
+        .search-result-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .search-result-path {
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
+        .search-result-icon {
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(76,175,80,0.1);
+            border-radius: 8px;
+        }
+
+        .search-result-title {
+            font-size: 15px;
+            color: #333;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .search-result-pages {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding-left: 40px;
+        }
+
+        .search-page-tag {
+            min-width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(76,175,80,0.1);
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0 8px;
+        }
+
+        .search-page-tag:hover {
+            background: var(--primary);
+            color: white;
         }
 
         .highlight {
@@ -366,9 +408,17 @@
             pointer-events: none;
         }
 
-        /* 目录列表 */
+        /* 目录列表 - 默认收起 */
         .category-section {
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+        }
+
+        .category-section.expanded .category-items {
+            max-height: 2000px;
+        }
+
+        .category-section.expanded .category-toggle {
+            transform: rotate(180deg);
         }
 
         .category-header {
@@ -378,7 +428,6 @@
             padding: 16px;
             background: linear-gradient(135deg, rgba(102,187,106,0.1) 0%, rgba(129,199,132,0.05) 100%);
             border-radius: 16px;
-            margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid rgba(76,175,80,0.1);
@@ -405,19 +454,12 @@
             transition: transform 0.3s;
         }
 
-        .category-section.expanded .category-toggle {
-            transform: rotate(180deg);
-        }
-
         .category-items {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease;
             padding-left: 8px;
-        }
-
-        .category-section.expanded .category-items {
-            max-height: 2000px;
+            margin-top: 8px;
         }
 
         .post-item {
@@ -500,6 +542,7 @@
             max-width: 430px;
             margin: 0 auto;
             min-height: calc(100vh - 80px);
+            padding-bottom: 140px;
         }
 
         .content-page.active {
@@ -546,7 +589,7 @@
             box-shadow: var(--shadow);
         }
 
-        /* 底部页码导航 */
+        /* 底部页码导航 - 新版美观设计 */
         .page-nav {
             position: fixed;
             bottom: 0;
@@ -555,7 +598,7 @@
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid rgba(0,0,0,0.05);
-            padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+            padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
             z-index: 98;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
             display: none;
@@ -570,79 +613,99 @@
             margin: 0 auto;
         }
 
-        .page-nav-row {
+        .page-nav-main {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
         }
 
-        .page-nav-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .page-nav-label {
-            font-size: 13px;
-            color: #666;
-            white-space: nowrap;
-            min-width: 40px;
-        }
-
-        .page-nav-pages {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            flex: 1;
-        }
-
-        .page-nav-btn {
-            min-width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: 1px solid rgba(76,175,80,0.2);
+        .nav-arrow-btn {
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 18px;
+            border: 2px solid var(--primary);
             background: white;
             color: var(--primary);
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
             cursor: pointer;
             transition: all 0.2s;
-            padding: 0 6px;
+            white-space: nowrap;
         }
 
-        .page-nav-btn:hover, .page-nav-btn.active {
+        .nav-arrow-btn:hover:not(:disabled) {
             background: var(--primary);
             color: white;
         }
 
-        .page-jump {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+        .nav-arrow-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #999;
         }
 
-        .page-input {
-            width: 60px;
+        .page-indicator {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            min-width: 80px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .page-jump-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             height: 32px;
+        }
+
+        .jump-label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .jump-input {
+            width: 56px;
+            height: 28px;
             border-radius: 8px;
-            border: 1px solid rgba(76,175,80,0.3);
+            border: 1.5px solid rgba(76,175,80,0.3);
             text-align: center;
             font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-dark);
             outline: none;
+            background: rgba(76,175,80,0.05);
         }
 
-        .page-jump-btn {
-            height: 32px;
+        .jump-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(76,175,80,0.1);
+        }
+
+        .jump-btn {
+            height: 28px;
             padding: 0 14px;
-            border-radius: 8px;
+            border-radius: 14px;
             border: none;
             background: var(--primary);
             color: white;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .jump-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
         }
 
         /* 加载提示 */
@@ -665,33 +728,36 @@
             display: block;
         }
 
-        .progress-bar-top {
+        .load-status {
             position: fixed;
-            top: 0;
+            bottom: 80px;
             left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-light), var(--primary-lighter));
-            z-index: 10000;
-            transition: width 0.3s;
+            right: 0;
+            text-align: center;
+            padding: 12px;
+            color: #999;
+            font-size: 13px;
+            z-index: 97;
             display: none;
+            pointer-events: none;
         }
 
-        .progress-bar-top.active {
+        .load-status.active {
             display: block;
         }
 
-        /* 回到顶部 */
+        /* 回到顶部 - 左侧植物暗纹 */
         .back-to-top {
             position: fixed;
-            right: 20px;
-            bottom: 160px;
-            width: 48px;
-            height: 48px;
+            left: 16px;
+            bottom: 100px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: none;
             background: linear-gradient(135deg, rgba(102,187,106,0.9) 0%, rgba(129,199,132,0.9) 100%);
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -716,9 +782,32 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,50 Q40,30 50,50 T70,50' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='2'/%3E%3Cpath d='M20,60 Q35,40 50,60 T80,60' fill='none' stroke='rgba(255,255,255,0.15)' stroke-width='2'/%3E%3Ccircle cx='50' cy='30' r='3' fill='rgba(255,255,255,0.2)'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,80 Q30,50 25,30 Q28,45 35,60' fill='none' stroke='rgba(255,255,255,0.25)' stroke-width='2'/%3E%3Cpath d='M50,85 Q55,55 50,25 Q53,40 60,55' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='2'/%3E%3Cpath d='M80,80 Q75,50 80,30 Q77,45 70,60' fill='none' stroke='rgba(255,255,255,0.25)' stroke-width='2'/%3E%3Cellipse cx='25' cy='28' rx='4' ry='2.5' fill='rgba(255,255,255,0.2)'/%3E%3Cellipse cx='50' cy='23' rx='4' ry='2.5' fill='rgba(255,255,255,0.15)'/%3E%3Cellipse cx='80' cy='28' rx='4' ry='2.5' fill='rgba(255,255,255,0.2)'/%3E%3C/svg%3E");
             background-size: cover;
-            opacity: 0.6;
+            opacity: 0.8;
+        }
+
+        .back-to-top::after {
+            content: '↑';
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+        }
+
+        /* 阅读进度条 */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            z-index: 10000;
+            transition: width 0.1s;
+            display: none;
+        }
+
+        .reading-progress.active {
+            display: block;
         }
 
         /* 悬浮目录按钮 */
@@ -1014,35 +1103,6 @@
             color: white;
         }
 
-        /* 滚动进度条（内容页） */
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-light), var(--primary));
-            z-index: 10000;
-            transition: width 0.1s;
-            display: none;
-        }
-
-        .reading-progress.active {
-            display: block;
-        }
-
-        /* 加载提示 */
-        .load-more {
-            text-align: center;
-            padding: 20px;
-            color: #999;
-            font-size: 13px;
-            display: none;
-        }
-
-        .load-more.active {
-            display: block;
-        }
-
         /* 空状态 */
         .empty-state {
             text-align: center;
@@ -1056,11 +1116,11 @@
             opacity: 0.3;
         }
 
-        /* 适配小屏幕 */
         @media (max-width: 380px) {
             .recent-card { min-width: 120px; }
             .catalog-panel { width: 65%; }
-            .page-btn { min-width: 32px; height: 32px; font-size: 12px; }
+            .nav-arrow-btn { padding: 0 12px; font-size: 13px; height: 32px; }
+            .page-indicator { font-size: 14px; min-width: 60px; }
         }
 
         @media (min-width: 768px) {
@@ -1070,8 +1130,7 @@
 </head>
 <body>
 
-    <!-- 顶部进度条 -->
-    <div class="progress-bar-top" id="progressBarTop"></div>
+    <!-- 阅读进度条 -->
     <div class="reading-progress" id="readingProgress"></div>
 
     <!-- 状态栏 -->
@@ -1118,15 +1177,11 @@
                 </h2>
                 <button class="section-action" onclick="clearRecent()">清空</button>
             </div>
-            <div class="recent-scroll" id="recentList">
-                <!-- 动态生成 -->
-            </div>
+            <div class="recent-scroll" id="recentList"></div>
         </div>
 
         <!-- 目录列表 -->
-        <div id="categoryList">
-            <!-- 动态生成 -->
-        </div>
+        <div id="categoryList"></div>
     </main>
 
     <!-- 内容页 -->
@@ -1138,29 +1193,32 @@
         <iframe class="content-frame" id="contentFrame"></iframe>
     </div>
 
-    <!-- 底部页码导航 -->
+    <!-- 底部页码导航 - 新版 -->
     <div class="page-nav" id="pageNav">
         <div class="page-nav-content">
-            <div class="page-nav-row">
-                <span class="page-nav-label">页码</span>
-                <div class="page-nav-pages" id="pageNavPages"></div>
+            <div class="page-nav-main">
+                <button class="nav-arrow-btn" id="prevBtn" onclick="goToPage(currentPage - 1)">
+                    ← 上一页
+                </button>
+                <div class="page-indicator" id="pageIndicator">1 / 1</div>
+                <button class="nav-arrow-btn" id="nextBtn" onclick="goToPage(currentPage + 1)">
+                    下一页 →
+                </button>
             </div>
-            <div class="page-nav-row">
-                <span class="page-nav-label">跳转</span>
-                <div class="page-jump">
-                    <input type="number" class="page-input" id="pageInput" min="1" placeholder="页">
-                    <button class="page-jump-btn" onclick="jumpToPage()">跳转</button>
-                </div>
+            <div class="page-jump-row">
+                <span class="jump-label">跳转到:</span>
+                <input type="number" class="jump-input" id="jumpInput" min="1" placeholder="页码">
+                <button class="jump-btn" onclick="jumpToPage()">GO</button>
             </div>
         </div>
     </div>
 
     <!-- 加载提示 -->
     <div class="loading-toast" id="loadingToast">加载中...</div>
-    <div class="load-more" id="loadMore">加载完成</div>
+    <div class="load-status" id="loadStatus"></div>
 
-    <!-- 回到顶部 -->
-    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+    <!-- 回到顶部 - 左侧 -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()"></button>
 
     <!-- 悬浮目录按钮 -->
     <div class="fab-catalog" id="fabCatalog">
@@ -1179,13 +1237,11 @@
             <div class="catalog-title"><span>🌲</span>目录</div>
             <button class="catalog-close" id="catalogClose">✕</button>
         </div>
-        <div class="catalog-content" id="catalogContent">
-            <!-- 动态生成 -->
-        </div>
+        <div class="catalog-content" id="catalogContent"></div>
     </div>
 
     <script>
-        // ==================== 数据定义（严格按txt顺序）====================
+        // ==================== 数据定义（严格按txt顺序，已补全）====================
         const siteData = [
             {
                 id: 'laolao',
@@ -1214,7 +1270,7 @@
                 name: '新番组存档',
                 icon: '📺',
                 posts: [
-                    { name: '泥跌飞了：7月3日追番组事件整理', pages: 1, icon: '📅', special: true },
+                    { name: '泥跌飞了：7月3日追番组事件整理', pages: 1, icon: '📅', special: 'nidi' },
                     { name: '太阳组：防新番岁月史书', pages: 2, icon: '📖' },
                     { name: '太阳组：七月闲聊', pages: 3, icon: '☀️' },
                     { name: '如日之升：临时闲聊楼', pages: 28, icon: '💬' },
@@ -1224,7 +1280,7 @@
                     { name: '组规2.0更所有女禁红不禁黑', pages: 1, icon: '📋' },
                     { name: '你们可一定要保证朋友熟人扶你一把的陌生人都不磕腐不沾男啊', pages: 1, icon: '🤝' },
                     { name: '组长打赏购买自证记录', pages: 1, icon: '💰' },
-                    { name: '补充装：Dia', pages: 1, icon: '📦', special: true }
+                    { name: '补充装：Dia', pages: 2, icon: '📦', special: 'dia' }
                 ]
             },
             {
@@ -1243,9 +1299,12 @@
         let currentCategory = null;
         let currentPost = null;
         let currentPage = 1;
+        let currentTotalPages = 1;
         let recentViews = JSON.parse(localStorage.getItem('recentViews') || '[]');
         let isDragging = false;
         let searchDebounceTimer = null;
+        let imageLoadTimer = null;
+        let scrollCheckTimer = null;
 
         // ==================== 初始化 ====================
         function init() {
@@ -1266,11 +1325,11 @@
             document.getElementById('clock').textContent = `${hours}:${minutes}`;
         }
 
-        // ==================== 渲染目录 ====================
+        // ==================== 渲染目录（默认全部收起）====================
         function renderCategories() {
             const container = document.getElementById('categoryList');
-            container.innerHTML = siteData.map((cat, idx) => `
-                <div class="category-section ${idx === 0 ? 'expanded' : ''}" data-id="${cat.id}">
+            container.innerHTML = siteData.map(cat => `
+                <div class="category-section" data-id="${cat.id}">
                     <div class="category-header" onclick="toggleCategory('${cat.id}')">
                         <span class="category-icon">${cat.icon}</span>
                         <span class="category-title">${cat.name}</span>
@@ -1295,7 +1354,7 @@
 
         function generatePageButtons(catId, postName, pages, special) {
             if (special && pages === 1) {
-                return `<button class="page-btn" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, true)">查看</button>`;
+                return `<button class="page-btn" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">查看</button>`;
             }
             let buttons = '';
             for (let i = 1; i <= Math.min(pages, 6); i++) {
@@ -1320,7 +1379,7 @@
                 return;
             }
             container.innerHTML = recentViews.map(view => `
-                <div class="recent-card" onclick="openPage('${view.catId}', '${view.postName}', ${view.page})">
+                <div class="recent-card" onclick="openPage('${view.catId}', '${view.postName}', ${view.page}, '${view.special || ''}')">
                     <div class="recent-icon green">📄</div>
                     <div class="recent-title">${view.postName}</div>
                     <div class="recent-meta">${view.time}</div>
@@ -1328,12 +1387,12 @@
             `).join('');
         }
 
-        function addRecent(catId, postName, page) {
+        function addRecent(catId, postName, page, special) {
             const exists = recentViews.findIndex(v => v.catId === catId && v.postName === postName && v.page === page);
             if (exists > -1) recentViews.splice(exists, 1);
             
             recentViews.unshift({
-                catId, postName, page,
+                catId, postName, page, special: special || '',
                 time: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             });
             
@@ -1352,23 +1411,27 @@
         function showPost(catId, postName, totalPages) {
             currentCategory = catId;
             currentPost = postName;
+            currentTotalPages = totalPages;
             currentPage = 1;
             openPage(catId, postName, 1);
         }
 
-        function openPage(catId, postName, page, special = false) {
-            addRecent(catId, postName, page);
+        function openPage(catId, postName, page, special) {
+            addRecent(catId, postName, page, special);
             
             const cat = siteData.find(c => c.id === catId);
             const post = cat.posts.find(p => p.name === postName);
             
             // 构建文件路径
             let filePath;
-            if (special) {
-                if (postName.includes('泥跌飞了')) {
-                    filePath = `新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html`;
-                } else if (postName.includes('Dia')) {
+            if (special === 'nidi') {
+                filePath = `新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html`;
+            } else if (special === 'dia') {
+                // Dia有两个文件，根据页码选择
+                if (page === 1) {
                     filePath = `新番组存档/补充装：Dia/Dia：不是，举我自证楼干嘛？.html`;
+                } else {
+                    filePath = `新番组存档/补充装：Dia/只敢举报不敢对线的造谣小团体你赢了.html`;
                 }
             } else {
                 filePath = `${cat.name}/${postName}/${page}.html`;
@@ -1386,57 +1449,56 @@
             document.getElementById('contentFrame').src = filePath;
             document.getElementById('contentTitle').textContent = postName + (post.pages > 1 ? ` (${page}/${post.pages})` : '');
             
-            setTimeout(() => showLoading(false), 500);
+            setTimeout(() => showLoading(false), 300);
             
-            // 渲染页码导航
-            renderPageNav(post.pages, page);
+            // 更新页码显示
+            currentPage = page;
+            currentTotalPages = post.pages;
+            updatePageNav();
             
             // 显示阅读进度条
             document.getElementById('readingProgress').classList.add('active');
+            
+            // 监听iframe加载和图片
+            setupIframeLoadListener();
         }
 
-        function renderPageNav(total, current) {
-            const container = document.getElementById('pageNavPages');
-            let buttons = '';
+        function updatePageNav() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicator = document.getElementById('pageIndicator');
             
-            // 智能分页显示
-            const maxVisible = 8;
-            let start = Math.max(1, current - Math.floor(maxVisible/2));
-            let end = Math.min(total, start + maxVisible - 1);
-            if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= currentTotalPages;
+            indicator.textContent = `${currentPage} / ${currentTotalPages}`;
             
-            if (start > 1) buttons += `<button class="page-nav-btn" onclick="goToPage(1)">1</button>`;
-            if (start > 2) buttons += `<span style="color:#999;padding:0 4px;">...</span>`;
-            
-            for (let i = start; i <= end; i++) {
-                buttons += `<button class="page-nav-btn ${i === current ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-            }
-            
-            if (end < total - 1) buttons += `<span style="color:#999;padding:0 4px;">...</span>`;
-            if (end < total) buttons += `<button class="page-nav-btn" onclick="goToPage(${total})">${total}</button>`;
-            
-            container.innerHTML = buttons;
-            document.getElementById('pageInput').max = total;
-            document.getElementById('pageInput').placeholder = `1-${total}`;
+            const jumpInput = document.getElementById('jumpInput');
+            jumpInput.max = currentTotalPages;
+            jumpInput.placeholder = `${currentTotalPages}`;
         }
 
         function goToPage(page) {
-            if (!currentPost) return;
+            if (page < 1 || page > currentTotalPages || !currentPost) return;
             currentPage = page;
-            openPage(currentCategory, currentPost, page);
+            openPage(currentCategory, currentPost, page, getSpecialType(currentCategory, currentPost));
             scrollToTop();
         }
 
         function jumpToPage() {
-            const input = document.getElementById('pageInput');
+            const input = document.getElementById('jumpInput');
             const page = parseInt(input.value);
-            const max = parseInt(input.max);
-            if (page >= 1 && page <= max) {
+            if (page >= 1 && page <= currentTotalPages) {
                 goToPage(page);
                 input.value = '';
             } else {
-                alert(`请输入 1-${max} 之间的页码`);
+                alert(`请输入 1-${currentTotalPages} 之间的页码`);
             }
+        }
+
+        function getSpecialType(catId, postName) {
+            const cat = siteData.find(c => c.id === catId);
+            const post = cat.posts.find(p => p.name === postName);
+            return post.special || '';
         }
 
         function goBack() {
@@ -1448,23 +1510,123 @@
             document.getElementById('contentFrame').src = '';
             document.getElementById('readingProgress').classList.remove('active');
             document.getElementById('readingProgress').style.width = '0%';
+            document.getElementById('loadStatus').classList.remove('active');
             currentCategory = null;
             currentPost = null;
+            clearTimeout(imageLoadTimer);
+            clearTimeout(scrollCheckTimer);
         }
 
-        // ==================== 滚动处理 ====================
+        // ==================== 加载检测（增强版）====================
+        function setupIframeLoadListener() {
+            const iframe = document.getElementById('contentFrame');
+            const loadStatus = document.getElementById('loadStatus');
+            
+            loadStatus.textContent = '加载中...';
+            loadStatus.classList.add('active');
+            
+            iframe.onload = function() {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const images = iframeDoc.querySelectorAll('img');
+                    let loadedCount = 0;
+                    let totalImages = images.length;
+                    
+                    if (totalImages === 0) {
+                        // 无图片，直接检测
+                        setTimeout(() => checkScrollBottom(), 500);
+                        return;
+                    }
+                    
+                    // 监听每张图片加载
+                    images.forEach(img => {
+                        if (img.complete) {
+                            loadedCount++;
+                        } else {
+                            img.addEventListener('load', () => {
+                                loadedCount++;
+                                checkAllLoaded();
+                            });
+                            img.addEventListener('error', () => {
+                                loadedCount++;
+                                checkAllLoaded();
+                            });
+                        }
+                    });
+                    
+                    // 超时处理（3秒）
+                    setTimeout(() => {
+                        if (loadStatus.classList.contains('active') && loadStatus.textContent === '加载中...') {
+                            checkScrollBottom();
+                        }
+                    }, 3000);
+                    
+                    function checkAllLoaded() {
+                        if (loadedCount >= totalImages) {
+                            // 图片加载完成，检查高度稳定
+                            let stableCount = 0;
+                            let lastHeight = 0;
+                            
+                            imageLoadTimer = setInterval(() => {
+                                const currentHeight = iframeDoc.body.scrollHeight;
+                                if (currentHeight === lastHeight) {
+                                    stableCount++;
+                                    if (stableCount >= 3) {
+                                        clearInterval(imageLoadTimer);
+                                        checkScrollBottom();
+                                    }
+                                } else {
+                                    stableCount = 0;
+                                    lastHeight = currentHeight;
+                                }
+                            }, 500);
+                            
+                            // 最多检查10次（5秒）
+                            setTimeout(() => {
+                                clearInterval(imageLoadTimer);
+                                if (loadStatus.classList.contains('active')) {
+                                    checkScrollBottom();
+                                }
+                            }, 5000);
+                        }
+                    }
+                    
+                    // 立即检查一次
+                    checkAllLoaded();
+                    
+                } catch(e) {
+                    // 跨域情况，简单处理
+                    setTimeout(() => checkScrollBottom(), 1000);
+                }
+            };
+        }
+
+        function checkScrollBottom() {
+            const loadStatus = document.getElementById('loadStatus');
+            const docHeight = document.documentElement.scrollHeight;
+            const winHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+            
+            // 缓冲值50px
+            if (scrollY + winHeight >= docHeight - 50) {
+                loadStatus.textContent = '— 到底了 —';
+            } else {
+                loadStatus.classList.remove('active');
+            }
+        }
+
+        // ==================== 滚动处理（增强版）====================
         function initScroll() {
-            let lastScroll = 0;
             const backToTop = document.getElementById('backToTop');
             const readingProgress = document.getElementById('readingProgress');
-            const loadMore = document.getElementById('loadMore');
+            const loadStatus = document.getElementById('loadStatus');
             
             window.addEventListener('scroll', () => {
                 const scrollY = window.scrollY;
                 const docHeight = document.documentElement.scrollHeight;
                 const winHeight = window.innerHeight;
                 
-                // 回到顶部按钮
+                // 回到顶部按钮（左侧）
                 if (scrollY > 300) {
                     backToTop.classList.add('visible');
                 } else {
@@ -1475,27 +1637,30 @@
                 if (currentPost) {
                     const progress = (scrollY / (docHeight - winHeight)) * 100;
                     readingProgress.style.width = Math.min(100, Math.max(0, progress)) + '%';
+                    
+                    // 到底检测（缓冲50px）
+                    if (scrollY + winHeight >= docHeight - 50) {
+                        if (!loadStatus.classList.contains('active') || loadStatus.textContent !== '— 到底了 —') {
+                            loadStatus.textContent = '— 到底了 —';
+                            loadStatus.classList.add('active');
+                        }
+                    }
                 }
-                
-                // 加载提示
-                if (scrollY + winHeight >= docHeight - 50) {
-                    loadMore.classList.add('active');
-                    loadMore.textContent = '加载完成';
-                } else if (scrollY > lastScroll && scrollY > 100) {
-                    loadMore.classList.add('active');
-                    loadMore.textContent = '加载中...';
-                    setTimeout(() => loadMore.classList.remove('active'), 300);
-                }
-                
-                lastScroll = scrollY;
             });
         }
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 同时滚动iframe内部
+            const iframe = document.getElementById('contentFrame');
+            if (iframe && iframe.contentWindow) {
+                try {
+                    iframe.contentWindow.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch(e) {}
+            }
         }
 
-        // ==================== 搜索功能 ====================
+        // ==================== 搜索功能（升级）====================
         function initSearch() {
             const toggle = document.getElementById('searchToggle');
             const container = document.getElementById('searchContainer');
@@ -1526,28 +1691,59 @@
             
             siteData.forEach(cat => {
                 cat.posts.forEach(post => {
-                    if (post.name.toLowerCase().includes(lowerK)) {
+                    // 匹配标题、文件名、子项目
+                    const matchName = post.name.toLowerCase().includes(lowerK);
+                    const matchCat = cat.name.toLowerCase().includes(lowerK);
+                    
+                    if (matchName || matchCat) {
                         matches.push({
                             catName: cat.name,
-                            postName: post.name,
                             catId: cat.id,
-                            pages: post.pages
+                            postName: post.name,
+                            pages: post.pages,
+                            icon: post.icon,
+                            special: post.special || ''
                         });
                     }
                 });
             });
             
             if (matches.length === 0) {
-                results.innerHTML = '<div class="search-result-item"><div class="search-result-title">无搜索结果</div></div>';
+                results.innerHTML = '<div class="search-result-item"><div class="search-result-header"><div class="search-result-title">无搜索结果</div></div></div>';
             } else {
                 results.innerHTML = matches.map(m => `
                     <div class="search-result-item" onclick="showPost('${m.catId}', '${m.postName}', ${m.pages})">
-                        <div class="search-result-title">${highlightText(m.postName, keyword)}</div>
-                        <div class="search-result-path">${m.catName} · ${m.pages}页</div>
+                        <div class="search-result-header">
+                            <div class="search-result-icon">${m.icon}</div>
+                            <div class="search-result-title">${highlightText(m.postName, keyword)}</div>
+                        </div>
+                        <div class="search-result-pages">
+                            ${generateSearchPages(m.catId, m.postName, m.pages, m.special)}
+                        </div>
                     </div>
                 `).join('');
             }
             results.classList.add('active');
+        }
+
+        function generateSearchPages(catId, postName, pages, special) {
+            if (special && pages <= 2) {
+                if (special === 'dia') {
+                    return `
+                        <span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, 'dia')">1</span>
+                        <span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 2, 'dia')">2</span>
+                    `;
+                }
+                return `<span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">查看</span>`;
+            }
+            let tags = '';
+            for (let i = 1; i <= Math.min(pages, 8); i++) {
+                tags += `<span class="search-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', ${i})">${i}</span>`;
+            }
+            if (pages > 8) {
+                tags += `<span class="search-page-tag" onclick="event.stopPropagation(); showPost('${catId}', '${postName}', ${pages})">...</span>`;
+            }
+            return tags;
         }
 
         function highlightText(text, keyword) {
@@ -1559,7 +1755,7 @@
         function renderCatalog() {
             const container = document.getElementById('catalogContent');
             container.innerHTML = siteData.map(cat => `
-                <div class="catalog-group">
+                <div class="catalog-group expanded">
                     <div class="catalog-group-header" onclick="toggleCatalogGroup(this)">
                         <div class="catalog-group-name">
                             <span>${cat.icon}</span>
@@ -1585,8 +1781,14 @@
         }
 
         function generateCatalogPages(catId, postName, pages, special) {
+            if (special === 'dia') {
+                return `
+                    <span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, 'dia')">1</span>
+                    <span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 2, 'dia')">2</span>
+                `;
+            }
             if (special && pages === 1) {
-                return `<span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, true)">1</span>`;
+                return `<span class="catalog-page-tag" onclick="event.stopPropagation(); openPage('${catId}', '${postName}', 1, '${special}')">1</span>`;
             }
             let tags = '';
             for (let i = 1; i <= pages; i++) {
