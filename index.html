@@ -25,15 +25,6 @@
             --shadow: rgba(0,0,0,0.08);
         }
         
-        .dark-mode {
-            --bg: #1a1a2e;
-            --card-bg: #16213e;
-            --text: #eaeaea;
-            --text-secondary: #a0a0a0;
-            --border: #0f3460;
-            --shadow: rgba(0,0,0,0.3);
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: var(--bg);
@@ -77,7 +68,22 @@
             gap: 10px;
         }
         
-        .menu-btn, .search-btn {
+        .back-btn-header {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-btn {
             width: 40px;
             height: 40px;
             border: none;
@@ -106,7 +112,7 @@
             font-size: 28px;
         }
         
-        /* 搜索框 */
+        /* 搜索框 - 放在顶部导航下方 */
         .search-container {
             position: fixed;
             top: 56px;
@@ -206,8 +212,39 @@
             font-weight: 600;
         }
         
-        /* 侧边栏目录 - 只占一半屏幕 */
-        .sidebar-overlay {
+        /* 悬浮目录球 */
+        .float-toc-btn {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1500;
+            box-shadow: 0 4px 16px rgba(76,175,80,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            touch-action: none;
+        }
+        
+        .float-toc-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .float-toc-btn.dragging {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+        
+        /* 目录面板 - 占屏幕一半 */
+        .toc-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.5);
@@ -217,12 +254,12 @@
             transition: all 0.3s;
         }
         
-        .sidebar-overlay.active {
+        .toc-overlay.active {
             opacity: 1;
             visibility: visible;
         }
         
-        .sidebar {
+        .toc-panel {
             position: fixed;
             top: 0;
             right: 0;
@@ -239,11 +276,11 @@
             flex-direction: column;
         }
         
-        .sidebar.active {
+        .toc-panel.active {
             transform: translateX(0);
         }
         
-        .sidebar-header {
+        .toc-header {
             padding: 20px;
             background: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);
             color: white;
@@ -253,7 +290,7 @@
             justify-content: space-between;
         }
         
-        .sidebar-title {
+        .toc-title {
             font-size: 20px;
             font-weight: bold;
             display: flex;
@@ -261,7 +298,7 @@
             gap: 10px;
         }
         
-        .close-btn {
+        .toc-close {
             width: 36px;
             height: 36px;
             border: none;
@@ -272,7 +309,7 @@
             cursor: pointer;
         }
         
-        .sidebar-content {
+        .toc-content {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
@@ -383,18 +420,6 @@
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(76,175,80,0.3);
-        }
-        
-        .file-meta {
-            position: absolute;
-            right: 16px;
-            top: 14px;
-            font-size: 12px;
-            color: var(--primary);
-            font-weight: 600;
-            background: rgba(76,175,80,0.1);
-            padding: 2px 8px;
-            border-radius: 10px;
         }
         
         /* 主内容区 */
@@ -678,7 +703,101 @@
             box-shadow: 0 4px 12px rgba(76,175,80,0.3);
         }
         
-        /* 加载和到底提示 */
+        /* 帖子内容页 */
+        .post-content {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 60vh;
+        }
+        
+        .post-content.active {
+            display: block;
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .post-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            flex: 1;
+        }
+        
+        .post-iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+            border-radius: 12px;
+            background: var(--bg);
+        }
+        
+        /* 帖子内页码导航 */
+        .post-page-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 16px;
+        }
+        
+        .post-page-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            padding: 0 16px;
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .post-page-btn:hover, .post-page-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .post-page-btn.current {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+        }
+        
+        .post-page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: var(--bg);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        
+        .post-page-info {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        /* 加载和到底提示 - 只在主页显示 */
         .loading-tip {
             text-align: center;
             padding: 20px;
@@ -715,7 +834,7 @@
             50% { transform: scale(1.2); }
         }
         
-        /* 底部翻页 */
+        /* 底部翻页 - 只在主页显示 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -724,12 +843,16 @@
             height: 60px;
             background: var(--card-bg);
             border-top: 2px solid var(--border);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
             z-index: 100;
             box-shadow: 0 -4px 12px var(--shadow);
+        }
+        
+        .bottom-nav.active {
+            display: flex;
         }
         
         .nav-btn {
@@ -763,44 +886,27 @@
             color: var(--primary);
         }
         
-        /* 悬浮按钮 */
-        .fab-container {
+        /* 返回顶部 */
+        #backToTop {
             position: fixed;
             bottom: 80px;
             right: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 99;
-        }
-        
-        .fab {
             width: 48px;
             height: 48px;
             border-radius: 50%;
             border: none;
-            background: var(--card-bg);
-            color: var(--primary);
+            background: var(--primary);
+            color: white;
             font-size: 20px;
             cursor: pointer;
             box-shadow: 0 4px 12px var(--shadow);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            border: 2px solid var(--border);
-        }
-        
-        .fab:active {
-            transform: scale(0.9);
-        }
-        
-        #backToTop {
+            transition: all 0.3s;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s;
-            background: var(--primary);
-            color: white;
+            z-index: 99;
         }
         
         #backToTop.show {
@@ -808,11 +914,9 @@
             visibility: visible;
         }
         
-        /* 字体大小 */
-        .font-small { font-size: 14px; }
-        .font-normal { font-size: 16px; }
-        .font-large { font-size: 18px; }
-        .font-xlarge { font-size: 20px; }
+        #backToTop:active {
+            transform: scale(0.9);
+        }
         
         /* 装饰元素 */
         .sun-decoration {
@@ -845,11 +949,6 @@
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(10deg); }
-        }
-        
-        /* 夜间模式切换 */
-        body.dark-mode .sun-decoration {
-            opacity: 0.03;
         }
         
         /* 页码快速跳转 */
@@ -889,14 +988,14 @@
             .categories-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
-            .sidebar {
+            .toc-panel {
                 width: 50%;
                 height: 60vh;
             }
         }
     </style>
 </head>
-<body class="font-normal">
+<body>
     <!-- 阅读进度条 -->
     <div id="progress-bar" style="width: 0%"></div>
     
@@ -905,9 +1004,9 @@
     <div class="leaf-decoration">🌿</div>
     
     <!-- 顶部导航 -->
-    <header class="header">
+    <header class="header" id="mainHeader">
         <div class="header-left">
-            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <button class="back-btn-header" id="headerBackBtn" onclick="goBack()" style="display:none;">←</button>
             <div class="logo">
                 <span class="logo-icon">🌅</span>
                 <span>如日之升</span>
@@ -926,17 +1025,20 @@
         <div class="search-results" id="searchResults"></div>
     </div>
     
-    <!-- 侧边栏目录 -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title">
+    <!-- 悬浮目录球 -->
+    <button class="float-toc-btn" id="floatTocBtn" onclick="toggleToc()">📑</button>
+    
+    <!-- 目录面板 -->
+    <div class="toc-overlay" id="tocOverlay" onclick="toggleToc()"></div>
+    <div class="toc-panel" id="tocPanel">
+        <div class="toc-header">
+            <div class="toc-title">
                 <span>🌲</span>
                 <span>目录</span>
             </div>
-            <button class="close-btn" onclick="toggleSidebar()">✕</button>
+            <button class="toc-close" onclick="toggleToc()">✕</button>
         </div>
-        <div class="sidebar-content" id="sidebarContent">
+        <div class="toc-content" id="tocContent">
             <!-- 目录内容由JS生成 -->
         </div>
     </div>
@@ -944,7 +1046,7 @@
     <!-- 主内容 -->
     <main class="main-content">
         <!-- 欢迎语 -->
-        <div class="welcome">
+        <div class="welcome" id="welcomeText">
             <span class="welcome-icon">🌱</span>
             <span>欢迎来到如日之升</span>
         </div>
@@ -966,13 +1068,14 @@
             <!-- 由JS生成 -->
         </div>
         
-        <!-- 内容列表 -->
+        <!-- 分类内容列表 -->
         <div class="content-list" id="contentList">
             <div class="list-header">
-                <button class="back-btn" onclick="showHome()">←</button>
+                <button class="back-btn" onclick="goBack()">←</button>
                 <div class="list-title" id="listTitle">分类名称</div>
             </div>
             <div id="listItems"></div>
+            <!-- 加载和到底提示只在主页分类列表显示 -->
             <div class="loading-tip" id="loadingTip">
                 <div style="display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;"></div>
                 <p>加载中...</p>
@@ -981,10 +1084,25 @@
                 <p>已经到底啦 ~</p>
             </div>
         </div>
+        
+        <!-- 帖子内容页 -->
+        <div class="post-content" id="postContent">
+            <div class="post-header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <div class="post-title" id="postTitle">帖子标题</div>
+            </div>
+            <iframe class="post-iframe" id="postFrame" src=""></iframe>
+            <!-- 帖子内页码导航 -->
+            <div class="post-page-nav" id="postPageNav">
+                <button class="post-page-btn" id="postPrevBtn" onclick="postPrevPage()">← 上一页</button>
+                <div class="post-page-info" id="postPageInfo">1 / 1</div>
+                <button class="post-page-btn" id="postNextBtn" onclick="postNextPage()">下一页 →</button>
+            </div>
+        </div>
     </main>
     
-    <!-- 底部翻页 -->
-    <nav class="bottom-nav" id="bottomNav" style="display:none;">
+    <!-- 底部翻页 - 只在主页显示 -->
+    <nav class="bottom-nav" id="bottomNav">
         <button class="nav-btn" id="prevBtn" onclick="prevPage()">
             <span>←</span>
             <span>上一页</span>
@@ -998,12 +1116,8 @@
         </button>
     </nav>
     
-    <!-- 悬浮按钮 -->
-    <div class="fab-container">
-        <button class="fab" id="fontSizeBtn" onclick="cycleFontSize()" title="字体大小">🔤</button>
-        <button class="fab" onclick="toggleDarkMode()" title="夜间模式">🌙</button>
-        <button class="fab" id="backToTop" onclick="scrollToTop()" title="返回顶部">↑</button>
-    </div>
+    <!-- 返回顶部 -->
+    <button id="backToTop" onclick="scrollToTop()">↑</button>
     
     <style>
         @keyframes spin {
@@ -1074,24 +1188,24 @@
         // ==========================================
         // 状态
         // ==========================================
+        let currentView = 'home'; // home, category, post
         let currentCategory = null;
-        let currentPage = 1;
+        let currentCategoryPage = 1;
+        let currentPost = null;
+        let currentPostPage = 1;
         let itemsPerPage = 10;
-        let fontSizeLevel = 1;
-        let isDarkMode = false;
         let expandedFolders = new Set();
-        
-        const fontSizeClasses = ['font-small', 'font-normal', 'font-large', 'font-xlarge'];
-        const fontSizeEmojis = ['🔤', '🔤', '🔤', '🔤'];
+        let viewHistory = []; // 浏览历史栈用于返回
         
         // ==========================================
         // 初始化
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             renderCategories();
-            renderSidebar();
+            renderToc();
             loadRecent();
             updateProgress();
+            initDragToc();
             
             // 滚动监听
             window.addEventListener('scroll', () => {
@@ -1099,6 +1213,82 @@
                 toggleBackToTop();
             });
         });
+        
+        // ==========================================
+        // 悬浮球拖动
+        // ==========================================
+        function initDragToc() {
+            const btn = document.getElementById('floatTocBtn');
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+            
+            btn.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                btn.classList.add('dragging');
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                const rect = btn.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+            }, { passive: false });
+            
+            btn.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                const dx = touch.clientX - startX;
+                const dy = touch.clientY - startY;
+                
+                let newX = initialX + dx;
+                let newY = initialY + dy;
+                
+                // 边界限制
+                newX = Math.max(0, Math.min(window.innerWidth - 48, newX));
+                newY = Math.max(60, Math.min(window.innerHeight - 100, newY));
+                
+                btn.style.left = newX + 'px';
+                btn.style.top = newY + 'px';
+                btn.style.right = 'auto';
+            }, { passive: false });
+            
+            btn.addEventListener('touchend', () => {
+                isDragging = false;
+                btn.classList.remove('dragging');
+            });
+            
+            // 鼠标支持
+            btn.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                btn.classList.add('dragging');
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = btn.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                
+                let newX = initialX + dx;
+                let newY = initialY + dy;
+                
+                newX = Math.max(0, Math.min(window.innerWidth - 48, newX));
+                newY = Math.max(60, Math.min(window.innerHeight - 100, newY));
+                
+                btn.style.left = newX + 'px';
+                btn.style.top = newY + 'px';
+                btn.style.right = 'auto';
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                btn.classList.remove('dragging');
+            });
+        }
         
         // ==========================================
         // 渲染大分类
@@ -1115,10 +1305,10 @@
         }
         
         // ==========================================
-        // 渲染侧边栏目录
+        // 渲染目录
         // ==========================================
-        function renderSidebar() {
-            const container = document.getElementById('sidebarContent');
+        function renderToc() {
+            const container = document.getElementById('tocContent');
             container.innerHTML = archiveData.map(cat => {
                 const isOpen = expandedFolders.has(cat.id);
                 return `
@@ -1134,15 +1324,14 @@
                             ${cat.children.map(item => {
                                 const pageLinks = [];
                                 if (item.special) {
-                                    // Dia特殊处理
-                                    pageLinks.push(`<a href="${item.path}Dia：不是，举我自证楼干嘛？.html" class="file-page-link" onclick="addRecent('${item.name}-1', '${item.path}Dia：不是，举我自证楼干嘛？.html')">1</a>`);
-                                    pageLinks.push(`<a href="${item.path}只敢举报不敢对线的造谣小团体你赢了.html" class="file-page-link" onclick="addRecent('${item.name}-2', '${item.path}只敢举报不敢对线的造谣小团体你赢了.html')">2</a>`);
+                                    pageLinks.push(`<a href="${item.path}Dia：不是，举我自证楼干嘛？.html" class="file-page-link" onclick="openPost('${item.name}', '${item.path}Dia：不是，举我自证楼干嘛？.html', 1, 2); addRecent('${item.name}-1', '${item.path}Dia：不是，举我自证楼干嘛？.html'); return false;">1</a>`);
+                                    pageLinks.push(`<a href="${item.path}只敢举报不敢对线的造谣小团体你赢了.html" class="file-page-link" onclick="openPost('${item.name}', '${item.path}只敢举报不敢对线的造谣小团体你赢了.html', 2, 2); addRecent('${item.name}-2', '${item.path}只敢举报不敢对线的造谣小团体你赢了.html'); return false;">2</a>`);
                                 } else if (item.pages === 1) {
-                                    pageLinks.push(`<a href="${item.path}" class="file-page-link" onclick="addRecent('${item.name}', '${item.path}')">1</a>`);
+                                    pageLinks.push(`<a href="${item.path}" class="file-page-link" onclick="openPost('${item.name}', '${item.path}', 1, 1); addRecent('${item.name}', '${item.path}'); return false;">1</a>`);
                                 } else {
                                     for (let i = 1; i <= item.pages; i++) {
                                         const pagePath = item.path + i + '.html';
-                                        pageLinks.push(`<a href="${pagePath}" class="file-page-link" onclick="addRecent('${item.name}-${i}', '${pagePath}')">${i}</a>`);
+                                        pageLinks.push(`<a href="${pagePath}" class="file-page-link" onclick="openPost('${item.name}', '${pagePath}', ${i}, ${item.pages}); addRecent('${item.name}-${i}', '${pagePath}'); return false;">${i}</a>`);
                                     }
                                 }
                                 return `
@@ -1168,42 +1357,47 @@
             } else {
                 expandedFolders.add(id);
             }
-            renderSidebar();
+            renderToc();
+        }
+        
+        function toggleToc() {
+            document.getElementById('tocPanel').classList.toggle('active');
+            document.getElementById('tocOverlay').classList.toggle('active');
         }
         
         // ==========================================
         // 显示分类内容
         // ==========================================
         function showCategory(catId) {
+            viewHistory.push(currentView);
+            currentView = 'category';
             currentCategory = archiveData.find(c => c.id === catId);
-            currentPage = 1;
+            currentCategoryPage = 1;
             
-            document.getElementById('categoriesGrid').style.display = 'none';
+            // 显示返回按钮
+            document.getElementById('headerBackBtn').style.display = 'flex';
+            
+            // 隐藏主页元素
+            document.getElementById('welcomeText').style.display = 'none';
             document.getElementById('recentSection').style.display = 'none';
-            document.querySelector('.welcome').style.display = 'none';
+            document.getElementById('categoriesGrid').style.display = 'none';
             
+            // 显示分类列表
             const contentList = document.getElementById('contentList');
             contentList.classList.add('active');
             
             document.getElementById('listTitle').innerHTML = `${currentCategory.emoji} ${currentCategory.name}`;
-            document.getElementById('bottomNav').style.display = 'flex';
             
-            renderList();
+            // 显示底部导航
+            document.getElementById('bottomNav').classList.add('active');
+            
+            renderCategoryList();
         }
         
-        function showHome() {
-            document.getElementById('categoriesGrid').style.display = 'grid';
-            document.getElementById('recentSection').style.display = localStorage.getItem('recent') ? 'block' : 'none';
-            document.querySelector('.welcome').style.display = 'flex';
-            document.getElementById('contentList').classList.remove('active');
-            document.getElementById('bottomNav').style.display = 'none';
-            currentCategory = null;
-        }
-        
-        function renderList() {
+        function renderCategoryList() {
             if (!currentCategory) return;
             
-            const start = (currentPage - 1) * itemsPerPage;
+            const start = (currentCategoryPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const items = currentCategory.children.slice(start, end);
             const totalPages = Math.ceil(currentCategory.children.length / itemsPerPage);
@@ -1212,14 +1406,16 @@
             container.innerHTML = items.map(item => {
                 const pageLinks = [];
                 if (item.special) {
-                    pageLinks.push(`<a href="${item.path}Dia：不是，举我自证楼干嘛？.html" class="page-btn" onclick="addRecent('${item.name}-1', '${item.path}Dia：不是，举我自证楼干嘛？.html')">1</a>`);
-                    pageLinks.push(`<a href="${item.path}只敢举报不敢对线的造谣小团体你赢了.html" class="page-btn" onclick="addRecent('${item.name}-2', '${item.path}只敢举报不敢对线的造谣小团体你赢了.html')">2</a>`);
+                    pageLinks.push(`<button class="page-btn" onclick="openPost('${item.name}', '${item.path}Dia：不是，举我自证楼干嘛？.html', 1, 2)">阅读</button>`);
                 } else if (item.pages === 1) {
-                    pageLinks.push(`<a href="${item.path}" class="page-btn" onclick="addRecent('${item.name}', '${item.path}')">阅读</a>`);
+                    pageLinks.push(`<button class="page-btn" onclick="openPost('${item.name}', '${item.path}', 1, 1)">阅读</button>`);
                 } else {
-                    for (let i = 1; i <= item.pages; i++) {
+                    for (let i = 1; i <= Math.min(item.pages, 5); i++) {
                         const pagePath = item.path + i + '.html';
-                        pageLinks.push(`<a href="${pagePath}" class="page-btn" onclick="addRecent('${item.name}-${i}', '${pagePath}')">${i}</a>`);
+                        pageLinks.push(`<button class="page-btn" onclick="openPost('${item.name}', '${pagePath}', ${i}, ${item.pages})">${i}</button>`);
+                    }
+                    if (item.pages > 5) {
+                        pageLinks.push(`<span style="color:var(--text-secondary);align-self:center;">...</span>`);
                     }
                 }
                 
@@ -1229,7 +1425,7 @@
                     pageJump = `
                         <div class="page-jump">
                             <span style="font-size:13px;color:var(--text-secondary);">跳转到:</span>
-                            <input type="number" class="page-jump-input" id="jump-${item.name}" min="1" max="${item.pages}" placeholder="页码">
+                            <input type="number" class="page-jump-input" id="jump-${item.name.replace(/[^a-zA-Z0-9]/g, '')}" min="1" max="${item.pages}" placeholder="页码">
                             <button class="page-jump-btn" onclick="jumpToPage('${item.path}', '${item.name}', ${item.pages})">GO</button>
                         </div>
                     `;
@@ -1250,14 +1446,14 @@
                 `;
             }).join('');
             
-            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('currentPage').textContent = currentCategoryPage;
             document.getElementById('totalPages').textContent = totalPages;
-            document.getElementById('prevBtn').disabled = currentPage <= 1;
-            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+            document.getElementById('prevBtn').disabled = currentCategoryPage <= 1;
+            document.getElementById('nextBtn').disabled = currentCategoryPage >= totalPages;
             
             // 显示/隐藏提示
             document.getElementById('loadingTip').classList.remove('active');
-            if (currentPage >= totalPages) {
+            if (currentCategoryPage >= totalPages) {
                 document.getElementById('endTip').classList.add('active');
             } else {
                 document.getElementById('endTip').classList.remove('active');
@@ -1267,32 +1463,164 @@
         }
         
         function jumpToPage(basePath, name, maxPages) {
-            const input = document.getElementById(`jump-${name}`);
+            const inputId = 'jump-' + name.replace(/[^a-zA-Z0-9]/g, '');
+            const input = document.getElementById(inputId);
             const page = parseInt(input.value);
             if (page >= 1 && page <= maxPages) {
                 const path = basePath + page + '.html';
+                openPost(name, path, page, maxPages);
                 addRecent(`${name}-${page}`, path);
-                window.location.href = path;
             } else {
                 alert(`请输入1-${maxPages}之间的页码`);
             }
         }
         
         // ==========================================
+        // 打开帖子内容
+        // ==========================================
+        function openPost(name, path, page, totalPages) {
+            viewHistory.push(currentView);
+            currentView = 'post';
+            currentPost = { name, path, page, totalPages, basePath: path.replace(/\/[^\/]*$/, '/') };
+            
+            // 显示返回按钮
+            document.getElementById('headerBackBtn').style.display = 'flex';
+            
+            // 隐藏分类列表
+            document.getElementById('contentList').classList.remove('active');
+            document.getElementById('bottomNav').classList.remove('active');
+            
+            // 隐藏主页元素（保险）
+            document.getElementById('welcomeText').style.display = 'none';
+            document.getElementById('recentSection').style.display = 'none';
+            document.getElementById('categoriesGrid').style.display = 'none';
+            
+            // 显示帖子内容
+            const postContent = document.getElementById('postContent');
+            postContent.classList.add('active');
+            
+            document.getElementById('postTitle').textContent = name;
+            document.getElementById('postFrame').src = path;
+            
+            // 更新帖子页码导航
+            updatePostPageNav();
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function updatePostPageNav() {
+            if (!currentPost) return;
+            
+            const { page, totalPages } = currentPost;
+            document.getElementById('postPageInfo').textContent = `${page} / ${totalPages}`;
+            
+            const prevBtn = document.getElementById('postPrevBtn');
+            const nextBtn = document.getElementById('postNextBtn');
+            
+            prevBtn.disabled = page <= 1;
+            nextBtn.disabled = page >= totalPages;
+            
+            // 高亮当前页
+            document.querySelectorAll('.post-page-btn').forEach(btn => btn.classList.remove('current'));
+        }
+        
+        function postPrevPage() {
+            if (!currentPost || currentPost.page <= 1) return;
+            const newPage = currentPost.page - 1;
+            let newPath;
+            if (currentPost.special) {
+                // Dia特殊处理
+                const files = ['Dia：不是，举我自证楼干嘛？.html', '只敢举报不敢对线的造谣小团体你赢了.html'];
+                newPath = currentPost.basePath + files[newPage - 1];
+            } else {
+                newPath = currentPost.basePath + newPage + '.html';
+            }
+            currentPost.page = newPage;
+            currentPost.path = newPath;
+            document.getElementById('postFrame').src = newPath;
+            updatePostPageNav();
+            addRecent(`${currentPost.name}-${newPage}`, newPath);
+        }
+        
+        function postNextPage() {
+            if (!currentPost || currentPost.page >= currentPost.totalPages) return;
+            const newPage = currentPost.page + 1;
+            let newPath;
+            if (currentPost.special) {
+                const files = ['Dia：不是，举我自证楼干嘛？.html', '只敢举报不敢对线的造谣小团体你赢了.html'];
+                newPath = currentPost.basePath + files[newPage - 1];
+            } else {
+                newPath = currentPost.basePath + newPage + '.html';
+            }
+            currentPost.page = newPage;
+            currentPost.path = newPath;
+            document.getElementById('postFrame').src = newPath;
+            updatePostPageNav();
+            addRecent(`${currentPost.name}-${newPage}`, newPath);
+        }
+        
+        // ==========================================
+        // 返回功能
+        // ==========================================
+        function goBack() {
+            if (viewHistory.length > 0) {
+                const prevView = viewHistory.pop();
+                
+                if (prevView === 'home') {
+                    showHome();
+                } else if (prevView === 'category') {
+                    // 返回分类列表
+                    currentView = 'category';
+                    document.getElementById('postContent').classList.remove('active');
+                    document.getElementById('contentList').classList.add('active');
+                    document.getElementById('bottomNav').classList.add('active');
+                    document.getElementById('headerBackBtn').style.display = 'flex';
+                    renderCategoryList();
+                }
+            } else {
+                showHome();
+            }
+        }
+        
+        function showHome() {
+            currentView = 'home';
+            viewHistory = [];
+            
+            // 隐藏返回按钮
+            document.getElementById('headerBackBtn').style.display = 'none';
+            
+            // 显示主页元素
+            document.getElementById('welcomeText').style.display = 'flex';
+            const recent = localStorage.getItem('recent');
+            document.getElementById('recentSection').style.display = recent ? 'block' : 'none';
+            document.getElementById('categoriesGrid').style.display = 'grid';
+            
+            // 隐藏其他
+            document.getElementById('contentList').classList.remove('active');
+            document.getElementById('postContent').classList.remove('active');
+            document.getElementById('bottomNav').classList.remove('active');
+            
+            currentCategory = null;
+            currentPost = null;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // ==========================================
         // 分页
         // ==========================================
         function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderList();
+            if (currentCategoryPage > 1) {
+                currentCategoryPage--;
+                renderCategoryList();
             }
         }
         
         function nextPage() {
             const totalPages = Math.ceil(currentCategory.children.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderList();
+            if (currentCategoryPage < totalPages) {
+                currentCategoryPage++;
+                renderCategoryList();
             }
         }
         
@@ -1332,20 +1660,19 @@
             resultsDiv.innerHTML = results.map(item => {
                 const pageLinks = [];
                 if (item.special) {
-                    pageLinks.push(`<a href="${item.path}Dia：不是，举我自证楼干嘛？.html" class="page-link" onclick="addRecent('${item.name}-1', '${item.path}Dia：不是，举我自证楼干嘛？.html')">1</a>`);
-                    pageLinks.push(`<a href="${item.path}只敢举报不敢对线的造谣小团体你赢了.html" class="page-link" onclick="addRecent('${item.name}-2', '${item.path}只敢举报不敢对线的造谣小团体你赢了.html')">2</a>`);
+                    pageLinks.push(`<button class="page-link" onclick="openPost('${item.name}', '${item.path}Dia：不是，举我自证楼干嘛？.html', 1, 2); toggleSearch();">阅读</button>`);
                 } else if (item.pages === 1) {
-                    pageLinks.push(`<a href="${item.path}" class="page-link" onclick="addRecent('${item.name}', '${item.path}')">阅读</a>`);
+                    pageLinks.push(`<button class="page-link" onclick="openPost('${item.name}', '${item.path}', 1, 1); toggleSearch();">阅读</button>`);
                 } else {
-                    for (let i = 1; i <= Math.min(item.pages, 5); i++) {
+                    for (let i = 1; i <= Math.min(item.pages, 3); i++) {
                         const pagePath = item.path + i + '.html';
-                        pageLinks.push(`<a href="${pagePath}" class="page-link" onclick="addRecent('${item.name}-${i}', '${pagePath}')">${i}</a>`);
+                        pageLinks.push(`<button class="page-link" onclick="openPost('${item.name}', '${pagePath}', ${i}, ${item.pages}); toggleSearch();">${i}</button>`);
                     }
-                    if (item.pages > 5) pageLinks.push(`<span style="color:var(--text-secondary);">...</span>`);
+                    if (item.pages > 3) pageLinks.push(`<span style="color:var(--text-secondary);">...</span>`);
                 }
                 
                 return `
-                    <div class="search-result-item" onclick="window.location.href='${item.special ? item.path + 'Dia：不是，举我自证楼干嘛？.html' : (item.pages === 1 ? item.path : item.path + '1.html')}'">
+                    <div class="search-result-item">
                         <span class="result-icon">${item.emoji}</span>
                         <div class="result-info">
                             <div class="result-title">${item.name}</div>
@@ -1381,44 +1708,36 @@
             
             section.style.display = 'block';
             list.innerHTML = recent.map(item => `
-                <a href="${item.path}" class="recent-item" onclick="addRecent('${item.name}', '${item.path}')">
+                <div class="recent-item" onclick="openRecent('${item.path}', '${item.name}')">
                     <span class="recent-emoji">📄</span>
                     <div class="recent-name">${item.name}</div>
-                </a>
+                </div>
             `).join('');
+        }
+        
+        function openRecent(path, name) {
+            // 解析路径确定页码
+            const match = path.match(/(\d+)\.html$/);
+            const page = match ? parseInt(match[1]) : 1;
+            
+            // 查找对应的帖子信息
+            let totalPages = 1;
+            let found = false;
+            archiveData.forEach(cat => {
+                cat.children.forEach(item => {
+                    if (path.includes(item.path.replace(/\/$/, ''))) {
+                        totalPages = item.pages;
+                        found = true;
+                    }
+                });
+            });
+            
+            openPost(name, path, page, totalPages);
         }
         
         function clearRecent() {
             localStorage.removeItem('recent');
             loadRecent();
-        }
-        
-        // ==========================================
-        // 侧边栏
-        // ==========================================
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
-        
-        // ==========================================
-        // 字体大小
-        // ==========================================
-        function cycleFontSize() {
-            document.body.classList.remove(fontSizeClasses[fontSizeLevel]);
-            fontSizeLevel = (fontSizeLevel + 1) % 4;
-            document.body.classList.add(fontSizeClasses[fontSizeLevel]);
-            document.getElementById('fontSizeBtn').textContent = ['小', '中', '大', '特大'][fontSizeLevel];
-        }
-        
-        // ==========================================
-        // 夜间模式
-        // ==========================================
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode');
-            const btn = document.querySelector('.fab[title="夜间模式"]');
-            btn.textContent = isDarkMode ? '☀️' : '🌙';
         }
         
         // ==========================================
@@ -1452,8 +1771,8 @@
         // ==========================================
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('sidebarOverlay').classList.remove('active');
+                document.getElementById('tocPanel').classList.remove('active');
+                document.getElementById('tocOverlay').classList.remove('active');
                 document.getElementById('searchContainer').classList.remove('active');
             }
             if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
