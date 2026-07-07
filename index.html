@@ -1,459 +1,1132 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>姥姥的树</title>
+    <title>如日之升</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans SC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
-            background: #f0f7f0;
-            height: 100%;
-            color: #2e4a2e;
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0fdf4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4ade80;
+        }
+
+        /* 进度条 */
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #facc15, #eab308);
+            z-index: 9999;
+            transition: width 0.1s;
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+        }
+
+        /* 目录动画 */
+        .folder-content {
+            max-height: 0;
             overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
         }
-        
-        /* 顶部导航 */
-        .top-nav {
-            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
-            color: white;
-            padding: 12px 16px;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            height: 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .folder-content.open {
+            max-height: 2000px;
+            opacity: 1;
+            transition: max-height 0.5s ease-in, opacity 0.3s ease-in;
         }
-        .top-nav h1 { font-size: 16px; }
-        .back-btn {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
+
+        /* 搜索高亮 */
+        .highlight {
+            background-color: #fef08a;
+            color: #854d0e;
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: 600;
         }
-        
-        /* 悬浮目录按钮 */
-        .fab {
-            position: fixed;
-            top: 7px;
-            right: 16px;
-            width: 36px;
-            height: 36px;
-            background: #fff;
+
+        /* 夜间模式 */
+        .dark body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .dark .bg-primary-50 { background-color: #064e3b; }
+        .dark .bg-white { background-color: #1e293b; }
+        .dark .text-gray-800 { color: #e2e8f0; }
+        .dark .text-gray-600 { color: #94a3b8; }
+        .dark .border-gray-200 { border-color: #334155; }
+        .dark .hover\:bg-primary-50:hover { background-color: #065f46; }
+
+        /* 悬浮按钮动画 */
+        .fab-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 卡片悬停效果 */
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* 加载动画 */
+        .loader {
+            border: 3px solid #f0fdf4;
+            border-top: 3px solid #22c55e;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            cursor: pointer;
-            z-index: 101;
-            border: 2px solid #81c784;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
         }
-        .fab svg { width: 20px; height: 20px; fill: #43a047; }
-        
-        /* 侧边栏 */
-        .overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 返回顶部按钮显示/隐藏 */
+        #backToTop {
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
-            z-index: 199;
         }
-        .overlay.active { opacity: 1; visibility: visible; }
-        .sidebar {
-            position: fixed;
-            top: 0; right: -50%;
-            width: 50%;
-            height: 100%;
-            background: #fff;
-            z-index: 200;
-            transition: right 0.3s;
-            overflow-y: auto;
-            padding: 16px 12px;
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
         }
-        .sidebar.active { right: 0; }
-        .sidebar-close { position: absolute; top: 12px; right: 12px; cursor: pointer; color: #999; font-size: 20px; }
-        .sidebar-header { font-size: 16px; font-weight: 700; color: #2e7d32; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e8f5e9; }
-        .nav-item { margin-bottom: 12px; }
-        .nav-title { font-size: 14px; font-weight: 600; color: #1b5e20; cursor: pointer; padding: 6px 4px; }
-        .nav-title:active { background: #e8f5e9; }
-        .nav-title .pages { font-size: 11px; color: #81c784; background: #f1f8e9; padding: 2px 6px; border-radius: 10px; }
-        .nav-pages { padding-left: 8px; display: flex; gap: 6px; }
-        .nav-page-link { font-size: 12px; color: #558b2f; text-decoration: none; padding: 4px 10px; background: #f1f8e9; border-radius: 12px; cursor: pointer; }
-        
-        /* 首页 */
-        .home-view {
-            padding: 66px 16px 20px;
-            height: calc(100vh - 50px);
-            overflow-y: auto;
-            display: block;
+
+        /* 目录侧边栏 */
+        #sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
         }
-        .home-view.hidden { display: none; }
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+        #sidebar.open {
+            transform: translateX(0);
         }
-        .catalog-item {
-            background: #fff;
-            border-radius: 10px;
-            padding: 10px 8px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            border: 1px solid #e8f5e9;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60px;
+        #sidebar-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
         }
-        .catalog-icon { font-size: 20px; margin-bottom: 4px; }
-        .catalog-title { font-size: 13px; font-weight: 600; color: #2e4a2e; }
-        .catalog-pages { font-size: 10px; color: #81c784; margin-top: 2px; }
-        
-        /* 内容容器 */
-        .content-wrapper {
+        #sidebar-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 搜索框展开 */
+        #search-bar {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        #search-bar.open {
+            max-height: 80px;
+        }
+
+        /* 最近浏览横向滚动 */
+        .recent-scroll {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .recent-scroll::-webkit-scrollbar {
             display: none;
-            position: fixed;
-            top: 50px;
-            left: 0;
-            right: 0;
-            bottom: 50px;
-            height: calc(100vh - 100px);
         }
-        .content-wrapper.active { display: block; }
-        
-        /* iframe */
-        .content-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
+
+        /* 页码按钮 */
+        .page-btn {
+            transition: all 0.2s;
         }
-        
-        /* 底部分页 */
-        .pagination {
-            position: fixed;
+        .page-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 文件树线条 */
+        .tree-line {
+            position: relative;
+        }
+        .tree-line::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 0;
             bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid #e8f5e9;
-            padding: 10px 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            z-index: 50;
-            height: 50px;
+            width: 2px;
+            background: #bbf7d0;
         }
-        .pagination a, .pagination span {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            font-size: 13px;
-            text-decoration: none;
+        .dark .tree-line::before {
+            background: #065f46;
         }
-        .pagination a { color: #43a047; background: #f1f8e9; border: 1px solid #c8e6c9; cursor: pointer; }
-        .pagination a:active { background: #43a047; color: white; }
-        .pagination .current { background: #43a047; color: white; font-weight: 600; }
-        .pagination .arrow { font-size: 14px; padding: 0 12px; }
-        .pagination .disabled { color: #ccc; background: #f5f5f5; }
-        .page-info { font-size: 14px; color: #666; font-weight: 600; }
-        
-        /* 到底提示 */
-        .bottom-hint {
-            position: fixed;
-            bottom: 50px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            padding: 8px;
-            color: #81c784;
-            font-size: 13px;
-            background: rgba(240, 247, 240, 0.95);
-            border-top: 1px solid #e8f5e9;
-            z-index: 49;
-            display: none;
-        }
-        .bottom-hint.show { display: block; }
-        
-        /* 加载中提示 */
-        .loading-tip {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #81c784;
-            font-size: 14px;
-            display: none;
-            z-index: 48;
-        }
-        .loading-tip.show { display: block; }
     </style>
 </head>
-<body>
+<body class="bg-primary-50 text-gray-800 font-sans antialiased selection:bg-primary-200 selection:text-primary-900">
+
+    <!-- 阅读进度条 -->
+    <div id="reading-progress" style="width: 0%"></div>
+
+    <!-- 搜索栏 -->
+    <div id="search-bar" class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg z-50 border-b border-primary-200">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+            <i class="fas fa-search text-primary-500"></i>
+            <input type="text" id="search-input" placeholder="搜索标题或文件名..." 
+                class="flex-1 bg-transparent outline-none text-base placeholder-gray-400"
+                autocomplete="off">
+            <button onclick="toggleSearch()" class="text-gray-400 hover:text-gray-600 p-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <!-- 搜索结果下拉 -->
+        <div id="search-results" class="max-w-4xl mx-auto px-4 pb-4 hidden">
+            <div class="bg-white rounded-lg shadow-xl border border-primary-100 max-h-96 overflow-y-auto" id="results-container">
+            </div>
+        </div>
+    </div>
+
     <!-- 顶部导航 -->
-    <header class="top-nav" id="topNav">
-        <span class="back-btn" onclick="goHome()" id="backBtn" style="visibility: hidden;">← 首页</span>
-        <h1>🌿 姥姥的树</h1>
-        <span style="width:40px;"></span>
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-primary-100 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="p-2 -ml-2 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h1 class="text-lg font-bold text-primary-800 tracking-tight">如日之升</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleSearch()" class="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <i class="fas fa-search text-lg"></i>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <!-- 悬浮目录 -->
-    <div class="fab" onclick="toggleSidebar()">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-    </div>
+    <!-- 侧边栏目录 -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/30 z-50 backdrop-blur-sm"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto">
+        <div class="p-4 border-b border-primary-100 flex items-center justify-between bg-primary-50/50">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-tree text-primary-600"></i>
+                <h2 class="font-bold text-primary-800 text-lg">目录</h2>
+            </div>
+            <button onclick="toggleSidebar()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="p-4 space-y-2" id="sidebar-nav">
+            <!-- 目录内容将由JS生成 -->
+        </nav>
+    </aside>
 
-    <div class="overlay" onclick="toggleSidebar()"></div>
+    <!-- 主内容区 -->
+    <main class="max-w-4xl mx-auto px-4 py-6 pb-24 min-h-screen">
 
-    <!-- 侧边栏 -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-close" onclick="toggleSidebar()">✕</div>
-        <div class="sidebar-header">🌲 姥姥的树存档</div>
-        <div id="sidebarContent"></div>
-    </nav>
+        <!-- 最近浏览 -->
+        <section id="recent-section" class="mb-8 hidden">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fas fa-book-open text-primary-600"></i>
+                <h2 class="text-lg font-bold text-primary-800">最近浏览</h2>
+            </div>
+            <div class="recent-scroll flex gap-3 overflow-x-auto pb-2" id="recent-list">
+                <!-- 最近浏览内容 -->
+            </div>
+        </section>
 
-    <!-- 首页 -->
-    <main class="home-view" id="homeView">
-        <div style="text-align:center; margin-bottom:16px; color:#558b2f; font-size:13px;">🌱 欢迎来到姥姥的树</div>
-        <div class="catalog-grid" id="catalogGrid"></div>
+        <!-- 大分类网格 -->
+        <section class="mb-8">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fas fa-folder-open text-primary-600"></i>
+                <h2 class="text-lg font-bold text-primary-800">归档分类</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="category-grid">
+                <!-- 分类卡片 -->
+            </div>
+        </section>
+
+        <!-- 内容列表区 -->
+        <section id="content-area" class="space-y-6">
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-hand-point-up text-4xl mb-3 text-primary-300"></i>
+                <p>选择一个分类开始浏览</p>
+            </div>
+        </section>
+
+        <!-- 加载提示 -->
+        <div id="loading-indicator" class="hidden py-8 text-center">
+            <div class="loader mx-auto mb-2"></div>
+            <p class="text-sm text-gray-500">加载中...</p>
+        </div>
+
+        <!-- 到底提示 -->
+        <div id="end-indicator" class="hidden py-8 text-center text-gray-400 text-sm">
+            <div class="w-12 h-1 bg-primary-200 rounded-full mx-auto mb-3"></div>
+            <p>已经到底啦 ~</p>
+        </div>
     </main>
 
-    <!-- 内容容器 -->
-    <div class="content-wrapper" id="contentWrapper">
-        <div class="loading-tip" id="loadingTip">加载中...</div>
-        <iframe class="content-frame" id="contentFrame" scrolling="yes"></iframe>
+    <!-- 底部翻页导航 -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-primary-100 shadow-lg z-30 safe-area-bottom">
+        <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+            <button onclick="prevPage()" class="page-btn flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed" id="btn-prev">
+                <i class="fas fa-chevron-left"></i>
+                <span>上一页</span>
+            </button>
+            
+            <div class="flex items-center gap-1 text-sm">
+                <span class="text-primary-700 font-bold" id="current-page">1</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-gray-500" id="total-pages">1</span>
+            </div>
+
+            <button onclick="nextPage()" class="page-btn flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed" id="btn-next">
+                <span>下一页</span>
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 左下角控制按钮 -->
+    <div class="fixed bottom-20 left-4 z-40 flex flex-col gap-3">
+        <!-- 字体大小 -->
+        <button onclick="cycleFontSize()" class="fab-btn w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-primary-600 border border-primary-100 hover:shadow-xl" title="字体大小">
+            <span id="font-size-icon" class="text-xs font-bold">abc</span>
+        </button>
+        <!-- 夜间模式 -->
+        <button onclick="toggleDarkMode()" class="fab-btn w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-primary-600 border border-primary-100 hover:shadow-xl" title="切换模式">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block text-yellow-500"></i>
+        </button>
     </div>
 
-    <!-- 到底提示 -->
-    <div class="bottom-hint" id="bottomHint">— 已经到底了 —</div>
-
-    <!-- 底部分页 -->
-    <nav class="pagination" id="pagination" style="display: none;"></nav>
+    <!-- 右下角返回顶部 -->
+    <button id="backToTop" onclick="scrollToTop()" class="fixed bottom-20 right-4 z-40 w-10 h-10 bg-primary-600 text-white shadow-lg rounded-full flex items-center justify-center hover:bg-primary-700 hover:shadow-xl fab-btn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script>
-        const archiveData = {
-            "史官楼": { pages: 2, icon: "📜" },
-            "吵架1": { pages: 3, icon: "💢" },
-            "吵架2": { pages: 3, icon: "😤" },
-            "吵架3": { pages: 1, icon: "😠" },
-            "吵架4": { pages: 1, icon: "🤬" },
-            "姥组吵架整理": { pages: 1, icon: "📝" },
-            "苹果凌晨出没": { pages: 1, icon: "🍎" },
-            "建议楼": { pages: 1, icon: "💡" },
-            "组务投票楼": { pages: 1, icon: "🗳️" },
-            "管理员留任投票楼": { pages: 1, icon: "🗳️" },
-            "投票2号": { pages: 1, icon: "🗳️" },
-            "管理组群内": { pages: 1, icon: "👥" },
-            "三天后狐狸第一次现身组内": { pages: 1, icon: "🦊" },
-            "组员发帖1": { pages: 2, icon: "📮" },
-            "苹果现身组内": { pages: 2, icon: "🍎" }
+        // ==========================================
+        // 数据结构 - 严格按照 list_sorted_0706_210544.txt 顺序
+        // ==========================================
+        const archiveData = [
+            {
+                id: 'laolao',
+                name: '姥姥的树存档',
+                icon: '🌲',
+                children: [
+                    {
+                        id: 'laolao-zhengli',
+                        name: '姥组吵架整理',
+                        pages: 1,
+                        path: '姥姥的树存档/姥组吵架整理/1.html'
+                    },
+                    {
+                        id: 'laolao-shiguan',
+                        name: '史官楼',
+                        pages: 2,
+                        path: '姥姥的树存档/史官楼/'
+                    },
+                    {
+                        id: 'laolao-chaojia1',
+                        name: '吵架1',
+                        pages: 3,
+                        path: '姥姥的树存档/吵架1/'
+                    },
+                    {
+                        id: 'laolao-chaojia2',
+                        name: '吵架2',
+                        pages: 3,
+                        path: '姥姥的树存档/吵架2/'
+                    },
+                    {
+                        id: 'laolao-chaojia3',
+                        name: '吵架3',
+                        pages: 1,
+                        path: '姥姥的树存档/吵架3/1.html'
+                    },
+                    {
+                        id: 'laolao-chaojia4',
+                        name: '吵架4',
+                        pages: 1,
+                        path: '姥姥的树存档/吵架4/1.html'
+                    },
+                    {
+                        id: 'laolao-pingguo',
+                        name: '苹果凌晨出没',
+                        pages: 1,
+                        path: '姥姥的树存档/苹果凌晨出没/1.html'
+                    },
+                    {
+                        id: 'laolao-jianyi',
+                        name: '建议楼',
+                        pages: 1,
+                        path: '姥姥的树存档/建议楼/1.html'
+                    },
+                    {
+                        id: 'laolao-zuwu',
+                        name: '组务投票楼',
+                        pages: 1,
+                        path: '姥姥的树存档/组务投票楼/1.html'
+                    },
+                    {
+                        id: 'laolao-guanliyuan',
+                        name: '管理员留任投票楼',
+                        pages: 1,
+                        path: '姥姥的树存档/管理员留任投票楼/1.html'
+                    },
+                    {
+                        id: 'laolao-toupiao2',
+                        name: '投票2号',
+                        pages: 1,
+                        path: '姥姥的树存档/投票2号/1.html'
+                    },
+                    {
+                        id: 'laolao-guanlizu',
+                        name: '管理组群内',
+                        pages: 1,
+                        path: '姥姥的树存档/管理组群内/1.html'
+                    },
+                    {
+                        id: 'laolao-huli',
+                        name: '三天后狐狸第一次现身组内',
+                        pages: 1,
+                        path: '姥姥的树存档/三天后狐狸第一次现身组内/1.html'
+                    },
+                    {
+                        id: 'laolao-zuyuan1',
+                        name: '组员发帖1',
+                        pages: 2,
+                        path: '姥姥的树存档/组员发帖1/'
+                    },
+                    {
+                        id: 'laolao-pingguo2',
+                        name: '苹果现身组内',
+                        pages: 2,
+                        path: '姥姥的树存档/苹果现身组内/'
+                    }
+                ]
+            },
+            {
+                id: 'xinfan',
+                name: '新番组存档',
+                icon: '📺',
+                children: [
+                    {
+                        id: 'xinfan-nidie',
+                        name: '泥跌飞了：7月3日追番组事件整理',
+                        pages: 1,
+                        path: '新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html',
+                        hasFiles: true
+                    },
+                    {
+                        id: 'xinfan-taiyang',
+                        name: '太阳组：防新番岁月史书',
+                        pages: 2,
+                        path: '新番组存档/太阳组：防新番岁月史书/'
+                    },
+                    {
+                        id: 'xinfan-taiyang-chat',
+                        name: '太阳组：七月闲聊',
+                        pages: 3,
+                        path: '新番组存档/太阳组：七月闲聊/'
+                    },
+                    {
+                        id: 'xinfan-ruri',
+                        name: '如日之升：临时闲聊楼',
+                        pages: 28,
+                        path: '新番组存档/如日之升：临时闲聊楼/'
+                    },
+                    {
+                        id: 'xinfan-zuzhang',
+                        name: '组长是腐zl吗—组长已在评论区回应',
+                        pages: 2,
+                        path: '新番组存档/组长是腐zl吗—组长已在评论区回应/'
+                    },
+                    {
+                        id: 'xinfan-zuzhang-huiying',
+                        name: '组长回应：能理解你们的顾虑',
+                        pages: 2,
+                        path: '新番组存档/组长回应：能理解你们的顾虑/'
+                    },
+                    {
+                        id: 'xinfan-last',
+                        name: '应该是最后一个帖啦',
+                        pages: 1,
+                        path: '新番组存档/应该是最后一个帖啦/1.html'
+                    },
+                    {
+                        id: 'xinfan-zugui',
+                        name: '组规2.0更所有女禁红不禁黑',
+                        pages: 1,
+                        path: '新番组存档/组规2.0更所有女禁红不禁黑/1.html'
+                    },
+                    {
+                        id: 'xinfan-baozheng',
+                        name: '你们可一定要保证朋友熟人扶你一把的陌生人都不磕腐不沾男啊',
+                        pages: 1,
+                        path: '新番组存档/你们可一定要保证朋友熟人扶你一把的陌生人都不磕腐不沾男啊/1.html'
+                    },
+                    {
+                        id: 'xinfan-dashang',
+                        name: '组长打赏购买自证记录',
+                        pages: 1,
+                        path: '新番组存档/组长打赏购买自证记录/1.html'
+                    },
+                    {
+                        id: 'xinfan-dia',
+                        name: '补充装：Dia',
+                        pages: 2,
+                        path: '新番组存档/补充装：Dia/',
+                        hasFiles: true,
+                        subItems: [
+                            'Dia：不是，举我自证楼干嘛？',
+                            '只敢举报不敢对线的造谣小团体你赢了'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'zhenhua',
+                name: '真话组存档',
+                icon: '💬',
+                children: [
+                    {
+                        id: 'zhenhua-yule',
+                        name: '本组为娱乐组，禁止过度讨女性_社会话题',
+                        pages: 1,
+                        path: '真话组存档/本组为娱乐组，禁止过度讨女性_社会话题/1.html'
+                    },
+                    {
+                        id: 'zhenhua-discuss',
+                        name: '豆瓣知名恨女大组讨论（真话组）',
+                        pages: 1,
+                        path: '真话组存档/豆瓣知名恨女大组讨论（真话组）/1.html'
+                    },
+                    {
+                        id: 'zhenhua-bang',
+                        name: '们真话组居然在别组组禁榜上有名',
+                        pages: 1,
+                        path: '真话组存档/们真话组居然在别组组禁榜上有名/1.html'
+                    }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // 状态管理
+        // ==========================================
+        const state = {
+            currentCategory: null,
+            currentPage: 1,
+            itemsPerPage: 10,
+            fontSizeLevel: 0, // 0: small, 1: normal, 2: large, 3: x-large
+            darkMode: false,
+            recentViews: JSON.parse(localStorage.getItem('recentViews') || '[]'),
+            expandedFolders: new Set(),
+            searchQuery: ''
         };
 
-        let currentSeries = null;
-        let currentPage = 1;
+        const fontSizeClasses = ['text-sm', 'text-base', 'text-lg', 'text-xl'];
 
-        function init() {
-            renderHome();
+        // ==========================================
+        // 初始化
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
             renderSidebar();
+            renderCategories();
+            renderRecentViews();
+            setupEventListeners();
+            updateReadingProgress();
+        });
+
+        // ==========================================
+        // 主题与字体
+        // ==========================================
+        function initTheme() {
+            const saved = localStorage.getItem('darkMode');
+            if (saved === 'true') {
+                document.documentElement.classList.add('dark');
+                state.darkMode = true;
+            }
+            const savedFont = parseInt(localStorage.getItem('fontSize') || '1');
+            state.fontSizeLevel = savedFont;
+            applyFontSize();
         }
 
-        function renderHome() {
-            const grid = document.getElementById('catalogGrid');
-            grid.innerHTML = Object.keys(archiveData).map(key => {
-                const item = archiveData[key];
-                return `<div class="catalog-item" onclick="loadContent('${key}', 1)">
-                    <div class="catalog-icon">${item.icon}</div>
-                    <div class="catalog-title">${key}</div>
-                    <div class="catalog-pages">[${item.pages}页]</div>
-                </div>`;
-            }).join('');
+        function toggleDarkMode() {
+            state.darkMode = !state.darkMode;
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', state.darkMode);
         }
 
+        function cycleFontSize() {
+            state.fontSizeLevel = (state.fontSizeLevel + 1) % 4;
+            applyFontSize();
+            localStorage.setItem('fontSize', state.fontSizeLevel);
+        }
+
+        function applyFontSize() {
+            document.body.className = document.body.className.replace(/text-(sm|base|lg|xl)/g, '');
+            document.body.classList.add(fontSizeClasses[state.fontSizeLevel]);
+            document.getElementById('font-size-icon').textContent = ['小', '中', '大', '特大'][state.fontSizeLevel];
+        }
+
+        // ==========================================
+        // 侧边栏目录 - 多级展开
+        // ==========================================
         function renderSidebar() {
-            const container = document.getElementById('sidebarContent');
-            container.innerHTML = Object.keys(archiveData).map(key => {
-                const item = archiveData[key];
-                const pages = Array.from({length: item.pages}, (_, i) => 
-                    `<span class="nav-page-link" onclick="loadContent('${key}', ${i+1}); toggleSidebar();">${i+1}</span>`
-                ).join('');
-                return `<div class="nav-item">
-                    <div class="nav-title" onclick="loadContent('${key}', 1); toggleSidebar();">
-                        ${key} <span class="pages">[${item.pages}页]</span>
+            const nav = document.getElementById('sidebar-nav');
+            nav.innerHTML = '';
+
+            archiveData.forEach((category, catIndex) => {
+                const folderId = `folder-${category.id}`;
+                const isExpanded = state.expandedFolders.has(folderId);
+                
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'mb-2';
+                
+                // 大分类按钮
+                const headerBtn = document.createElement('button');
+                headerBtn.className = `w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${isExpanded ? 'bg-primary-100 text-primary-800' : 'hover:bg-primary-50 text-gray-700'}`;
+                headerBtn.onclick = () => toggleFolder(folderId);
+                headerBtn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl">${category.icon}</span>
+                        <span class="font-bold text-sm">${category.name}</span>
                     </div>
-                    <div class="nav-pages">${pages}</div>
-                </div>`;
-            }).join('');
-        }
-
-        function loadContent(series, page) {
-            currentSeries = series;
-            currentPage = page;
-            const data = archiveData[series];
-            
-            document.getElementById('homeView').classList.add('hidden');
-            document.getElementById('contentWrapper').classList.add('active');
-            document.getElementById('pagination').style.display = 'flex';
-            document.getElementById('backBtn').style.visibility = 'visible';
-            document.getElementById('bottomHint').classList.remove('show');
-            document.getElementById('loadingTip').classList.add('show');
-            
-            const path = series + '/' + page + '.html';
-            const iframe = document.getElementById('contentFrame');
-            iframe.src = path;
-            
-            // 关键：等 iframe 完全加载后再处理
-            iframe.onload = function() {
-                document.getElementById('loadingTip').classList.remove('show');
-                waitForImages(iframe);
-            };
-            
-            renderPagination(series, page, data.pages);
-        }
-
-        // 关键：等待所有图片加载完成
-        function waitForImages(iframe) {
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                const images = iframeDoc.querySelectorAll('img');
-                const totalImages = images.length;
-                let loadedImages = 0;
+                    <i class="fas fa-chevron-down transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}"></i>
+                `;
                 
-                // 如果没有图片，直接设置滚动监听
-                if (totalImages === 0) {
-                    setupScrollListener(iframe);
-                    return;
-                }
+                // 子目录容器
+                const childrenDiv = document.createElement('div');
+                childrenDiv.id = folderId;
+                childrenDiv.className = `folder-content ml-4 mt-1 space-y-1 ${isExpanded ? 'open' : ''}`;
                 
-                // 监听每张图片加载
-                images.forEach(img => {
-                    if (img.complete) {
-                        loadedImages++;
+                category.children.forEach((item, itemIndex) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'tree-line relative';
+                    
+                    const itemBtn = document.createElement('button');
+                    itemBtn.className = 'w-full text-left p-2.5 pl-4 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-colors flex items-center justify-between group';
+                    
+                    // 生成页码链接
+                    let pageLinks = '';
+                    if (item.pages > 1) {
+                        pageLinks = `<div class="flex gap-1 mt-1.5 ml-6">`;
+                        for (let i = 1; i <= item.pages; i++) {
+                            const pagePath = item.path.endsWith('/') ? `${item.path}${i}.html` : item.path;
+                            pageLinks += `<a href="${pagePath}" onclick="addRecent('${item.name}', '${pagePath}', '${category.icon}')" class="text-xs px-2 py-0.5 rounded bg-primary-50 text-primary-600 hover:bg-primary-200 transition-colors">${i}</a>`;
+                        }
+                        pageLinks += `</div>`;
                     } else {
-                        img.addEventListener('load', function() {
-                            loadedImages++;
-                            checkAllLoaded();
-                        });
-                        img.addEventListener('error', function() {
-                            loadedImages++; // 加载失败也算完成
-                            checkAllLoaded();
-                        });
+                        pageLinks = `<div class="mt-1.5 ml-6"><a href="${item.path}" onclick="addRecent('${item.name}', '${item.path}', '${category.icon}')" class="text-xs px-2 py-0.5 rounded bg-primary-50 text-primary-600 hover:bg-primary-200 transition-colors">1</a></div>`;
                     }
+                    
+                    itemBtn.innerHTML = `
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-primary-300 group-hover:bg-primary-500 transition-colors"></span>
+                                <span class="truncate">${item.name}</span>
+                            </div>
+                            ${pageLinks}
+                        </div>
+                        <span class="text-xs text-gray-400 ml-2 shrink-0">[${item.pages}页]</span>
+                    `;
+                    
+                    itemDiv.appendChild(itemBtn);
+                    childrenDiv.appendChild(itemDiv);
                 });
                 
-                // 检查是否全部加载完成
-                function checkAllLoaded() {
-                    if (loadedImages >= totalImages) {
-                        // 所有图片加载完成，设置滚动监听
-                        setTimeout(() => setupScrollListener(iframe), 100);
-                    }
-                }
-                
-                // 立即检查一次（可能图片已经缓存）
-                checkAllLoaded();
-                
-                // 超时处理：最多等3秒
-                setTimeout(() => {
-                    setupScrollListener(iframe);
-                }, 3000);
-                
-            } catch(e) {
-                // 跨域限制，直接设置监听
-                setupScrollListener(iframe);
-            }
+                categoryDiv.appendChild(headerBtn);
+                categoryDiv.appendChild(childrenDiv);
+                nav.appendChild(categoryDiv);
+            });
         }
 
-        // 设置滚动监听
-        function setupScrollListener(iframe) {
-            try {
-                const iframeWin = iframe.contentWindow;
-                
-                const scrollHandler = function() {
-                    const iframeDoc = iframe.contentDocument || iframeWin.document;
-                    const scrollTop = iframeWin.pageYOffset || iframeDoc.documentElement.scrollTop;
-                    const scrollHeight = iframeDoc.documentElement.scrollHeight;
-                    const clientHeight = iframeDoc.documentElement.clientHeight;
-                    
-                    // 关键：增加缓冲值，确保真的到底了
-                    const buffer = 50;
-                    const isBottom = scrollTop + clientHeight >= scrollHeight - buffer;
-                    
-                    if (isBottom) {
-                        document.getElementById('bottomHint').classList.add('show');
-                    } else {
-                        document.getElementById('bottomHint').classList.remove('show');
-                    }
-                };
-                
-                // 移除旧监听器
-                iframeWin.removeEventListener('scroll', scrollHandler);
-                iframeWin.addEventListener('scroll', scrollHandler);
-                
-                // 初始检查
-                setTimeout(scrollHandler, 200);
-                
-                // 图片加载后高度可能变化，定时检查
-                let checkCount = 0;
-                const intervalId = setInterval(() => {
-                    scrollHandler();
-                    checkCount++;
-                    if (checkCount > 10) clearInterval(intervalId); // 检查10次后停止
-                }, 500);
-                
-            } catch(e) {
-                // 跨域：默认显示提示
-                document.getElementById('bottomHint').classList.add('show');
-            }
-        }
-
-        function renderPagination(series, current, total) {
-            const nav = document.getElementById('pagination');
-            let html = '';
+        function toggleFolder(folderId) {
+            const folder = document.getElementById(folderId);
+            const isOpen = folder.classList.contains('open');
             
-            if (current > 1) {
-                html += `<a onclick="loadContent('${series}', ${current-1})" class="arrow">← 上一页</a>`;
+            if (isOpen) {
+                folder.classList.remove('open');
+                state.expandedFolders.delete(folderId);
             } else {
-                html += `<span class="arrow disabled">← 上一页</span>`;
+                folder.classList.add('open');
+                state.expandedFolders.add(folderId);
             }
             
-            html += `<span class="page-info">第 ${current} / ${total} 页</span>`;
-            
-            if (current < total) {
-                html += `<a onclick="loadContent('${series}', ${current+1})" class="arrow">下一页 →</a>`;
-            } else {
-                html += `<span class="arrow disabled">下一页 →</span>`;
-            }
-            
-            nav.innerHTML = html;
-        }
-
-        function goHome() {
-            document.getElementById('homeView').classList.remove('hidden');
-            document.getElementById('contentWrapper').classList.remove('active');
-            document.getElementById('pagination').style.display = 'none';
-            document.getElementById('backBtn').style.visibility = 'hidden';
-            document.getElementById('bottomHint').classList.remove('show');
-            document.getElementById('contentFrame').src = '';
+            renderSidebar(); // 重新渲染以更新箭头方向
         }
 
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.querySelector('.overlay').classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('open');
         }
 
-        init();
+        // ==========================================
+        // 主页大分类
+        // ==========================================
+        function renderCategories() {
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+            
+            archiveData.forEach(category => {
+                const totalItems = category.children.length;
+                const totalPages = category.children.reduce((sum, item) => sum + item.pages, 0);
+                
+                const card = document.createElement('div');
+                card.className = 'category-card bg-white rounded-2xl p-5 border border-primary-100 cursor-pointer hover:border-primary-300';
+                card.onclick = () => showCategory(category.id);
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="text-4xl">${category.icon}</span>
+                        <span class="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded-full">${totalItems}个帖子</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-1 text-lg">${category.name}</h3>
+                    <p class="text-sm text-gray-500">共 ${totalPages} 页内容</p>
+                    <div class="mt-3 flex items-center text-primary-600 text-sm font-medium">
+                        <span>进入浏览</span>
+                        <i class="fas fa-arrow-right ml-1 text-xs transition-transform group-hover:translate-x-1"></i>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // 分类内容展示
+        // ==========================================
+        function showCategory(categoryId) {
+            state.currentCategory = categoryId;
+            state.currentPage = 1;
+            
+            const category = archiveData.find(c => c.id === categoryId);
+            if (!category) return;
+            
+            // 更新内容区标题
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = `
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="text-3xl">${category.icon}</span>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">${category.name}</h2>
+                        <p class="text-sm text-gray-500">共 ${category.children.length} 个主题</p>
+                    </div>
+                </div>
+                <div id="items-list" class="space-y-3"></div>
+            `;
+            
+            renderItems();
+            updatePagination();
+            
+            // 添加浏览记录
+            addRecent(category.name, `#category-${categoryId}`, category.icon);
+        }
+
+        function renderItems() {
+            const category = archiveData.find(c => c.id === state.currentCategory);
+            if (!category) return;
+            
+            const list = document.getElementById('items-list');
+            if (!list) return;
+            
+            const start = (state.currentPage - 1) * state.itemsPerPage;
+            const end = start + state.itemsPerPage;
+            const items = category.children.slice(start, end);
+            
+            list.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'bg-white rounded-xl p-4 border border-primary-100 hover:shadow-md transition-all hover:border-primary-200';
+                
+                // 生成页码按钮
+                let pagesHtml = '';
+                if (item.pages === 1) {
+                    pagesHtml = `<a href="${item.path}" onclick="addRecent('${item.name}', '${item.path}', '${category.icon}')" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-primary-50 text-primary-700 text-sm font-medium hover:bg-primary-100 transition-colors">阅读</a>`;
+                } else {
+                    pagesHtml = `<div class="flex flex-wrap gap-2">`;
+                    for (let i = 1; i <= item.pages; i++) {
+                        const pagePath = item.path.endsWith('/') ? `${item.path}${i}.html` : item.path;
+                        pagesHtml += `<a href="${pagePath}" onclick="addRecent('${item.name} - 第${i}页', '${pagePath}', '${category.icon}')" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary-50 text-primary-700 text-sm font-medium hover:bg-primary-100 transition-colors">${i}</a>`;
+                    }
+                    pagesHtml += `</div>`;
+                }
+                
+                // 子项目（如Dia的补充）
+                let subItemsHtml = '';
+                if (item.subItems) {
+                    subItemsHtml = `<div class="mt-2 pl-4 border-l-2 border-primary-200 space-y-1">`;
+                    item.subItems.forEach(sub => {
+                        subItemsHtml += `<div class="text-xs text-gray-500">└ ${sub}</div>`;
+                    });
+                    subItemsHtml += `</div>`;
+                }
+                
+                itemCard.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800 mb-1">${item.name}</h3>
+                            <span class="text-xs text-gray-400">[${item.pages}页]</span>
+                        </div>
+                        ${item.hasFiles ? '<span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">含附件</span>' : ''}
+                    </div>
+                    ${subItemsHtml}
+                    <div class="mt-3">
+                        ${pagesHtml}
+                    </div>
+                `;
+                
+                list.appendChild(itemCard);
+            });
+            
+            // 显示/隐藏加载和到底提示
+            const loading = document.getElementById('loading-indicator');
+            const end = document.getElementById('end-indicator');
+            
+            if (items.length === 0) {
+                loading.classList.add('hidden');
+                end.classList.remove('hidden');
+            } else if (end >= category.children.length) {
+                loading.classList.add('hidden');
+                end.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+                end.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // 分页
+        // ==========================================
+        function updatePagination() {
+            const category = archiveData.find(c => c.id === state.currentCategory);
+            if (!category) {
+                document.getElementById('current-page').textContent = '1';
+                document.getElementById('total-pages').textContent = '1';
+                document.getElementById('btn-prev').disabled = true;
+                document.getElementById('btn-next').disabled = true;
+                return;
+            }
+            
+            const totalPages = Math.ceil(category.children.length / state.itemsPerPage);
+            document.getElementById('current-page').textContent = state.currentPage;
+            document.getElementById('total-pages').textContent = totalPages;
+            
+            document.getElementById('btn-prev').disabled = state.currentPage <= 1;
+            document.getElementById('btn-next').disabled = state.currentPage >= totalPages;
+        }
+
+        function prevPage() {
+            if (state.currentPage > 1) {
+                state.currentPage--;
+                renderItems();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function nextPage() {
+            const category = archiveData.find(c => c.id === state.currentCategory);
+            if (!category) return;
+            
+            const totalPages = Math.ceil(category.children.length / state.itemsPerPage);
+            if (state.currentPage < totalPages) {
+                state.currentPage++;
+                renderItems();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ==========================================
+        // 最近浏览
+        // ==========================================
+        function addRecent(name, path, icon) {
+            // 移除重复项
+            state.recentViews = state.recentViews.filter(r => r.path !== path);
+            // 添加到开头
+            state.recentViews.unshift({ name, path, icon, time: Date.now() });
+            // 最多保留10个
+            state.recentViews = state.recentViews.slice(0, 10);
+            // 保存
+            localStorage.setItem('recentViews', JSON.stringify(state.recentViews));
+            renderRecentViews();
+        }
+
+        function renderRecentViews() {
+            const section = document.getElementById('recent-section');
+            const list = document.getElementById('recent-list');
+            
+            if (state.recentViews.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            
+            section.classList.remove('hidden');
+            list.innerHTML = '';
+            
+            state.recentViews.forEach(item => {
+                const card = document.createElement('a');
+                card.href = item.path;
+                card.className = 'flex-shrink-0 w-32 bg-white rounded-xl p-3 border border-primary-100 hover:shadow-md transition-all hover:border-primary-200';
+                card.innerHTML = `
+                    <div class="text-2xl mb-2 text-center">${item.icon || '📄'}</div>
+                    <div class="text-xs font-medium text-gray-700 truncate text-center">${item.name}</div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // 搜索功能 - 基于标题/文件名
+        // ==========================================
+        function toggleSearch() {
+            const bar = document.getElementById('search-bar');
+            const input = document.getElementById('search-input');
+            bar.classList.toggle('open');
+            if (bar.classList.contains('open')) {
+                setTimeout(() => input.focus(), 100);
+            } else {
+                closeSearch();
+            }
+        }
+
+        function closeSearch() {
+            document.getElementById('search-bar').classList.remove('open');
+            document.getElementById('search-results').classList.add('hidden');
+            document.getElementById('search-input').value = '';
+            state.searchQuery = '';
+        }
+
+        function performSearch(query) {
+            if (!query.trim()) {
+                document.getElementById('search-results').classList.add('hidden');
+                return;
+            }
+            
+            const results = [];
+            const lowerQuery = query.toLowerCase();
+            
+            archiveData.forEach(category => {
+                category.children.forEach(item => {
+                    const matchName = item.name.toLowerCase().includes(lowerQuery);
+                    const matchId = item.id.toLowerCase().includes(lowerQuery);
+                    
+                    if (matchName || matchId) {
+                        results.push({
+                            ...item,
+                            categoryName: category.name,
+                            categoryIcon: category.icon
+                        });
+                    }
+                    
+                    // 搜索子项
+                    if (item.subItems) {
+                        item.subItems.forEach(sub => {
+                            if (sub.toLowerCase().includes(lowerQuery)) {
+                                results.push({
+                                    name: sub,
+                                    path: item.path,
+                                    pages: 1,
+                                    categoryName: category.name,
+                                    categoryIcon: category.icon,
+                                    isSubItem: true,
+                                    parentName: item.name
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+            
+            renderSearchResults(results, query);
+        }
+
+        function renderSearchResults(results, query) {
+            const container = document.getElementById('results-container');
+            const resultsDiv = document.getElementById('search-results');
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="p-4 text-center text-gray-500">
+                        <i class="fas fa-search mb-2 text-2xl text-gray-300"></i>
+                        <p>未找到相关内容</p>
+                    </div>
+                `;
+                resultsDiv.classList.remove('hidden');
+                return;
+            }
+            
+            let html = `<div class="p-2 text-xs text-gray-500 border-b border-gray-100">找到 ${results.length} 个结果</div>`;
+            
+            results.forEach(item => {
+                const highlightedName = highlightText(item.name, query);
+                const pageLinks = item.pages > 1 
+                    ? Array.from({length: item.pages}, (_, i) => 
+                        `<a href="${item.path.endsWith('/') ? item.path + (i+1) + '.html' : item.path}" 
+                            onclick="addRecent('${item.name}', '${item.path}', '${item.categoryIcon}')"
+                            class="text-xs px-2 py-1 rounded bg-primary-50 text-primary-600 hover:bg-primary-100">${i+1}</a>`
+                      ).join('')
+                    : `<a href="${item.path}" onclick="addRecent('${item.name}', '${item.path}', '${item.categoryIcon}')" class="text-xs px-2 py-1 rounded bg-primary-50 text-primary-600 hover:bg-primary-100">阅读</a>`;
+                
+                html += `
+                    <div class="p-3 hover:bg-primary-50 border-b border-gray-50 last:border-0 transition-colors">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-sm">${item.categoryIcon}</span>
+                            <span class="text-xs text-gray-400">${item.categoryName}</span>
+                            ${item.isSubItem ? `<span class="text-xs text-gray-300">← ${item.parentName}</span>` : ''}
+                        </div>
+                        <div class="font-medium text-gray-800 mb-2 text-sm">${highlightedName}</div>
+                        <div class="flex gap-2">${pageLinks}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // ==========================================
+        // 阅读进度条
+        // ==========================================
+        function updateReadingProgress() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('reading-progress').style.width = scrolled + '%';
+            
+            // 返回顶部按钮
+            const backToTop = document.getElementById('backToTop');
+            if (winScroll > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // 事件监听
+        // ==========================================
+        function setupEventListeners() {
+            // 滚动事件
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(() => {
+                    updateReadingProgress();
+                    scrollTimeout = null;
+                }, 10);
+            });
+            
+            // 搜索输入
+            const searchInput = document.getElementById('search-input');
+            let searchTimeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    state.searchQuery = e.target.value;
+                    performSearch(e.target.value);
+                }, 300);
+            });
+            
+            // 点击外部关闭搜索
+            document.addEventListener('click', (e) => {
+                const searchBar = document.getElementById('search-bar');
+                const searchBtn = e.target.closest('button[onclick="toggleSearch()"]');
+                if (!searchBar.contains(e.target) && !searchBtn) {
+                    closeSearch();
+                }
+            });
+            
+            // 键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                // ESC关闭侧边栏和搜索
+                if (e.key === 'Escape') {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebar-overlay').classList.remove('open');
+                    closeSearch();
+                }
+                // / 打开搜索
+                if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                    if (document.activeElement.tagName !== 'INPUT') {
+                        e.preventDefault();
+                        toggleSearch();
+                    }
+                }
+            });
+        }
+
+        // 防止iOS橡皮筋效果
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('#sidebar')) return;
+        }, { passive: true });
     </script>
 </body>
 </html>
