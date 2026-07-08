@@ -1605,12 +1605,13 @@
         // 第一步：先显示"加载中..."
         showLoadStatus('加载中...', true);
         
-        const BUFFER = 50;
+        const BUFFER = 80;
         
         // 检测是否已滚动到底部
         function isAtBottom() {
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!iframeDoc) return false;
                 const body = iframeDoc.body;
                 const html = iframeDoc.documentElement;
                 if (!body || !html) return false;
@@ -1625,8 +1626,14 @@
                 const viewHeight = iframe.clientHeight || window.innerHeight;
                 const scrollTop = html.scrollTop || body.scrollTop || 0;
                 
-                // 必须滚动到接近底部（50px缓冲）才视为到底
-                if (scrollTop + viewHeight >= contentHeight - BUFFER) return true;
+                // 内容比视口短（视口比内容大）→ 直接到底
+                if (contentHeight <= viewHeight + BUFFER) {
+                    return true;
+                }
+                // 已滚动到接近底部
+                if (scrollTop + viewHeight >= contentHeight - BUFFER) {
+                    return true;
+                }
                 return false;
             } catch(e) {
                 return false;
@@ -1668,6 +1675,12 @@
             try {
                 iframe.contentWindow.addEventListener('scroll', loadScrollListener);
             } catch(e) {}
+            // 兜底：每 1 秒检查一次，防止滚动事件没触发（比如某些手机浏览器对 iframe scroll 不响应）
+            loadCheckTimer = setInterval(() => {
+                if (isAtBottom()) {
+                    resolveBottom();
+                }
+            }, 1000);
         }
         
         // 第二步：等待所有图片加载完成
@@ -1770,10 +1783,14 @@
 
     function showLoadStatus(text, show) {
         const loadStatus = document.getElementById('loadStatus');
-        if (show) {
+        // 只有在内容页（currentPost 不为空）时才显示加载/到底提示
+        if (show && currentPost) {
             loadStatus.textContent = text;
             loadStatus.classList.add('active');
+        } else if (!show) {
+            loadStatus.classList.remove('active');
         } else {
+            // 主页情况下强制隐藏
             loadStatus.classList.remove('active');
         }
     }
@@ -1797,16 +1814,51 @@
     }
 
     function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+        // 滚动主窗口
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
+        try { document.documentElement.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { document.documentElement.scrollTop = 0; }
+        try { document.body.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { document.body.scrollTop = 0; }
         
+        // 滚动 iframe 内容（内容页在 iframe 内部，需要滚动它）
         const iframe = document.getElementById('contentFrame');
-        if (iframe && iframe.contentWindow) {
+        if (!iframe) return;
+        
+        const tryScrollIframe = () => {
             try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                iframeDoc.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
-                iframeDoc.body.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch(e) {}
+                const win = iframe.contentWindow;
+                const doc = iframe.contentDocument || (win && win.document);
+                if (!doc) return false;
+                
+                const html = doc.documentElement;
+                const body = doc.body;
+                
+                // 方法1：使用 window.scrollTo
+                if (win) {
+                    try { win.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { try { win.scrollTo(0, 0); } catch(e2) {} }
+                }
+                // 方法2：设置 documentElement.scrollTop
+                if (html) {
+                    try { html.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { html.scrollTop = 0; }
+                }
+                // 方法3：设置 body.scrollTop
+                if (body) {
+                    try { body.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { body.scrollTop = 0; }
+                }
+                return true;
+            } catch(e) {
+                return false;
+            }
+        };
+        
+        // 立即尝试一次
+        if (tryScrollIframe()) {
+            // 多次尝试以兼容不同浏览器对 smooth 滚动的处理
+            let attempts = 0;
+            const retry = setInterval(() => {
+                attempts++;
+                tryScrollIframe();
+                if (attempts >= 5) clearInterval(retry);
+            }, 80);
         }
     }
 
