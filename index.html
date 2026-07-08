@@ -749,15 +749,10 @@
             cursor: pointer;
             box-shadow: 0 4px 16px rgba(76,175,80,0.3);
             z-index: 90;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            overflow: hidden;
-        }
-
-        .back-to-top.visible {
             opacity: 1;
             visibility: visible;
+            transition: all 0.3s;
+            overflow: hidden;
         }
 
         .back-to-top::before {
@@ -1660,9 +1655,14 @@
             }
         }
         
-        // 启动滚动监听（不自动检测，只等用户滚动）
+        // 启动滚动监听（先检查一次当前位置，再监听滚动）
         function startScrollWatch() {
-            // 隐藏"加载中..."，等待用户滚动
+            // 先检查一次当前是否已经在底部（内容很短或用户已在底部）
+            if (isAtBottom()) {
+                resolveBottom();
+                return;
+            }
+            // 隐藏"加载中..."，监听用户滚动
             showLoadStatus('', false);
             loadScrollListener = onScroll;
             try {
@@ -1781,38 +1781,13 @@
     // ==================== 滚动处理（修复版）====================
     function initScroll() {
         window.addEventListener('scroll', handleScroll);
-        
-        // iframe滚动监听
-        setInterval(() => {
-            if (!currentPost) return;
-            
-            const iframe = document.getElementById('contentFrame');
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                const iframeScroll = iframeDoc.documentElement.scrollTop || iframeDoc.body.scrollTop;
-                
-                if (iframeScroll > 200) {
-                    document.getElementById('backToTop').classList.add('visible');
-                } else {
-                    document.getElementById('backToTop').classList.remove('visible');
-                }
-            } catch(e) {}
-        }, 200);
     }
 
     function handleScroll() {
-        const backToTop = document.getElementById('backToTop');
         const readingProgress = document.getElementById('readingProgress');
         const scrollY = window.scrollY || document.documentElement.scrollTop;
         const docHeight = document.documentElement.scrollHeight;
         const winHeight = window.innerHeight;
-        
-        // 回到顶部按钮
-        if (scrollY > 200) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
-        }
         
         // 阅读进度（仅内容页）
         if (currentPost) {
@@ -1833,10 +1808,6 @@
                 iframeDoc.body.scrollTo({ top: 0, behavior: 'smooth' });
             } catch(e) {}
         }
-        
-        setTimeout(() => {
-            document.getElementById('backToTop').classList.remove('visible');
-        }, 300);
     }
 
     // ==================== 搜索功能（优化间距和字体）====================
