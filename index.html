@@ -1453,6 +1453,7 @@
         // 绑定iframe加载事件
         iframe.onload = function() {
             isLoading = false;
+            injectResponsiveStyles();
             setupLoadDetection();
         };
         
@@ -1460,6 +1461,56 @@
             isLoading = false;
             showLoadStatus('加载失败', true);
         };
+    }
+
+    // ==================== iframe响应式修复 ====================
+    function injectResponsiveStyles() {
+        const iframe = document.getElementById('contentFrame');
+        try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            // 添加 viewport meta 标签
+            let viewport = iframeDoc.querySelector('meta[name="viewport"]');
+            if (!viewport) {
+                viewport = iframeDoc.createElement('meta');
+                viewport.setAttribute('name', 'viewport');
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                const head = iframeDoc.querySelector('head');
+                if (head) head.appendChild(viewport);
+            } else {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            }
+            
+            // 注入响应式样式
+            let style = iframeDoc.getElementById('responsive-fix');
+            if (!style) {
+                style = iframeDoc.createElement('style');
+                style.id = 'responsive-fix';
+                const head = iframeDoc.querySelector('head');
+                if (head) head.appendChild(style);
+            }
+            
+            style.textContent = `
+                * { max-width: 100% !important; }
+                img { max-width: 100% !important; height: auto !important; }
+                table { width: 100% !important; table-layout: fixed !important; }
+                td, th { word-break: break-all !important; }
+                iframe, embed, object, video { max-width: 100% !important; }
+                body { overflow-x: hidden !important; width: 100% !important; }
+                html { overflow-x: hidden !important; width: 100% !important; }
+                div, p, span { word-break: break-all !important; }
+                pre { white-space: pre-wrap !important; word-break: break-all !important; }
+            `;
+            
+            // 设置 iframe 文档宽度
+            iframeDoc.documentElement.style.width = '100%';
+            iframeDoc.body.style.width = '100%';
+            iframeDoc.documentElement.style.overflowX = 'hidden';
+            iframeDoc.body.style.overflowX = 'hidden';
+            
+        } catch(e) {
+            // 跨域时无法注入样式
+        }
     }
 
     // ==================== 页码切换（核心修复）====================
@@ -1519,7 +1570,9 @@
         document.getElementById('contentFrame').src = '';
         document.getElementById('readingProgress').classList.remove('active');
         document.getElementById('readingProgress').style.width = '0%';
-        document.getElementById('loadStatus').classList.remove('active');
+        const loadStatus = document.getElementById('loadStatus');
+        loadStatus.classList.remove('active');
+        loadStatus.textContent = '';  // 清空文本内容，防止主页显示
         
         currentCategory = null;
         currentPost = null;
@@ -1828,14 +1881,14 @@
             setTimeout(showLoadStatusIfNeeded, 250);
         });
         
-        // 跳转输入框获得焦点（键盘弹起）→ 隐藏页码导航
+        // 跳转输入框获得焦点（键盘弹起）→ 不隐藏页码导航，让键盘自然顶起
         const jumpInput = document.getElementById('jumpInput');
         if (jumpInput) {
             jumpInput.addEventListener('focus', () => {
-                pageNav.classList.remove('active');
+                // 不再隐藏页码导航，让键盘自然顶起
             });
             jumpInput.addEventListener('blur', () => {
-                // 键盘收起后恢复页码导航（仅在内容页）
+                // 键盘收起后确保页码导航显示（仅在内容页）
                 setTimeout(() => {
                     if (currentPost) {
                         pageNav.classList.add('active');
