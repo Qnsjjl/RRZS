@@ -156,7 +156,7 @@
         }
 
         .search-result-item {
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-bottom: 1px solid rgba(0,0,0,0.04);
             cursor: pointer;
             transition: all 0.2s;
@@ -186,34 +186,34 @@
         }
 
         .search-result-title {
-            font-size: 13px;
+            font-size: 12px;
             color: #333;
             font-weight: 600;
             flex: 1;
-            line-height: 1.3;
+            line-height: 1.25;
         }
 
         .search-result-pages {
             display: flex;
-            gap: 3px;
+            gap: 2px;
             flex-wrap: wrap;
             padding-left: 32px;
         }
 
         .search-page-tag {
-            min-width: 22px;
-            height: 22px;
-            border-radius: 5px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 4px;
             background: rgba(76,175,80,0.1);
             color: var(--primary);
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
-            padding: 0 5px;
+            padding: 0 4px;
         }
 
         .search-page-tag:hover {
@@ -566,7 +566,6 @@
             line-height: 1.4;
         }
 
-        /* 修复3：iframe响应式适配 */
         .content-frame {
             width: 100%;
             min-height: 500px;
@@ -574,9 +573,6 @@
             border-radius: 12px;
             background: white;
             box-shadow: var(--shadow);
-            /* 确保iframe内容自适应 */
-            max-width: 100%;
-            overflow-x: auto;
         }
 
         /* 底部页码导航 - 新版 */
@@ -598,10 +594,6 @@
 
         .page-nav.active {
             display: block;
-        }
-
-        .page-nav.hidden-by-keyboard {
-            display: none !important;
         }
 
         .page-nav-content {
@@ -683,14 +675,20 @@
             background: rgba(76,175,80,0.05);
         }
 
+        .jump-input::placeholder {
+            color: #c8c8c8;
+            font-weight: 500;
+            opacity: 1;
+        }
+
+        .jump-input::-webkit-input-placeholder {
+            color: #c8c8c8;
+            font-weight: 500;
+        }
+
         .jump-input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(76,175,80,0.1);
-        }
-
-        .jump-input::placeholder {
-            color: #ccc;
-            font-weight: 400;
         }
 
         .jump-btn {
@@ -711,19 +709,20 @@
             transform: scale(1.05);
         }
 
-        /* 修复2：加载中提示改为浅绿色文字，无灰底 */
+        /* 加载提示 - 仅内容页 */
         .loading-toast {
             position: fixed;
-            bottom: 80px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            color: var(--primary-light);  /* 浅绿色 */
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
             font-size: 14px;
             z-index: 3000;
             display: none;
             pointer-events: none;
-            background: none;  /* 无背景 */
-            padding: 0;  /* 无内边距 */
         }
 
         .loading-toast.active {
@@ -738,12 +737,13 @@
             width: 100%;
             max-width: 480px;
             text-align: center;
-            padding: 12px;
-            color: #999;
+            padding: 8px 12px;
+            color: #07c160;
             font-size: 13px;
             z-index: 97;
             display: none;
             pointer-events: none;
+            background: transparent;
         }
 
         .load-status.active {
@@ -1119,34 +1119,11 @@
             opacity: 0.3;
         }
 
-        /* 缩放提示 */
-        .zoom-hint {
-            position: fixed;
-            top: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 100;
-            display: none;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .zoom-hint.active {
-            display: block;
-        }
-
-        /* 修复3：响应式媒体查询 */
         @media (max-width: 380px) {
             .recent-card { min-width: 120px; }
             .catalog-panel { width: 65%; }
             .nav-arrow-btn { padding: 0 12px; font-size: 13px; height: 32px; }
             .page-indicator { font-size: 14px; min-width: 60px; }
-            .content-title { font-size: 16px; }
         }
 
         @media (min-width: 481px) {
@@ -1157,27 +1134,6 @@
 
         @media (min-width: 768px) {
             .catalog-panel { width: 45%; max-width: 400px; }
-        }
-
-        /* 修复3：确保iframe内容自适应 */
-        @media (max-width: 480px) {
-            .content-frame {
-                width: 100vw !important;
-                max-width: 100% !important;
-                margin-left: -16px;
-                margin-right: -16px;
-                border-radius: 0;
-            }
-            
-            .content-page {
-                padding: 8px;
-                padding-bottom: 140px;
-            }
-            
-            .content-header {
-                padding: 8px;
-                margin-bottom: 10px;
-            }
         }
     </style>
 </head>
@@ -1285,9 +1241,6 @@
         <div class="catalog-content" id="catalogContent"></div>
     </div>
 
-    <!-- 缩放提示 -->
-    <div class="zoom-hint" id="zoomHint">双指捏合缩放</div>
-
 </div><!-- app-container -->
 
 <script>
@@ -1355,6 +1308,9 @@
     let isDragging = false;
     let searchDebounceTimer = null;
     let loadCheckTimer = null;
+    let loadStabilityTimer = null;
+    let loadScrollListener = null;
+    let loadIsResolved = false;
     let isLoading = false;
 
     // ==================== 初始化 ====================
@@ -1365,8 +1321,6 @@
         initDrag();
         initScroll();
         initSearch();
-        initKeyboardListener();
-        initPinchZoom();
     }
 
     // ==================== 渲染目录（默认全部收起）====================
@@ -1488,15 +1442,14 @@
         loadContent(page);
     }
 
-    // 修复1：重构加载内容函数，确保加载提示逻辑正确
+    // 核心修复：单独提取加载内容函数
     function loadContent(page) {
         isLoading = true;
         showLoading(true);
-        showLoadStatus('', false);  // 确保"到底了"隐藏
         
         const cat = siteData.find(c => c.id === currentCategory);
         
-        // 修复1：构建正确的文件路径（使用相对路径）
+        // 构建文件路径
         let filePath;
         if (currentSpecial === 'nidi') {
             filePath = `新番组存档/泥跌飞了：7月3日追番组事件整理/泥跌飞了：7月3日追番组事件整理.html`;
@@ -1507,8 +1460,7 @@
                 filePath = `新番组存档/补充装：Dia/只敢举报不敢对线的造谣小团体你赢了.html`;
             }
         } else {
-            // 修复1：使用正确的相对路径格式
-            filePath = `./${cat.name}/${currentPost}/${page}.html`;
+            filePath = `${cat.name}/${currentPost}/${page}.html`;
         }
         
         const iframe = document.getElementById('contentFrame');
@@ -1520,12 +1472,9 @@
         
         // 绑定iframe加载事件
         iframe.onload = function() {
-            // 修复3：注入响应式样式到iframe
-            injectResponsiveStyle(iframe);
-            // 延迟一下确保DOM渲染
-            setTimeout(() => {
-                setupLoadDetection();
-            }, 100);
+            isLoading = false;
+            showLoading(false);
+            setupLoadDetection();
         };
         
         iframe.onerror = function() {
@@ -1533,159 +1482,6 @@
             showLoading(false);
             showLoadStatus('加载失败', true);
         };
-    }
-
-    // 修复3：向iframe注入响应式样式
-    function injectResponsiveStyle(iframe) {
-        try {
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const style = iframeDoc.createElement('style');
-            style.textContent = `
-                /* 强制响应式 */
-                body, html {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    overflow-x: hidden !important;
-                    margin: 0 !important;
-                    padding: 8px !important;
-                    box-sizing: border-box !important;
-                }
-                
-                /* 替换固定宽度 */
-                table, img, video, iframe, div {
-                    max-width: 100% !important;
-                    height: auto !important;
-                }
-                
-                /* 文字大小响应式 */
-                @media (max-width: 480px) {
-                    body { font-size: 14px !important; }
-                    h1 { font-size: 18px !important; }
-                    h2 { font-size: 16px !important; }
-                    h3 { font-size: 15px !important; }
-                }
-                
-                /* 禁用横向滚动 */
-                * {
-                    -webkit-overflow-scrolling: touch;
-                }
-                
-                /* 图片自适应 */
-                img {
-                    display: block;
-                    max-width: 100% !important;
-                }
-                
-                /* 表格横向滚动 */
-                table {
-                    display: block;
-                    overflow-x: auto;
-                    white-space: nowrap;
-                }
-            `;
-            iframeDoc.head.appendChild(style);
-        } catch(e) {
-            console.log('跨域无法注入样式');
-        }
-    }
-
-    // 修复1：重构加载检测逻辑
-    function setupLoadDetection() {
-        const iframe = document.getElementById('contentFrame');
-        let imagesLoaded = 0;
-        let totalImages = 0;
-        let heightStableCount = 0;
-        let lastHeight = 0;
-        let checkCount = 0;
-        let heightChecker = null;
-        
-        clearTimeout(loadCheckTimer);
-        
-        try {
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const images = iframeDoc.querySelectorAll('img');
-            totalImages = images.length;
-            
-            if (totalImages === 0) {
-                // 无图片，直接检查高度稳定
-                startHeightCheck();
-                return;
-            }
-            
-            // 监听每张图片加载
-            images.forEach(img => {
-                if (img.complete) {
-                    imagesLoaded++;
-                } else {
-                    img.addEventListener('load', checkAllImagesLoaded);
-                    img.addEventListener('error', checkAllImagesLoaded);
-                }
-            });
-            
-            // 立即检查一次（可能所有图片都已缓存）
-            checkAllImagesLoaded();
-            
-        } catch(e) {
-            // 跨域情况，简单处理
-            startHeightCheck();
-        }
-        
-        function checkAllImagesLoaded() {
-            imagesLoaded++;
-            if (imagesLoaded >= totalImages) {
-                // 所有图片加载完成，开始检查高度稳定
-                startHeightCheck();
-            }
-        }
-        
-        function startHeightCheck() {
-            // 先显示加载中，等高度稳定后再显示到底
-            showLoading(true);
-            showLoadStatus('', false);
-            
-            heightChecker = setInterval(() => {
-                try {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    const currentHeight = iframeDoc.body ? iframeDoc.body.scrollHeight : 0;
-                    
-                    if (currentHeight === lastHeight && currentHeight > 0) {
-                        heightStableCount++;
-                        if (heightStableCount >= 2) {
-                            // 高度稳定，显示到底
-                            clearInterval(heightChecker);
-                            isLoading = false;
-                            showLoading(false);
-                            showLoadStatus('— 到底了 —', true);
-                        }
-                    } else {
-                        heightStableCount = 0;
-                        lastHeight = currentHeight;
-                    }
-                    
-                    checkCount++;
-                    if (checkCount >= 10) {
-                        // 超过5秒，强制显示到底
-                        clearInterval(heightChecker);
-                        isLoading = false;
-                        showLoading(false);
-                        showLoadStatus('— 到底了 —', true);
-                    }
-                } catch(e) {
-                    clearInterval(heightChecker);
-                    isLoading = false;
-                    showLoading(false);
-                    showLoadStatus('— 到底了 —', true);
-                }
-            }, 500);  // 每500ms检查一次
-        }
-        
-        // 3秒超时保护
-        loadCheckTimer = setTimeout(() => {
-            if (heightChecker) clearInterval(heightChecker);
-            isLoading = false;
-            showLoading(false);
-            showLoadStatus('— 到底了 —', true);
-        }, 3000);
     }
 
     // ==================== 页码切换（核心修复）====================
@@ -1731,7 +1527,9 @@
         indicator.textContent = `${currentPage} / ${currentTotalPages}`;
         
         jumpInput.max = currentTotalPages;
-        jumpInput.placeholder = '页码';
+        // 占位符显示"1-N"格式，且颜色为浅色
+        jumpInput.placeholder = currentTotalPages > 1 ? `1-${currentTotalPages}` : '1';
+        jumpInput.value = '';
     }
 
     function goBack() {
@@ -1753,6 +1551,207 @@
         isLoading = false;
         
         clearTimeout(loadCheckTimer);
+        clearInterval(loadStabilityTimer);
+        if (loadScrollListener) {
+            try {
+                document.getElementById('contentFrame').contentWindow.removeEventListener('scroll', loadScrollListener);
+            } catch(e) {}
+            loadScrollListener = null;
+        }
+        loadIsResolved = false;
+    }
+
+    // ==================== 加载检测（加强版：图片+高度+滚动+50px缓冲）====================
+    function setupLoadDetection() {
+        const iframe = document.getElementById('contentFrame');
+        
+        // 清空之前的状态
+        clearTimeout(loadCheckTimer);
+        clearInterval(loadStabilityTimer);
+        if (loadScrollListener) {
+            try {
+                iframe.contentWindow.removeEventListener('scroll', loadScrollListener);
+            } catch(e) {}
+            loadScrollListener = null;
+        }
+        loadIsResolved = false;
+        
+        // 第一步：先显示"加载中..."
+        showLoadStatus('加载中...', true);
+        
+        const BUFFER = 50;
+        
+        // 检测是否已滚动到底部
+        function isAtBottom() {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const body = iframeDoc.body;
+                const html = iframeDoc.documentElement;
+                if (!body || !html) return true;
+                
+                const contentHeight = Math.max(
+                    body.scrollHeight || 0,
+                    body.offsetHeight || 0,
+                    html.scrollHeight || 0,
+                    html.offsetHeight || 0,
+                    html.clientHeight || 0
+                );
+                const viewHeight = iframe.clientHeight || window.innerHeight;
+                const scrollTop = html.scrollTop || body.scrollTop || 0;
+                
+                // 内容比视口短（50px缓冲），或者已滚动到底部（50px缓冲）
+                if (contentHeight <= viewHeight + BUFFER) return true;
+                if (scrollTop + viewHeight >= contentHeight - BUFFER) return true;
+                return false;
+            } catch(e) {
+                // 跨域无法检测，默认到底
+                return true;
+            }
+        }
+        
+        // 标记为完成（到底了）
+        function resolveBottom() {
+            if (loadIsResolved) return;
+            loadIsResolved = true;
+            clearTimeout(loadCheckTimer);
+            clearInterval(loadStabilityTimer);
+            if (loadScrollListener) {
+                try {
+                    iframe.contentWindow.removeEventListener('scroll', loadScrollListener);
+                } catch(e) {}
+                loadScrollListener = null;
+            }
+            showLoadStatus('— 到底了 —', true);
+        }
+        
+        // 尝试检测是否到底
+        function tryShowBottom() {
+            if (isAtBottom()) {
+                resolveBottom();
+                return true;
+            }
+            return false;
+        }
+        
+        // 启动滚动监听
+        function startScrollWatch() {
+            if (tryShowBottom()) return;
+            loadScrollListener = tryShowBottom;
+            try {
+                iframe.contentWindow.addEventListener('scroll', loadScrollListener);
+            } catch(e) {}
+        }
+        
+        // 第二步：等待所有图片加载完成
+        function waitForImages() {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const images = iframeDoc.querySelectorAll('img');
+                
+                if (images.length === 0) {
+                    waitForStable();
+                    return;
+                }
+                
+                let pending = 0;
+                images.forEach(img => {
+                    if (!img.complete) {
+                        pending++;
+                        const onImgLoad = () => {
+                            pending--;
+                            if (pending <= 0) {
+                                pending = 0;
+                                waitForStable();
+                            }
+                        };
+                        img.addEventListener('load', onImgLoad);
+                        img.addEventListener('error', onImgLoad);
+                    }
+                });
+                
+                if (pending === 0) {
+                    waitForStable();
+                }
+            } catch(e) {
+                // 跨域
+                waitForStable();
+            }
+        }
+        
+        // 第三步：等待高度稳定（每500ms检查，最多10次）
+        function waitForStable() {
+            let checkCount = 0;
+            let stableCount = 0;
+            let lastHeight = -1;
+            
+            clearInterval(loadStabilityTimer);
+            loadStabilityTimer = setInterval(() => {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const body = iframeDoc.body;
+                    const html = iframeDoc.documentElement;
+                    if (!body || !html) {
+                        clearInterval(loadStabilityTimer);
+                        startScrollWatch();
+                        return;
+                    }
+                    
+                    const currentHeight = Math.max(
+                        body.scrollHeight || 0,
+                        html.scrollHeight || 0,
+                        body.offsetHeight || 0,
+                        html.offsetHeight || 0
+                    );
+                    
+                    if (currentHeight > 0 && currentHeight === lastHeight) {
+                        stableCount++;
+                        if (stableCount >= 2) {
+                            // 高度稳定2次
+                            clearInterval(loadStabilityTimer);
+                            startScrollWatch();
+                            return;
+                        }
+                    } else {
+                        stableCount = 0;
+                        lastHeight = currentHeight;
+                    }
+                    
+                    checkCount++;
+                    if (checkCount >= 10) {
+                        // 已经检查10次
+                        clearInterval(loadStabilityTimer);
+                        startScrollWatch();
+                    }
+                } catch(e) {
+                    clearInterval(loadStabilityTimer);
+                    startScrollWatch();
+                }
+            }, 500);
+        }
+        
+        // 启动流程
+        waitForImages();
+        
+        // 3秒超时兜底
+        loadCheckTimer = setTimeout(resolveBottom, 3000);
+    }
+
+    function checkHeightStable() {
+        // 已废弃：由 setupLoadDetection 内部处理
+    }
+
+    function scheduleBottomCheck(delay) {
+        // 已废弃：由 setupLoadDetection 内部处理
+    }
+
+    function showLoadStatus(text, show) {
+        const loadStatus = document.getElementById('loadStatus');
+        if (show) {
+            loadStatus.textContent = text;
+            loadStatus.classList.add('active');
+        } else {
+            loadStatus.classList.remove('active');
+        }
     }
 
     // ==================== 滚动处理（修复版）====================
@@ -1821,55 +1820,53 @@
         const toggle = document.getElementById('searchToggle');
         const container = document.getElementById('searchContainer');
         const box = document.getElementById('searchBox');
+        const pageNav = document.getElementById('pageNav');
+        
+        // 工具函数：恢复页码导航
+        function restorePageNav() {
+            // 仅在内容页（currentPost不为空）时恢复
+            if (currentPost) {
+                pageNav.classList.add('active');
+            }
+        }
         
         toggle.addEventListener('click', () => {
             container.classList.toggle('active');
             if (container.classList.contains('active')) {
                 box.focus();
-                // 修复2：搜索激活时临时隐藏页码导航，但不清除active类
-                document.getElementById('pageNav').classList.add('hidden-by-keyboard');
+                // 搜索时隐藏页码导航，避免被输入法顶起
+                pageNav.classList.remove('active');
             } else {
-                // 修复2：搜索关闭时恢复页码导航
-                document.getElementById('pageNav').classList.remove('hidden-by-keyboard');
+                // 关闭搜索，恢复页码导航
+                restorePageNav();
             }
         });
+        
+        // 搜索框获得焦点（键盘弹起）→ 隐藏页码导航
+        box.addEventListener('focus', () => {
+            pageNav.classList.remove('active');
+        });
+        
+        // 搜索框失去焦点（键盘收起）→ 恢复页码导航
+        box.addEventListener('blur', () => {
+            // 延迟执行，确保键盘完全收起
+            setTimeout(restorePageNav, 250);
+        });
+        
+        // 跳转输入框也做同样处理
+        const jumpInput = document.getElementById('jumpInput');
+        if (jumpInput) {
+            jumpInput.addEventListener('focus', () => {
+                pageNav.classList.remove('active');
+            });
+            jumpInput.addEventListener('blur', () => {
+                setTimeout(restorePageNav, 250);
+            });
+        }
         
         box.addEventListener('input', (e) => {
             clearTimeout(searchDebounceTimer);
             searchDebounceTimer = setTimeout(() => doSearch(e.target.value), 300);
-        });
-        
-        // 修复2：监听输入框失去焦点，恢复页码导航
-        box.addEventListener('blur', () => {
-            setTimeout(() => {
-                document.getElementById('pageNav').classList.remove('hidden-by-keyboard');
-            }, 300);
-        });
-    }
-
-    // 修复2：监听键盘事件，确保键盘收起时恢复页码导航
-    function initKeyboardListener() {
-        const box = document.getElementById('searchBox');
-        
-        // 监听键盘收起（resize事件）
-        let initialHeight = window.innerHeight;
-        window.addEventListener('resize', () => {
-            const currentHeight = window.innerHeight;
-            const pageNav = document.getElementById('pageNav');
-            
-            // 如果键盘收起（高度增加），且当前在内容页，恢复页码导航
-            if (currentHeight > initialHeight * 0.8 && currentPost) {
-                pageNav.classList.remove('hidden-by-keyboard');
-            }
-            initialHeight = currentHeight;
-        });
-        
-        // 监听输入框回车键关闭键盘
-        box.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                box.blur();
-                document.getElementById('pageNav').classList.remove('hidden-by-keyboard');
-            }
         });
     }
 
@@ -1902,7 +1899,7 @@
         });
         
         if (matches.length === 0) {
-            results.innerHTML = '<div class="search-result-item"><div class="search-result-header"><div class="search-result-title" style="font-size:12px;color:#999;">无搜索结果</div></div></div>';
+            results.innerHTML = '<div class="search-result-item"><div class="search-result-header"><div class="search-result-title" style="font-size:13px;color:#999;">无搜索结果</div></div></div>';
         } else {
             results.innerHTML = matches.map(m => `
                 <div class="search-result-item" onclick="showPost('${m.catId}', '${m.postName}', ${m.pages}, '${m.special}')">
@@ -2093,129 +2090,6 @@
             }
             setTimeout(() => isDragging = false, 50);
         }
-    }
-
-    // ==================== 修复5：双指放大缩小功能 ====================
-    function initPinchZoom() {
-        const iframe = document.getElementById('contentFrame');
-        let initialDistance = 0;
-        let initialScale = 1;
-        let currentScale = 1;
-        let isPinching = false;
-        let lastPinchTime = 0;
-        const PINCH_COOLDOWN = 300; // 防误触冷却时间300ms
-        
-        // 获取两点间距离
-        function getDistance(touches) {
-            const dx = touches[0].clientX - touches[1].clientX;
-            const dy = touches[0].clientY - touches[1].clientY;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-        
-        // 显示缩放提示
-        function showZoomHint(scale) {
-            const hint = document.getElementById('zoomHint');
-            hint.textContent = `缩放: ${Math.round(scale * 100)}%`;
-            hint.classList.add('active');
-            clearTimeout(hint.hideTimer);
-            hint.hideTimer = setTimeout(() => {
-                hint.classList.remove('active');
-            }, 1500);
-        }
-        
-        // 应用缩放（仅在内容页）
-        function applyScale(scale) {
-            if (!currentPost) return; // 非内容页不缩放
-            iframe.style.transform = `scale(${scale})`;
-            iframe.style.transformOrigin = 'center top';
-        }
-        
-        // 监听iframe加载后绑定事件
-        iframe.addEventListener('load', () => {
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                const iframeBody = iframeDoc.body || iframeDoc.documentElement;
-                
-                // 绑定touch事件到iframe内部
-                iframeBody.addEventListener('touchstart', handleTouchStart, { passive: false });
-                iframeBody.addEventListener('touchmove', handleTouchMove, { passive: false });
-                iframeBody.addEventListener('touchend', handleTouchEnd, { passive: false });
-                
-            } catch (e) {
-                // 跨域情况下，在主窗口监听并透传
-                console.log('跨域iframe，使用主窗口监听');
-            }
-        });
-        
-        // 同时在主窗口监听（备用方案）
-        document.addEventListener('touchstart', handleTouchStart, { passive: false });
-        document.addEventListener('touchmove', handleTouchMove, { passive: false });
-        document.addEventListener('touchend', handleTouchEnd, { passive: false });
-        
-        function handleTouchStart(e) {
-            if (!currentPost) return; // 仅在内容页生效
-            
-            if (e.touches.length === 2) {
-                // 防误触检查
-                const now = Date.now();
-                if (now - lastPinchTime < PINCH_COOLDOWN) {
-                    e.preventDefault();
-                    return;
-                }
-                
-                isPinching = true;
-                initialDistance = getDistance(e.touches);
-                initialScale = currentScale;
-                e.preventDefault(); // 防止页面滚动
-            }
-        }
-        
-        function handleTouchMove(e) {
-            if (!currentPost || !isPinching || e.touches.length !== 2) return;
-            
-            e.preventDefault(); // 阻止默认滚动
-            
-            const currentDistance = getDistance(e.touches);
-            const scaleRatio = currentDistance / initialDistance;
-            let newScale = initialScale * scaleRatio;
-            
-            // 限制缩放范围 0.5 - 3倍
-            newScale = Math.max(0.5, Math.min(3, newScale));
-            
-            currentScale = newScale;
-            applyScale(currentScale);
-            showZoomHint(currentScale);
-        }
-        
-        function handleTouchEnd(e) {
-            if (!currentPost) return;
-            
-            if (isPinching) {
-                lastPinchTime = Date.now();
-                isPinching = false;
-                
-                // 如果缩放接近1，自动回弹
-                if (Math.abs(currentScale - 1) < 0.1) {
-                    currentScale = 1;
-                    applyScale(1);
-                }
-            }
-        }
-        
-        // 双击重置缩放（防误触）
-        let lastTapTime = 0;
-        document.addEventListener('touchend', (e) => {
-            if (!currentPost) return;
-            
-            const now = Date.now();
-            if (now - lastTapTime < 300) {
-                // 双击重置
-                currentScale = 1;
-                applyScale(1);
-                showZoomHint(1);
-            }
-            lastTapTime = now;
-        });
     }
 
     // ==================== 工具函数 ====================
