@@ -709,37 +709,18 @@
             transform: scale(1.05);
         }
 
-        /* 加载提示 - 仅内容页 */
-        .loading-toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-size: 14px;
-            z-index: 3000;
-            display: none;
-            pointer-events: none;
-        }
-
-        .loading-toast.active {
-            display: block;
-        }
-
+        /* 加载提示 - 仅内容页，底部绿色文字 */
         .load-status {
             position: fixed;
-            bottom: 80px;
+            bottom: 140px;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
             max-width: 480px;
             text-align: center;
-            padding: 8px 12px;
+            padding: 4px 8px;
             color: #07c160;
-            font-size: 13px;
+            font-size: 11px;
             z-index: 97;
             display: none;
             pointer-events: none;
@@ -1215,7 +1196,6 @@
     </div>
 
     <!-- 加载提示 - 仅内容页 -->
-    <div class="loading-toast" id="loadingToast">加载中...</div>
     <div class="load-status" id="loadStatus"></div>
 
     <!-- 回到顶部 - 左侧 -->
@@ -1445,7 +1425,7 @@
     // 核心修复：单独提取加载内容函数
     function loadContent(page) {
         isLoading = true;
-        showLoading(true);
+        showLoadStatus('加载中...', true);
         
         const cat = siteData.find(c => c.id === currentCategory);
         
@@ -1473,13 +1453,11 @@
         // 绑定iframe加载事件
         iframe.onload = function() {
             isLoading = false;
-            showLoading(false);
             setupLoadDetection();
         };
         
         iframe.onerror = function() {
             isLoading = false;
-            showLoading(false);
             showLoadStatus('加载失败', true);
         };
     }
@@ -1587,7 +1565,7 @@
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 const body = iframeDoc.body;
                 const html = iframeDoc.documentElement;
-                if (!body || !html) return true;
+                if (!body || !html) return false;
                 
                 const contentHeight = Math.max(
                     body.scrollHeight || 0,
@@ -1599,13 +1577,11 @@
                 const viewHeight = iframe.clientHeight || window.innerHeight;
                 const scrollTop = html.scrollTop || body.scrollTop || 0;
                 
-                // 内容比视口短（50px缓冲），或者已滚动到底部（50px缓冲）
-                if (contentHeight <= viewHeight + BUFFER) return true;
+                // 必须滚动到接近底部（50px缓冲）才视为到底
                 if (scrollTop + viewHeight >= contentHeight - BUFFER) return true;
                 return false;
             } catch(e) {
-                // 跨域无法检测，默认到底
-                return true;
+                return false;
             }
         }
         
@@ -1624,19 +1600,18 @@
             showLoadStatus('— 到底了 —', true);
         }
         
-        // 尝试检测是否到底
-        function tryShowBottom() {
+        // 滚动监听：只在滚动到底部时显示"到底了"
+        function onScroll() {
             if (isAtBottom()) {
                 resolveBottom();
-                return true;
             }
-            return false;
         }
         
-        // 启动滚动监听
+        // 启动滚动监听（不自动检测，只等用户滚动）
         function startScrollWatch() {
-            if (tryShowBottom()) return;
-            loadScrollListener = tryShowBottom;
+            // 隐藏"加载中..."，等待用户滚动
+            showLoadStatus('', false);
+            loadScrollListener = onScroll;
             try {
                 iframe.contentWindow.addEventListener('scroll', loadScrollListener);
             } catch(e) {}
@@ -1673,7 +1648,6 @@
                     waitForStable();
                 }
             } catch(e) {
-                // 跨域
                 waitForStable();
             }
         }
@@ -1706,7 +1680,6 @@
                     if (currentHeight > 0 && currentHeight === lastHeight) {
                         stableCount++;
                         if (stableCount >= 2) {
-                            // 高度稳定2次
                             clearInterval(loadStabilityTimer);
                             startScrollWatch();
                             return;
@@ -1718,7 +1691,6 @@
                     
                     checkCount++;
                     if (checkCount >= 10) {
-                        // 已经检查10次
                         clearInterval(loadStabilityTimer);
                         startScrollWatch();
                     }
@@ -1732,8 +1704,7 @@
         // 启动流程
         waitForImages();
         
-        // 3秒超时兜底
-        loadCheckTimer = setTimeout(resolveBottom, 3000);
+        // 移除3秒超时：不再自动显示"到底了"，只等用户滚动到底部
     }
 
     function checkHeightStable() {
@@ -1821,12 +1792,17 @@
         const container = document.getElementById('searchContainer');
         const box = document.getElementById('searchBox');
         const pageNav = document.getElementById('pageNav');
+        const loadStatus = document.getElementById('loadStatus');
         
-        // 工具函数：恢复页码导航
-        function restorePageNav() {
-            // 仅在内容页（currentPost不为空）时恢复
-            if (currentPost) {
-                pageNav.classList.add('active');
+        // 搜索时隐藏加载提示
+        function hideLoadStatus() {
+            loadStatus.classList.remove('active');
+        }
+        
+        // 关闭搜索时恢复加载提示（如果在内容页）
+        function showLoadStatusIfNeeded() {
+            if (currentPost && loadStatus.textContent) {
+                loadStatus.classList.add('active');
             }
         }
         
@@ -1834,33 +1810,37 @@
             container.classList.toggle('active');
             if (container.classList.contains('active')) {
                 box.focus();
-                // 搜索时隐藏页码导航，避免被输入法顶起
-                pageNav.classList.remove('active');
+                // 搜索时隐藏加载提示（防止穿模）
+                hideLoadStatus();
             } else {
-                // 关闭搜索，恢复页码导航
-                restorePageNav();
+                // 关闭搜索，恢复加载提示
+                showLoadStatusIfNeeded();
             }
         });
         
-        // 搜索框获得焦点（键盘弹起）→ 隐藏页码导航
+        // 搜索框获得焦点 → 隐藏加载提示
         box.addEventListener('focus', () => {
-            pageNav.classList.remove('active');
+            hideLoadStatus();
         });
         
-        // 搜索框失去焦点（键盘收起）→ 恢复页码导航
+        // 搜索框失去焦点 → 恢复加载提示
         box.addEventListener('blur', () => {
-            // 延迟执行，确保键盘完全收起
-            setTimeout(restorePageNav, 250);
+            setTimeout(showLoadStatusIfNeeded, 250);
         });
         
-        // 跳转输入框也做同样处理
+        // 跳转输入框获得焦点（键盘弹起）→ 隐藏页码导航
         const jumpInput = document.getElementById('jumpInput');
         if (jumpInput) {
             jumpInput.addEventListener('focus', () => {
                 pageNav.classList.remove('active');
             });
             jumpInput.addEventListener('blur', () => {
-                setTimeout(restorePageNav, 250);
+                // 键盘收起后恢复页码导航（仅在内容页）
+                setTimeout(() => {
+                    if (currentPost) {
+                        pageNav.classList.add('active');
+                    }
+                }, 250);
             });
         }
         
@@ -2093,9 +2073,6 @@
     }
 
     // ==================== 工具函数 ====================
-    function showLoading(show) {
-        document.getElementById('loadingToast').classList.toggle('active', show);
-    }
 
     // 防止拖拽时页面滚动
     document.addEventListener('touchmove', function(e) {
