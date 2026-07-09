@@ -280,6 +280,81 @@
             justify-content: center;
         }
 
+        .welcome-images {
+            display: flex;
+            gap: 8px;
+        }
+
+        .welcome-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .welcome-img:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        /* 图片放大弹窗 */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: lightboxFade 0.3s ease;
+        }
+
+        @keyframes lightboxFade {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
         /* 最近浏览 */
         .recent-section {
             margin-bottom: 24px;
@@ -1130,7 +1205,7 @@
     <!-- 标题栏 - 去除状态栏后置顶 -->
     <header class="header">
         <div class="header-left">
-            <div class="logo-icon">🌅</div>
+            <div class="logo-icon"><img src="https://s41.ax1x.com/2026/07/09/pmraqUK.jpg" style="width:100%;height:100%;border-radius:10px;object-fit:cover;"></div>
             <h1 class="header-title" id="pageTitle">如日之升</h1>
         </div>
         <div class="header-actions">
@@ -1149,6 +1224,10 @@
         <!-- 欢迎横幅 -->
         <div class="welcome-banner" id="welcomeBanner">
             <div class="welcome-text">🌱 欢迎来到如日之升</div>
+            <div class="welcome-images">
+                <img src="https://s41.ax1x.com/2026/07/09/pmraqUK.jpg" class="welcome-img" onclick="openLightbox(this.src)" alt="图片1">
+                <img src="https://s41.ax1x.com/2026/07/09/pmraL4O.jpg" class="welcome-img" onclick="openLightbox(this.src)" alt="图片2">
+            </div>
             <button class="welcome-close" onclick="this.parentElement.style.display='none'">✕</button>
         </div>
 
@@ -1221,6 +1300,12 @@
             <button class="catalog-close" id="catalogClose">✕</button>
         </div>
         <div class="catalog-content" id="catalogContent"></div>
+    </div>
+
+    <!-- 图片放大弹窗 -->
+    <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="event.stopPropagation(); closeLightbox()">✕</button>
+        <img src="" class="lightbox-content" id="lightboxImage">
     </div>
 
 </div><!-- app-container -->
@@ -1303,6 +1388,21 @@
         initDrag();
         initScroll();
         initSearch();
+    }
+
+    // ==================== 图片放大弹窗 ====================
+    function openLightbox(src) {
+        const overlay = document.getElementById('lightboxOverlay');
+        const image = document.getElementById('lightboxImage');
+        image.src = src;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        const overlay = document.getElementById('lightboxOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
     }
 
     // ==================== 渲染目录（默认全部收起）====================
@@ -1416,6 +1516,7 @@
         document.getElementById('contentPage').classList.add('active');
         document.getElementById('pageNav').classList.add('active');
         document.getElementById('pageTitle').textContent = postName;
+        document.title = postName + ' - 如日之升';
         
         // 显示阅读进度条
         document.getElementById('readingProgress').classList.add('active');
@@ -1569,6 +1670,7 @@
         document.getElementById('homePage').style.display = 'block';
         document.getElementById('recentSection').style.display = 'block';
         document.getElementById('pageTitle').textContent = '如日之升';
+        document.title = '如日之升';
         document.getElementById('contentFrame').src = '';
         document.getElementById('readingProgress').classList.remove('active');
         document.getElementById('readingProgress').style.width = '0%';
