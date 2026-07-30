@@ -1,0 +1,36 @@
+# --- 针对你当前项目的特定文件 ---
+# 刚才提到的不需要上传的排序文件和脚本
+sort_order.txt
+generate_sorted_list.py
+
+# --- Python 通用忽略规则 ---
+# Python 编译产生的字节码文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C 扩展文件 (如果你以后用到了Cython等)
+*.so
+
+# 分发/打包产生的文件夹
+build/
+dist/
+*.egg-info/
+
+# --- 虚拟环境 (非常重要) ---
+# 如果你创建了 venv 或 env 文件夹，千万不要上传，体积巨大且包含密码风险
+venv/
+env/
+.venv/
+
+# --- 编辑器配置 ---
+# VS Code 的配置文件夹
+.vscode/
+# PyCharm 的配置文件夹
+.idea/
+
+# --- 操作系统文件 ---
+# Mac 系统产生的隐藏文件
+.DS_Store
+# Windows 系统产生的缩略图缓存
+Thumbs.db
